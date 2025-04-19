@@ -15,7 +15,7 @@ document.getElementById("warrantyForm").addEventListener("submit", async functio
   statusMessage.textContent = "Submitting...";
 
   try {
-    const response = await fetch("https://script.google.com/macros/s/AKfycbxKKXrVemMkJ2zc0VkWlZ37JSyWIxqML6aDCBCMmzg/dev", {
+    const response = await fetch("https://script.google.com/macros/s/AKfycbzk8XOzvR7_27-7r_89vYyA4hnGkKUDu62F5MAbKWbw6ZgHrgOBMPVmLWlLmJ9Rkpc3/exec", {
       method: "POST",
       mode: "no-cors",
       headers: {
