@@ -1,0 +1,27 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RefurWish Shield - Extended Warranty</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <div class="container">
+    <img src="logo.png" alt="RefurWish Logo" class="logo" />
+    <h1>RefurWish Shield - Extended Warranty</h1>
+    <form id="warrantyForm">
+      <input type="text" name="store_id" placeholder="Store ID" required />
+      <input type="text" name="name" placeholder="Customer Name" required />
+      <input type="email" name="email" placeholder="Customer Email" required />
+      <input type="text" name="phone_model" placeholder="Phone Model" required />
+      <input type="text" name="imei" placeholder="IMEI Number" required />
+      <input type="text" name="plan" value="1 Year Plan" readonly />
+      <button type="submit">Submit</button>
+    </form>
+    <p id="statusMessage"></p>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
