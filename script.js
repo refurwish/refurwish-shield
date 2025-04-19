@@ -1,14 +1,14 @@
-
 document.getElementById("warrantyForm").addEventListener("submit", async function(e) {
   e.preventDefault();
   const form = e.target;
+
   const data = {
-    store_id: form.store_id.value,
-    name: form.name.value,
-    email: form.email.value,
-    phone_model: form.phone_model.value,
-    imei: form.imei.value,
-    plan: form.plan.value,
+    StoreID: form.StoreID.value,
+    CustomerName: form.CustomerName.value,
+    Email: form.Email.value,
+    PhoneModel: form.PhoneModel.value,
+    IMEI: form.IMEI.value,
+    WarrantyPlan: form.WarrantyPlan.value,
   };
 
   const statusMessage = document.getElementById("statusMessage");
@@ -23,9 +23,11 @@ document.getElementById("warrantyForm").addEventListener("submit", async functio
       },
       body: JSON.stringify(data),
     });
-    statusMessage.textContent = "Submitted successfully!";
+
+    statusMessage.textContent = "Submitted successfully! Warranty certificate will be sent to the customer's email shortly.";
     form.reset();
   } catch (error) {
-    statusMessage.textContent = "Error: Could not submit. Try again later.";
+    console.error(error);
+    statusMessage.textContent = "❌ Error: Could not submit. Please try again.";
   }
 });
