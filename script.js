@@ -23,9 +23,15 @@ document.getElementById("warrantyForm").addEventListener("submit", async functio
     });
 
     const text = await response.text();
-    statusMessage.textContent = text.includes("Success") ? "Submitted successfully!" : "Error: " + text;
-    form.reset();
+    console.log("Response Text:", text);
+    if (text.includes("Success")) {
+      statusMessage.textContent = "Submitted successfully!";
+      form.reset();
+    } else {
+      statusMessage.textContent = "Error: " + text;
+    }
   } catch (error) {
+    console.error("Fetch error:", error);
     statusMessage.textContent = "Error: Could not submit. Try again later.";
   }
 });
