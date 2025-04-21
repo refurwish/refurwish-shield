@@ -14,7 +14,7 @@ document.getElementById("warrantyForm").addEventListener("submit", async functio
   statusMessage.textContent = "Submitting...";
 
   try {
-    const response = await fetch("https://script.google.com/macros/s/AKfycbxcRbHJnva_oMEgAV-yIsxnawHbY_afl8-iH3QN6nZy11YdYhkbojafrIfAAO7q_VnY/exec", {
+    const response = await fetch("https://script.google.com/macros/s/AKfycbzQrwXaltVe1iC-WDh1VisduFpp1Hix8V20CvBglvQU2Skm999HRI8LlYueQ2vzXXFA/exec", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
