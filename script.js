@@ -1,35 +1,38 @@
-document.getElementById("warrantyForm").addEventListener("submit", async function(e) {
-  e.preventDefault();
-  const form = e.target;
-  const data = {
-    store_id: form.store_id.value.trim(),
-    name: form.name.value.trim(),
-    email: form.email.value.trim(),
-    phone_model: form.phone_model.value.trim(),
-    imei: form.imei.value.trim(),
-    plan: form.plan.value,
-  };
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('warrantyForm');
+    const loadingDiv = document.getElementById('loading');
+    const successMessageDiv = document.getElementById('successMessage');
+    const errorMessageDiv = document.getElementById('errorMessage');
 
-  const statusMessage = document.getElementById("statusMessage");
-  statusMessage.textContent = "Submitting...";
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
 
-  try {
-    const response = await fetch("https://script.google.com/macros/s/AKfycbzQrwXaltVe1iC-WDh1VisduFpp1Hix8V20CvBglvQU2Skm999HRI8LlYueQ2vzXXFA/exec", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
+        loadingDiv.classList.remove('hidden');
+        successMessageDiv.classList.add('hidden');
+        errorMessageDiv.classList.add('hidden');
+
+        const formData = new FormData(form);
+        const formDataObject = Object.fromEntries(formData.entries());
+
+        // Send data to Google Apps Script
+        fetch('https://script.google.com/macros/s/AKfycbxKKXrVemMkJ2zc0VkWlZ37JSyWIxqML6aDCBCMmzg/dev', {
+            method: 'POST',
+            mode: 'no-cors', // Required for POST requests to Google Apps Script from a different origin
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formDataObject)
+        })
+        .then(response => {
+            // Google Apps Script will handle the response, no need to parse here for this setup
+            loadingDiv.classList.add('hidden');
+            successMessageDiv.classList.remove('hidden');
+            form.reset(); // Clear the form after successful submission
+        })
+        .catch(error => {
+            console.error('Error sending data:', error);
+            loadingDiv.classList.add('hidden');
+            errorMessageDiv.classList.remove('hidden');
+        });
     });
-
-    const result = await response.text();
-    if (result.includes("Success")) {
-      statusMessage.style.color = "green";
-      statusMessage.textContent = "Submitted successfully!";
-      form.reset();
-    } else {
-      throw new Error(result);
-    }
-  } catch (error) {
-    console.error(error);
-    statusMessage.textContent = "Error: Could not submit. Try again later.";
-  }
 });
