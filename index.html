@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>RefurWish Shield - Extended Warranty</title>
-  <link rel="stylesheet" href="style.css"/>
+  <meta charset="UTF-8">
+  <title>RefurWish Shield - Warranty</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
@@ -16,10 +15,14 @@
       <input type="email" name="email" placeholder="Customer Email" required />
       <input type="text" name="phone_model" placeholder="Phone Model" required />
       <input type="text" name="imei" placeholder="IMEI Number" required />
-      <input type="text" name="plan" value="1 Year Plan" readonly />
+      <select name="plan" required>
+        <option value="" disabled selected>Select Plan</option>
+        <option value="1 Year Plan">1 Year Plan</option>
+        <option value="6 Months Plan">6 Months Plan</option>
+      </select>
       <button type="submit">Submit</button>
+      <p id="statusMessage"></p>
     </form>
-    <p id="statusMessage"></p>
   </div>
   <script src="script.js"></script>
 </body>
