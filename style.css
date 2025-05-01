@@ -44,13 +44,23 @@ label {
 input[type="text"],
 input[type="email"],
 input[type="tel"],
-input[type="date"] {
+input[type="date"],
+select {
     width: calc(100% - 12px);
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
     box-sizing: border-box;
     font-size: 16px;
+}
+
+select {
+    appearance: none; /* Remove default arrow */
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007bff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E');
+    background-repeat: no-repeat;
+    background-position: right 10px top 50%;
+    background-size: 16px;
+    padding-right: 30px; /* Adjust padding to accommodate arrow */
 }
 
 .submit-button {
@@ -73,7 +83,7 @@ input[type="date"] {
     display: none;
 }
 
-#loading, #successMessage, #errorMessage {
+#loading, #successContainer, #errorMessage {
     margin-top: 15px;
     text-align: center;
     font-weight: bold;
@@ -89,6 +99,42 @@ input[type="date"] {
 
 #errorMessage {
     color: red;
+}
+
+#pdfLinkSection {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+}
+
+#pdfLinkSection p {
+    margin-bottom: 10px;
+}
+
+#qrcode {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+#qrcode canvas {
+    margin: 5px;
+    border: 1px solid #ccc;
+}
+
+#downloadLink {
+    display: inline-block;
+    background-color: #28a745;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+#downloadLink:hover {
+    background-color: #1e7e34;
 }
 
 /* Responsive adjustments (for mobile-friendliness) */
@@ -110,6 +156,7 @@ input[type="date"] {
     input[type="email"],
     input[type="tel"],
     input[type="date"],
+    select,
     .submit-button {
         font-size: 14px;
         padding: 10px;
