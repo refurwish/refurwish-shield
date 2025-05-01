@@ -24,23 +24,44 @@
                 <input type="tel" id="customerPhone" name="customerPhone" placeholder="Enter customer's phone number" required>
             </div>
             <div class="form-group">
+                <label for="storeId">Store ID:</label>
+                <input type="text" id="storeId" name="storeId" placeholder="Enter the Store ID" required>
+            </div>
+            <div class="form-group">
                 <label for="productName">Product Name:</label>
                 <input type="text" id="productName" name="productName" placeholder="Enter the product name" required>
             </div>
             <div class="form-group">
-                <label for="serialNumber">Serial Number:</label>
-                <input type="text" id="serialNumber" name="serialNumber" placeholder="Enter the product's serial number" required>
+                <label for="imeiNumber">IMEI Number:</label>
+                <input type="text" id="imeiNumber" name="imeiNumber" placeholder="Enter the product's IMEI number" required>
             </div>
             <div class="form-group">
                 <label for="purchaseDate">Purchase Date:</label>
                 <input type="date" id="purchaseDate" name="purchaseDate" required>
             </div>
+            <div class="form-group">
+                <label for="planOption">Plan Option:</label>
+                <select id="planOption" name="planOption" required>
+                    <option value="" disabled selected>Select Plan Option</option>
+                    <option value="under_15000">Under ₹15,000</option>
+                    <option value="15001_25000">₹15,001 - ₹25,000</option>
+                    <option value="25001_35000">₹25,001 - ₹35,000</option>
+                </select>
+            </div>
             <button type="submit" class="submit-button">Generate Warranty Certificate</button>
             <div id="loading" class="hidden">Processing...</div>
-            <div id="successMessage" class="hidden">Warranty certificate generated successfully! The link has been sent to the customer's email.</div>
+            <div id="successContainer" class="hidden">
+                <p id="successMessage">Warranty certificate generated successfully!</p>
+                <div id="pdfLinkSection" class="hidden">
+                    <p>Download your certificate:</p>
+                    <div id="qrcode"></div>
+                    <p><a id="downloadLink" href="#" target="_blank">Download PDF</a></p>
+                </div>
+            </div>
             <div id="errorMessage" class="hidden">An error occurred. Please try again.</div>
         </form>
     </div>
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
