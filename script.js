@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const formDataObject = Object.fromEntries(formData.entries());
 
  // Send POST request to Google Apps Script
-fetch('https://script.google.com/macros/s/AKfycbzLG9pFHRcoJ-KPWGV_ZysUMe9SsRGliRee1pE19ThhLYUa22Cni-VTWfPujrzgR2Vb8g/exec', {
+fetch('https://script.google.com/macros/s/AKfycbyfCUZL2qVmY5DWerP_0RQioZAuulTeSMPnVvJeyeyVo-R5YjWuh20Xd9jtrB5B0nwPIw/exec', {
             method: 'POST',
             mode: 'no-cors', // Required for POST requests to Google Apps Script from a different origin
 
