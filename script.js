@@ -1,4 +1,4 @@
-         document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('warrantyForm');
     const loadingDiv = document.getElementById('loading');
     const successContainerDiv = document.getElementById('successContainer');
@@ -19,7 +19,7 @@
         const formData = new FormData(form);
         const formDataObject = Object.fromEntries(formData.entries());
 
-        fetchhttps://script.google.com/macros/s/AKfycbyzBmvuwzh2aytqz6WipjCnnGVa1bS13YlNpWQol3dfvV6Y3IrS8Urw7ZQTIeCxSF2jVw/exec', {
+        fetch('https://script.google.com/macros/s/AKfycbyzBmvuwzh2aytqz6WipjCnnGVa1bS13YlNpWQol3dfvV6Y3IrS8Urw7ZQTIeCxSF2jVw/exec', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -47,8 +47,5 @@
             errorMessageDiv.classList.remove('hidden');
             errorMessageDiv.textContent = `An error occurred: ${error.message}`;
         });
-    });
-});
-
     });
 });
