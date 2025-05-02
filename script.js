@@ -11,14 +11,17 @@ document.addEventListener('DOMContentLoaded', function () {
     form.addEventListener('submit', function (event) {
         event.preventDefault();
 
+        // Show loading, hide everything else
         loadingDiv.classList.remove('hidden');
         successContainerDiv.classList.add('hidden');
         errorMessageDiv.classList.add('hidden');
         pdfLinkSectionDiv.classList.add('hidden');
 
+        // Get form data
         const formData = new FormData(form);
         const formDataObject = Object.fromEntries(formData.entries());
 
+        // Send POST request to Google Apps Script
         fetch('https://script.google.com/macros/s/AKfycbyzBmvuwzh2aytqz6WipjCnnGVa1bS13YlNpWQol3dfvV6Y3IrS8Urw7ZQTIeCxSF2jVw/exec', {
             method: 'POST',
             headers: {
@@ -31,11 +34,30 @@ document.addEventListener('DOMContentLoaded', function () {
             loadingDiv.classList.add('hidden');
 
             if (data.status === 'success') {
+                // Show success message
                 successContainerDiv.classList.remove('hidden');
+                successMessageDiv.textContent = "Warranty certificate generated successfully!";
+
+                // Set PDF download link
                 downloadLink.href = data.url;
+                downloadLink.target = "_blank"; // Open in new tab
+                downloadLink.textContent = "View PDF Certificate";
+
+                // Clear and regenerate QR code
                 qrcodeDiv.innerHTML = '';
-                new QRCode(qrcodeDiv, data.url);
+                new QRCode(qrcodeDiv, {
+                    text: data.url,
+                    width: 150,
+                    height: 150,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+
+                // Show link and QR
                 pdfLinkSectionDiv.classList.remove('hidden');
+
+                // Reset the form
                 form.reset();
             } else {
                 throw new Error(data.message || 'Unknown error occurred.');
