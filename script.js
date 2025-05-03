@@ -1,4 +1,3 @@
-<script>
 document.addEventListener('DOMContentLoaded', function () {
   const form = document.getElementById('warrantyForm');
   const loadingDiv = document.getElementById('loading');
@@ -77,4 +76,3 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 });
-</script>
