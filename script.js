@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Send POST request to Google Apps Script
     fetch('https://script.google.com/macros/s/AKfycbzIX5lxJ69INT6o4jvL77VdShHkS5Lb_gN8KGMT8S6t1BgAGRmLH8MS0eTpvqLGv8CZ/exec', {
       method: 'POST',
+      mode: 'no-cors', // Required for POST requests to Google Apps Script from a different origin
       headers: {
         'Content-Type': 'application/json'
       },
