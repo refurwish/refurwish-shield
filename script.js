@@ -21,22 +21,14 @@ document.addEventListener('DOMContentLoaded', function () {
         const formData = new FormData(form);
         const formDataObject = Object.fromEntries(formData.entries());
 
- // Send POST request to Google Apps Script
-fetch('https://script.google.com/macros/s/AKfycbyfCUZL2qVmY5DWerP_0RQioZAuulTeSMPnVvJeyeyVo-R5YjWuh20Xd9jtrB5B0nwPIw/exec', {
-            method: 'POST',
-            mode: 'no-cors', // Required for POST requests to Google Apps Script from a different origin
-
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formDataObject)
-        })
-
-
-
-        
         // Send POST request to Google Apps Script
-   
+        fetch('https://script.google.com/macros/s/AKfycbyfCUZL2qVmY5DWerP_0RQioZAuulTeSMPnVvJeyeyVo-R5YjWuh20Xd9jtrB5B0nwPIw/exec', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formDataObject)
+        })
         .then(response => response.json())
         .then(data => {
             loadingDiv.classList.add('hidden');
