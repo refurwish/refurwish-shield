@@ -1,3 +1,4 @@
+<script>
 document.addEventListener('DOMContentLoaded', function () {
   const form = document.getElementById('warrantyForm');
   const loadingDiv = document.getElementById('loading');
@@ -24,7 +25,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // Send POST request to Google Apps Script
     fetch('https://script.google.com/macros/s/AKfycbzIX5lxJ69INT6o4jvL77VdShHkS5Lb_gN8KGMT8S6t1BgAGRmLH8MS0eTpvqLGv8CZ/exec', {
       method: 'POST',
-      mode: 'no-cors', // Required for POST requests to Google Apps Script from a different origin
       headers: {
         'Content-Type': 'application/json'
       },
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      return response.json(); //  Always parse the JSON
+      return response.json();
     })
     .then(data => {
       loadingDiv.classList.add('hidden');
@@ -77,3 +77,4 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 });
+</script>
