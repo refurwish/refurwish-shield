@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const formDataObject = Object.fromEntries(formData.entries());
 
         // Send POST request to Google Apps Script
-        fetch('https://script.google.com/macros/s/AKfycbyfCUZL2qVmY5DWerP_0RQioZAuulTeSMPnVvJeyeyVo-R5YjWuh20Xd9jtrB5B0nwPIw/exec', {
+        fetch('https://script.google.com/macros/s/AKfycbxaI4fhiZ90Fb6va-p5sMlEqLaaNozKEp7yV6YLfTzQ_Y-3vZbg6va7_sTbKmJ-skCS/exec', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
