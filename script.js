@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Send the POST request to the Apps Script endpoint
     fetch(targetUrl, {
       method: 'POST',
-      mode: 'cors', // Explicitly set the mode to 'cors'
+      mode: 'cors', // Explicitly set the mode to 'cors' (already present - good!)
       headers: {
         'Content-Type': 'application/json',
       },
@@ -37,7 +37,9 @@ document.addEventListener('DOMContentLoaded', function () {
         if (response.ok) {
           return response.json(); // Parse the response as JSON if it's a valid response
         } else {
-          return response.text(); // If it's not JSON, return it as text (likely an error message)
+          return response.text().then(text => { // Capture text for error message
+            throw new Error(`Server Error: ${response.status} - ${text}`);
+          });
         }
       })
       .then(data => {
