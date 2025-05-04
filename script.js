@@ -12,8 +12,8 @@ document.addEventListener('DOMContentLoaded', function () {
   // ✏️ Your script URL
   const targetUrl = "https://script.google.com/macros/s/AKfycbwt-GNgskJfca2A-suvbvZ64QJwmk9BUxSEw3fBoU3pvsgs00GtkZ8kjVRqrcpBP7Rz/exec";
   
-  // If using a CORS proxy
-  const proxyUrl = "https://corsproxy.io/?";
+  // Using CORS proxy
+  const proxyUrl = "https://cors-anywhere.herokuapp.com/";
 
   form.addEventListener('submit', function (event) {
     event.preventDefault();
@@ -27,8 +27,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const formData = new FormData(form);
     const formDataObject = Object.fromEntries(formData.entries());
 
-    // Send the POST request to the Apps Script endpoint through the CORS proxy (if needed)
-    fetch(proxyUrl + encodeURIComponent(targetUrl), {
+    // Send the POST request to the Apps Script endpoint through the CORS proxy
+    fetch(proxyUrl + targetUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
