@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const downloadLink = document.getElementById('downloadLink');
 
   // ✏️ Your script URL
-  const targetUrl = "https://script.google.com/macros/s/AKfycbxeRlLUiZ4wIrqZ-5vfK1yqC2SWKLPk5Em0XC_sUrg6px9mEiYVt-yW7o12UrLBBMDw/exec";
+  const targetUrl = "https://script.google.com/macros/s/AKfycbx8igHiCeaMCbZT7po8J7m83xdCktv4f5ttz1iQq2K0hVDIOGljezBCnOP9XDVHrjXG/exec";
 
   form.addEventListener('submit', function (event) {
     event.preventDefault();
@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Send the POST request to the Apps Script endpoint
     fetch(targetUrl, {
       method: 'POST',
+      mode: 'cors', // Explicitly set the mode to 'cors'
       headers: {
         'Content-Type': 'application/json',
       },
@@ -40,11 +41,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       })
       .then(data => {
-        loadingDiv.classList.add('hidden');
-
         // If the response was a string (HTML error message), show it as an error
         if (typeof data === 'string') {
-          throw new Error(`Error: ${data}`);
+          throw new Error(`Server Error: ${data}`);
         }
 
         // Handle the response if it's a JSON object
@@ -69,15 +68,17 @@ document.addEventListener('DOMContentLoaded', function () {
           pdfLinkSectionDiv.classList.remove('hidden');
           form.reset();
         } else {
-          throw new Error(data.message || 'Unknown error occurred.');
+          throw new Error(data.message || 'Unknown error occurred on the server.');
         }
       })
       .catch(error => {
         // Handle fetch errors
-        console.error('Error:', error);
-        loadingDiv.classList.add('hidden');
+        console.error('Fetch Error:', error);
         errorMessageDiv.classList.remove('hidden');
-        errorMessageDiv.textContent = `An error occurred: ${error.message}`;
+        errorMessageDiv.textContent = `An error occurred while sending the request: ${error.message}`;
+      })
+      .finally(() => {
+        loadingDiv.classList.add('hidden'); // Ensure loading indicator is hidden
       });
   });
 });
