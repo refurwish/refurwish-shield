@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // ✏️ Your script URL
   const targetUrl = "https://script.google.com/macros/s/AKfycbxeIQVJHnFuL50VpWKuaPuFtYkFVipvBEMjUlMKBH5zYuRxDLPopryDu3XnONOHE5K6/exec";
   
-  // Using CORS proxy
+  // If using a CORS proxy
   const proxyUrl = "https://cors-anywhere.herokuapp.com/";
 
   form.addEventListener('submit', function (event) {
@@ -27,29 +27,39 @@ document.addEventListener('DOMContentLoaded', function () {
     const formData = new FormData(form);
     const formDataObject = Object.fromEntries(formData.entries());
 
-    // Send the POST request to the Apps Script endpoint through the CORS proxy
-    fetch(proxyUrl + targetUrl, {
+    // Send the POST request to the Apps Script endpoint through the CORS proxy (if needed)
+    fetch(proxyUrl + encodeURIComponent(targetUrl), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(formDataObject)
     })
-    .then(response => response.json())  // Expecting a JSON response
+    .then(response => {
+      // Check if the response is JSON
+      if (response.ok) {
+        return response.json(); // Parse the response as JSON if it's a valid response
+      } else {
+        return response.text(); // If it's not JSON, return it as text (likely an error message)
+      }
+    })
     .then(data => {
       loadingDiv.classList.add('hidden');
 
+      // If the response was a string (HTML error message), show it as an error
+      if (typeof data === 'string') {
+        throw new Error(`Error: ${data}`);
+      }
+
+      // Handle the response if it's a JSON object
       if (data.status === 'success') {
-        // Display success message and download link
         successContainerDiv.classList.remove('hidden');
         successMessageDiv.textContent = "Warranty certificate generated successfully!";
 
-        // Set the PDF download link
         downloadLink.href = data.url;
         downloadLink.target = "_blank";
         downloadLink.textContent = "View PDF Certificate";
 
-        // Generate a QR code for the PDF link
         qrcodeDiv.innerHTML = '';
         new QRCode(qrcodeDiv, {
           text: data.url,
@@ -61,9 +71,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         pdfLinkSectionDiv.classList.remove('hidden');
-        form.reset();  // Reset the form after successful submission
+        form.reset();
       } else {
-        // Handle error from the response
         throw new Error(data.message || 'Unknown error occurred.');
       }
     })
