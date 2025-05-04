@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const downloadLink = document.getElementById('downloadLink');
 
   // ✏️ Your script URL
-  const targetUrl = "https://script.google.com/macros/s/AKfycbwt-GNgskJfca2A-suvbvZ64QJwmk9BUxSEw3fBoU3pvsgs00GtkZ8kjVRqrcpBP7Rz/exec";
+  const targetUrl = "https://script.google.com/macros/s/AKfycbxeIQVJHnFuL50VpWKuaPuFtYkFVipvBEMjUlMKBH5zYuRxDLPopryDu3XnONOHE5K6/exec";
   
   // Using CORS proxy
   const proxyUrl = "https://cors-anywhere.herokuapp.com/";
