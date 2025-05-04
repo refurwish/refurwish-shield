@@ -10,7 +10,9 @@ document.addEventListener('DOMContentLoaded', function () {
   const downloadLink = document.getElementById('downloadLink');
 
   // ✏️ Your script URL
-  const targetUrl = "https://script.google.com/macros/s/AKfycbzZ3yk7IRwEoqAZzMq4vO14f8uGOhl6DPzTxb3JlyKbP95Lbr0i3ZyN3l_Akoon2YCC/exec";
+  const targetUrl = "https://script.google.com/macros/s/AKfycbwt-GNgskJfca2A-suvbvZ64QJwmk9BUxSEw3fBoU3pvsgs00GtkZ8kjVRqrcpBP7Rz/exec";
+  
+  // If using a CORS proxy
   const proxyUrl = "https://corsproxy.io/?";
 
   form.addEventListener('submit', function (event) {
@@ -21,28 +23,33 @@ document.addEventListener('DOMContentLoaded', function () {
     errorMessageDiv.classList.add('hidden');
     pdfLinkSectionDiv.classList.add('hidden');
 
+    // Convert form data to a plain object
     const formData = new FormData(form);
     const formDataObject = Object.fromEntries(formData.entries());
 
+    // Send the POST request to the Apps Script endpoint through the CORS proxy (if needed)
     fetch(proxyUrl + encodeURIComponent(targetUrl), {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(formDataObject)
     })
-    .then(response => response.json())
+    .then(response => response.json())  // Expecting a JSON response
     .then(data => {
       loadingDiv.classList.add('hidden');
 
       if (data.status === 'success') {
+        // Display success message and download link
         successContainerDiv.classList.remove('hidden');
         successMessageDiv.textContent = "Warranty certificate generated successfully!";
 
+        // Set the PDF download link
         downloadLink.href = data.url;
         downloadLink.target = "_blank";
         downloadLink.textContent = "View PDF Certificate";
 
+        // Generate a QR code for the PDF link
         qrcodeDiv.innerHTML = '';
         new QRCode(qrcodeDiv, {
           text: data.url,
@@ -54,12 +61,14 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         pdfLinkSectionDiv.classList.remove('hidden');
-        form.reset();
+        form.reset();  // Reset the form after successful submission
       } else {
+        // Handle error from the response
         throw new Error(data.message || 'Unknown error occurred.');
       }
     })
     .catch(error => {
+      // Handle fetch errors
       console.error('Error:', error);
       loadingDiv.classList.add('hidden');
       errorMessageDiv.classList.remove('hidden');
