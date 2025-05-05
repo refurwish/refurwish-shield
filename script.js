@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const downloadLink = document.getElementById('downloadLink');
 
   // ✏️ Your script URL
-  const targetUrl = "https://script.google.com/macros/s/AKfycbx8igHiCeaMCbZT7po8J7m83xdCktv4f5ttz1iQq2K0hVDIOGljezBCnOP9XDVHrjXG/exec";
+  const targetUrl = "https://script.google.com/macros/s/AKfycbyHlOx0NPoWqWxAS0QBMfqyUtMs3YN9gngYmUJdFVxKDsOfx4ZDXsLiOYuXAiigfoEb/exec";
 
   form.addEventListener('submit', function (event) {
     event.preventDefault();
