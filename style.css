@@ -10,17 +10,17 @@ body {
 
 .container {
     background-color: #fff;
-    padding: 30px;
+    padding: 25px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 90%;
-    max-width: 550px; /* Slightly wider for better readability */
+    width: 95%;
+    max-width: 500px;
 }
 
 .logo {
     display: block;
     margin: 0 auto 20px;
-    max-width: 150px;
+    max-width: 140px;
     height: auto;
 }
 
@@ -28,80 +28,53 @@ h1 {
     text-align: center;
     color: #333;
     margin-bottom: 20px;
+    font-size: 1.8em;
 }
 
 .form-group {
-    margin-bottom: 18px; /* Slightly more spacing */
+    margin-bottom: 16px;
 }
 
 label {
     display: block;
-    margin-bottom: 6px;
+    margin-bottom: 5px;
     color: #555;
     font-weight: bold;
+    font-size: 15px;
 }
 
 input[type="text"],
 input[type="email"],
 input[type="tel"],
-input[type="date"] {
-    width: calc(100% - 12px);
-    padding: 12px; /* Slightly larger padding for better touch targets */
-    border: 1px solid #ddd;
-    border-radius: 6px; /* Slightly more rounded */
-    box-sizing: border-box;
-    font-size: 16px;
-    appearance: none; /* Remove default arrow */
-}
-
-input[type="text"]:focus,
-input[type="email"]:focus,
-input[type="tel"]:focus,
-input[type="date"]:focus {
-    border-color: #007bff;
-    outline: none;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-}
-
+input[type="date"],
 select {
-    width: 100%; /* Make it full width for mobile */
-    padding: 12px; /* Slightly larger padding for better touch targets */
+    width: 100%;
+    padding: 12px;
     border: 1px solid #ddd;
-    border-radius: 6px; /* Slightly more rounded */
+    border-radius: 6px;
     box-sizing: border-box;
     font-size: 16px;
-    appearance: none; /* Remove default arrow for custom styling */
-    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007bff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E');
-    background-repeat: no-repeat;
-    background-position: right 12px top 50%;
-    background-size: 16px;
-    padding-right: 35px; /* Adjust padding to accommodate the arrow */
-    -webkit-appearance: none; /* For Safari */
-    -moz-appearance: none; /* For Firefox */
+    appearance: auto; /* Use browser default for mobile */
 }
 
-select::-ms-expand {
-    display: none; /* For Internet Explorer */
-}
-
+input:focus,
 select:focus {
     border-color: #007bff;
     outline: none;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    box-shadow: 0 0 0 0.15rem rgba(0, 123, 255, 0.25);
 }
 
 .submit-button {
     background-color: #007bff;
     color: white;
-    padding: 14px 24px; /* Slightly larger button */
+    padding: 14px;
     border: none;
     border-radius: 6px;
     cursor: pointer;
     font-size: 16px;
     width: 100%;
-    display: block;
+    margin-top: 20px;
     transition: background-color 0.2s ease-in-out;
-    margin-top: 20px; /* Add some space above the button */
 }
 
 .submit-button:hover {
@@ -156,7 +129,6 @@ select:focus {
     border: 1px solid #ccc;
 }
 
-/* Link styled as button */
 #downloadLink {
     display: inline-block;
     background-color: #28a745;
@@ -172,40 +144,26 @@ select:focus {
     background-color: #1e7e34;
 }
 
-/* Responsive adjustments */
 @media (max-width: 600px) {
     .container {
-        padding: 25px;
+        padding: 20px;
     }
 
     h1 {
-        font-size: 1.7em;
-        margin-bottom: 18px;
+        font-size: 1.5em;
     }
 
-    .form-group {
-        margin-bottom: 15px;
-    }
-
-    label {
-        font-size: 15px;
-        margin-bottom: 5px;
-    }
-
-    input[type="text"],
-    input[type="email"],
-    input[type="tel"],
-    input[type="date"],
+    label,
+    input,
     select,
-    .submit-button {
+    .submit-button,
+    #downloadLink {
         font-size: 15px;
         padding: 11px;
         border-radius: 5px;
     }
 
-    #downloadLink {
+    #pdfLinkSection p {
         font-size: 15px;
-        padding: 10px 16px;
-        border-radius: 5px;
     }
 }
