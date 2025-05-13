@@ -54,7 +54,12 @@ select {
     border-radius: 6px;
     box-sizing: border-box;
     font-size: 16px;
-    appearance: auto; /* Use browser default for mobile */
+}
+
+input[type="date"] {
+    appearance: auto; /* Keep calendar icon */
+    -webkit-appearance: none;
+    -moz-appearance: none;
 }
 
 input:focus,
@@ -62,6 +67,17 @@ select:focus {
     border-color: #007bff;
     outline: none;
     box-shadow: 0 0 0 0.15rem rgba(0, 123, 255, 0.25);
+}
+
+/* Style for dropdown price alignment */
+select {
+    font-family: 'Courier New', Courier, monospace; /* Monospaced for alignment */
+    white-space: pre; /* Preserve spacing */
+}
+
+select option {
+    font-size: 15px;
+    padding: 8px;
 }
 
 .submit-button {
