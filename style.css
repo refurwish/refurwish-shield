@@ -10,17 +10,17 @@ body {
 
 .container {
     background-color: #fff;
-    padding: 25px;
+    padding: 30px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 95%;
+    width: 90%;
     max-width: 500px;
 }
 
 .logo {
     display: block;
     margin: 0 auto 20px;
-    max-width: 140px;
+    max-width: 150px;
     height: auto;
 }
 
@@ -28,11 +28,10 @@ h1 {
     text-align: center;
     color: #333;
     margin-bottom: 20px;
-    font-size: 1.8em;
 }
 
 .form-group {
-    margin-bottom: 16px;
+    margin-bottom: 15px;
 }
 
 label {
@@ -40,7 +39,6 @@ label {
     margin-bottom: 5px;
     color: #555;
     font-weight: bold;
-    font-size: 15px;
 }
 
 input[type="text"],
@@ -48,48 +46,33 @@ input[type="email"],
 input[type="tel"],
 input[type="date"],
 select {
-    width: 100%;
-    padding: 12px;
+    width: calc(100% - 12px);
+    padding: 10px;
     border: 1px solid #ddd;
-    border-radius: 6px;
+    border-radius: 4px;
     box-sizing: border-box;
     font-size: 16px;
 }
 
-input[type="date"] {
-    appearance: auto; /* Keep calendar icon */
-    -webkit-appearance: none;
-    -moz-appearance: none;
-}
-
-input:focus,
-select:focus {
-    border-color: #007bff;
-    outline: none;
-    box-shadow: 0 0 0 0.15rem rgba(0, 123, 255, 0.25);
-}
-
-/* Style for dropdown price alignment */
 select {
-    font-family: 'Courier New', Courier, monospace; /* Monospaced for alignment */
-    white-space: pre; /* Preserve spacing */
-}
-
-select option {
-    font-size: 15px;
-    padding: 8px;
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007bff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E');
+    background-repeat: no-repeat;
+    background-position: right 10px top 50%;
+    background-size: 16px;
+    padding-right: 30px;
 }
 
 .submit-button {
     background-color: #007bff;
     color: white;
-    padding: 14px;
+    padding: 12px 20px;
     border: none;
-    border-radius: 6px;
+    border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
     width: 100%;
-    margin-top: 20px;
+    display: block;
     transition: background-color 0.2s ease-in-out;
 }
 
@@ -104,7 +87,7 @@ select option {
 #loading,
 #successContainer,
 #errorMessage {
-    margin-top: 20px;
+    margin-top: 15px;
     text-align: center;
     font-weight: bold;
 }
@@ -122,35 +105,36 @@ select option {
 }
 
 #pdfLinkSection {
-    margin-top: 25px;
-    padding: 18px;
+    margin-top: 20px;
+    padding: 15px;
     border: 1px solid #ddd;
-    border-radius: 6px;
+    border-radius: 4px;
     background-color: #f9f9f9;
     text-align: center;
 }
 
 #pdfLinkSection p {
-    margin-bottom: 12px;
-    font-size: 16px;
+    margin-bottom: 10px;
+    font-size: 15px;
 }
 
 #qrcode {
     text-align: center;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 
 #qrcode canvas {
-    margin: 8px;
+    margin: 5px;
     border: 1px solid #ccc;
 }
 
+/* Link styled as button */
 #downloadLink {
     display: inline-block;
     background-color: #28a745;
     color: white;
-    padding: 12px 20px;
-    border-radius: 6px;
+    padding: 10px 15px;
+    border-radius: 4px;
     text-decoration: none;
     font-weight: bold;
     transition: background-color 0.2s ease-in-out;
@@ -160,6 +144,7 @@ select option {
     background-color: #1e7e34;
 }
 
+/* Responsive adjustments */
 @media (max-width: 600px) {
     .container {
         padding: 20px;
@@ -167,19 +152,25 @@ select option {
 
     h1 {
         font-size: 1.5em;
+        margin-bottom: 15px;
     }
 
-    label,
-    input,
+    .form-group {
+        margin-bottom: 10px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="date"],
     select,
-    .submit-button,
-    #downloadLink {
-        font-size: 15px;
-        padding: 11px;
-        border-radius: 5px;
+    .submit-button {
+        font-size: 14px;
+        padding: 10px;
     }
 
-    #pdfLinkSection p {
-        font-size: 15px;
+    #downloadLink {
+        font-size: 14px;
+        padding: 8px 12px;
     }
 }
