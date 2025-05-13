@@ -35,6 +35,10 @@
             pdfLinkSection.classList.remove('hidden');
             successContainer.classList.remove('hidden');
             e.target.reset();
+
+               // Scroll down to the QR code section
+            pdfLinkSection.scrollIntoView({ behavior: 'smooth' });
+              
           } else {
             throw new Error(data.message || 'Unknown error');
           }
