@@ -37,7 +37,7 @@
             e.target.reset();
 
                // Scroll down to the QR code section
-            pdfLinkSection.scrollIntoView({ behavior: 'smooth' });
+              pdfLinkSection.scrollIntoView();
               
           } else {
             throw new Error(data.message || 'Unknown error');
