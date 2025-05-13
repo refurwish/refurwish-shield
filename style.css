@@ -44,9 +44,27 @@ label {
 input[type="text"],
 input[type="email"],
 input[type="tel"],
-input[type="date"],
-select {
+input[type="date"] {
     width: calc(100% - 12px);
+    padding: 12px; /* Slightly larger padding for better touch targets */
+    border: 1px solid #ddd;
+    border-radius: 6px; /* Slightly more rounded */
+    box-sizing: border-box;
+    font-size: 16px;
+    appearance: none; /* Remove default arrow */
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
+input[type="date"]:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+select {
+    width: 100%; /* Make it full width for mobile */
     padding: 12px; /* Slightly larger padding for better touch targets */
     border: 1px solid #ddd;
     border-radius: 6px; /* Slightly more rounded */
@@ -58,6 +76,12 @@ select {
     background-position: right 12px top 50%;
     background-size: 16px;
     padding-right: 35px; /* Adjust padding to accommodate the arrow */
+    -webkit-appearance: none; /* For Safari */
+    -moz-appearance: none; /* For Firefox */
+}
+
+select::-ms-expand {
+    display: none; /* For Internet Explorer */
 }
 
 select:focus {
