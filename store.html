@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="style.css" />
     <style>
         .container {
-            max-width: 400px; /* Adjust as needed for mobile view */
+            max-width: 400px;
             margin: 20px auto;
             padding: 20px;
             border: 1px solid #ccc;
@@ -28,7 +28,7 @@
         input[type="tel"],
         input[type="email"],
         input[type="url"] {
-            width: calc(100% - 12px); /* Adjust for padding and border */
+            width: calc(100% - 12px);
             padding: 8px;
             border: 1px solid #ddd;
             border-radius: 3px;
@@ -52,7 +52,7 @@
         .logo {
             display: block;
             margin: 0 auto 20px;
-            max-width: 150px; /* Adjust logo size as needed */
+            max-width: 150px;
         }
         #storeIdDisplay {
             text-align: center;
@@ -66,7 +66,7 @@
         <img src="logo.png" alt="Refurwish Logo" class="logo" />
         <h1>Store Registration</h1>
 
-        <div id="storeIdDisplay" style="text-align:center; font-weight:bold; margin-bottom: 20px;"></div>
+        <div id="storeIdDisplay"></div>
 
         <form id="storeForm">
             <div class="form-group">
@@ -121,7 +121,7 @@
 
             <div class="form-group">
                 <label for="mapLink">Google Map Location Link:</label>
-                <input type="url" id="mapLink" name="mapLink" placeholder="Click to paste location link" required onclick="pasteMapLink()" style="width: calc(100% - 12px);" />
+                <input type="url" id="mapLink" name="mapLink" placeholder="Click to paste location link" required onclick="pasteMapLink()" />
                 <small>Paste the full Google Maps link here.</small>
             </div>
 
@@ -129,6 +129,10 @@
             <div id="loading" class="hidden">Processing...</div>
             <div id="storeSuccess" class="hidden">Store registered successfully!</div>
             <div id="storeError" class="hidden">Error occurred. Please try again.</div>
+            <div id="passwordDisplay" class="hidden" style="margin-top: 10px; text-align: center;">
+                <strong>Generated Password:</strong>
+                <div id="passwordText" style="font-family: monospace; font-size: 1.2em; margin-top: 5px;"></div>
+            </div>
         </form>
     </div>
 
@@ -153,9 +157,13 @@
             const loading = document.getElementById('loading');
             const success = document.getElementById('storeSuccess');
             const error = document.getElementById('storeError');
+            const passwordDisplay = document.getElementById('passwordDisplay');
+            const passwordText = document.getElementById('passwordText');
+
             loading.classList.remove('hidden');
             success.classList.add('hidden');
             error.classList.add('hidden');
+            passwordDisplay.classList.add('hidden');
 
             const formData = new FormData(this);
             formData.append('storeId', this.dataset.storeId);
@@ -168,8 +176,10 @@
             .then(data => {
                 if (data.status === 'success') {
                     success.classList.remove('hidden');
+                    passwordText.textContent = data.generatedPassword || 'N/A';
+                    passwordDisplay.classList.remove('hidden');
                     this.reset();
-                    fetchNextStoreId(); // refresh ID
+                    fetchNextStoreId();
                 } else {
                     throw new Error(data.message);
                 }
