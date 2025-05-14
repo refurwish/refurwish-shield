@@ -28,6 +28,15 @@
     .hidden {
       display: none;
     }
+
+    .status-message {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    .status-message.error {
+      color: red;
+    }
   </style>
 </head>
 <body>
@@ -57,11 +66,12 @@
     </form>
   </div>
 
-  <!-- Warranty Registration Form Section -->
+  <!-- Warranty Registration Section -->
   <div class="container hidden" id="warrantySection">
     <img src="logo.png" alt="Refurwish Logo" class="logo" />
     <h1>Refurwish Shield Warranty Registration</h1>
     <form id="warrantyForm" novalidate>
+      <!-- All warranty fields -->
       <div class="form-group">
         <label for="customerName">Customer Name:</label>
         <input type="text" id="customerName" name="customerName" placeholder="Enter customer's full name" required />
@@ -129,6 +139,6 @@
   <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="script.js"></script>
-  <script src="auth.js"></script> <!-- For login handling -->
+  <script src="auth.js"></script>
 </body>
 </html>
