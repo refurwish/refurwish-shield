@@ -8,11 +8,31 @@
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <div class="container">
+
+    <!-- Store Login Section -->
+    <div class="container" id="loginSection">
+        <img src="logo.png" alt="Refurwish Logo" class="logo" />
+        <h2>Store Login</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="loginStoreId">Store ID:</label>
+                <input type="text" id="loginStoreId" name="storeId" required />
+            </div>
+            <div class="form-group">
+                <label for="loginPassword">Password:</label>
+                <input type="password" id="loginPassword" name="password" required />
+            </div>
+            <button type="submit" class="submit-button">Login</button>
+            <div id="loginError" class="hidden" style="color: red; margin-top: 10px;">Invalid Store ID or Password</div>
+        </form>
+    </div>
+
+    <!-- Warranty Registration Form Section -->
+    <div class="container hidden" id="warrantySection">
         <img src="logo.png" alt="Refurwish Logo" class="logo" />
         <h1>Refurwish Shield Warranty Registration</h1>
 
-        <form id="warrantyForm">
+        <form id="warrantyForm" novalidate>
             <div class="form-group">
                 <label for="customerName">Customer Name:</label>
                 <input type="text" id="customerName" name="customerName" placeholder="Enter customer's full name" required />
@@ -52,37 +72,41 @@
                 <label for="planOption">Plan Option:</label>
                 <select id="planOption" name="planOption" required>
                     <option value="">-- Select Plan Option --</option>
-                    <option value="under_15000" data-price="699">Under ₹15,000 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (₹699)</option>
-                    <option value="15001_25000" data-price="799">₹15,001 - ₹25,000 &nbsp;&nbsp; (₹799)</option>
-                    <option value="25001_35000" data-price="899">₹25,001 - ₹35,000 &nbsp; (₹899)</option>
-                    <option value="35001_45000" data-price="999">₹35,001 - ₹45,000 &nbsp; (₹999)</option>
-                    <option value="45001_60000" data-price="1299">₹45,001 - ₹60,000 &nbsp; (₹1299)</option>
-                    <option value="60001_75000" data-price="1599">₹60,001 - ₹75,000 &nbsp; (₹1599)</option>
-                    <option value="75001_100000" data-price="1999">₹75,001 - ₹1,00,000 &nbsp; (₹1999)</option>
-                    <option value="100001_150000" data-price="2499">₹1,00,001 - ₹1,50,000 &nbsp; (₹2499)</option>
-                    <option value="150001_200000" data-price="2999">₹1,50,001 - ₹2,00,000 &nbsp; (₹2999)</option>
-                    <option value="200001_250000" data-price="3499">₹2,00,001 - ₹2,50,000 &nbsp; (₹3499)</option>
+                    <option value="under_15000" data-price="699">Under ₹15,000 (₹699)</option>
+                    <option value="15001_25000" data-price="799">₹15,001 - ₹25,000 (₹799)</option>
+                    <option value="25001_35000" data-price="899">₹25,001 - ₹35,000 (₹899)</option>
+                    <option value="35001_45000" data-price="999">₹35,001 - ₹45,000 (₹999)</option>
+                    <option value="45001_60000" data-price="1299">₹45,001 - ₹60,000 (₹1299)</option>
+                    <option value="60001_75000" data-price="1599">₹60,001 - ₹75,000 (₹1599)</option>
+                    <option value="75001_100000" data-price="1999">₹75,001 - ₹1,00,000 (₹1999)</option>
+                    <option value="100001_150000" data-price="2499">₹1,00,001 - ₹1,50,000 (₹2499)</option>
+                    <option value="150001_200000" data-price="2999">₹1,50,001 - ₹2,00,000 (₹2999)</option>
+                    <option value="200001_250000" data-price="3499">₹2,00,001 - ₹2,50,000 (₹3499)</option>
                 </select>
             </div>
 
             <button type="submit" class="submit-button">Generate Warranty Certificate</button>
 
-            <div id="loading" class="hidden">Processing...</div>
+            <div id="loading" class="status-message hidden">Processing...</div>
 
-            <div id="successContainer" class="hidden">
+            <div id="successContainer" class="status-message hidden">
                 <p id="successMessage">Warranty certificate generated successfully!</p>
-                <div id="pdfLinkSection" class="hidden">
+                <div id="pdfLinkSection" class="qrcode-container hidden">
                     <p><strong>Scan QR to view certificate:</strong></p>
                     <div id="qrcode"></div>
                     <p><a id="downloadLink" href="#" target="_blank">View PDF Certificate</a></p>
                 </div>
             </div>
 
-            <div id="errorMessage" class="hidden">An error occurred. Please try again.</div>
+            <div id="errorMessage" class="status-message error hidden">
+                An error occurred. Please try again.
+            </div>
         </form>
     </div>
 
+    <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="script.js"></script>
+    <script src="auth.js"></script> <!-- For login handling -->
 </body>
 </html>
