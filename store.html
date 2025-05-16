@@ -183,18 +183,16 @@ const passwordText = document.getElementById('passwordText');
 
 .then(data => {
     if (data.status === 'success') {
-        success.classList.remove('hidden');
+    success.classList.remove('hidden');
 
-        // Show both store ID and password returned from server
-        const storeIdDisplay = document.getElementById('storeIdDisplay');
-        storeIdDisplay.innerHTML = `<strong>Store ID:</strong> ${data.storeId}`;
-        passwordText.textContent = data.generatedPassword || 'N/A';
-        passwordDisplay.classList.remove('hidden');
+    storeIdText.textContent = data.storeId || 'N/A';
+    passwordText.textContent = data.generatedPassword || 'N/A';
+    credentialsDisplay.classList.remove('hidden');
 
-        this.reset(); // clear the form
-        // Delay loading the next ID so it doesn't overwrite the just-used one immediately
-        setTimeout(fetchNextStoreId, 3000);
-    } else {
+    this.reset();
+    setTimeout(fetchNextStoreId, 3000);
+}
+ else {
         throw new Error(data.message);
     }
 })
