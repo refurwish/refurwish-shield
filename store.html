@@ -161,15 +161,15 @@
             const loading = document.getElementById('loading');
             const success = document.getElementById('storeSuccess');
             const error = document.getElementById('storeError');
-            const credentialsDisplay = document.getElementById('credentialsDisplay');
+     const credentialsDisplay = document.getElementById('credentialsDisplay');
 const storeIdText = document.getElementById('storeIdText');
 const passwordText = document.getElementById('passwordText');
 
+loading.classList.remove('hidden');
+success.classList.add('hidden');
+error.classList.add('hidden');
+credentialsDisplay.classList.add('hidden'); // ✅ Correct element
 
-            loading.classList.remove('hidden');
-            success.classList.add('hidden');
-            error.classList.add('hidden');
-            passwordDisplay.classList.add('hidden');
 
             const formData = new FormData(this);
             formData.append('storeId', this.dataset.storeId);
