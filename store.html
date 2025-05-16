@@ -176,6 +176,9 @@
             .then(data => {
                 if (data.status === 'success') {
                     success.classList.remove('hidden');
+                    
+        // Show both store ID and password
+        document.getElementById('storeIdDisplay').textContent = 'Store ID: ' + data.storeId;
                     passwordText.textContent = data.generatedPassword || 'N/A';
                     passwordDisplay.classList.remove('hidden');
                     this.reset();
