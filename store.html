@@ -59,6 +59,11 @@
             font-weight: bold;
             margin-bottom: 20px;
         }
+
+        html {
+    scroll-behavior: smooth;
+}
+
     </style>
 </head>
 <body>
@@ -191,6 +196,13 @@ credentialsDisplay.classList.add('hidden'); // ✅ Correct element
 
     this.reset();
     setTimeout(fetchNextStoreId, 3000);
+
+        
+    // Auto scroll to credentials
+    setTimeout(() => {
+        credentialsDisplay.scrollIntoView({ behavior: 'smooth' });
+    }, 300); // Wait for DOM to update before scrolling
+        
 }
  else {
         throw new Error(data.message);
