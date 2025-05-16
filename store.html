@@ -173,20 +173,26 @@
                 body: formData
             })
             .then(res => res.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    success.classList.remove('hidden');
-                    
-        // Show both store ID and password
-        document.getElementById('storeIdDisplay').textContent = 'Store ID: ' + data.storeId;
-                    passwordText.textContent = data.generatedPassword || 'N/A';
-                    passwordDisplay.classList.remove('hidden');
-                    this.reset();
-                    fetchNextStoreId();
-                } else {
-                    throw new Error(data.message);
-                }
-            })
+
+
+.then(data => {
+    if (data.status === 'success') {
+        success.classList.remove('hidden');
+
+        // Show both store ID and password returned from server
+        const storeIdDisplay = document.getElementById('storeIdDisplay');
+        storeIdDisplay.innerHTML = `<strong>Store ID:</strong> ${data.storeId}`;
+        passwordText.textContent = data.generatedPassword || 'N/A';
+        passwordDisplay.classList.remove('hidden');
+
+        this.reset(); // clear the form
+        // Delay loading the next ID so it doesn't overwrite the just-used one immediately
+        setTimeout(fetchNextStoreId, 3000);
+    } else {
+        throw new Error(data.message);
+    }
+})
+            
             .catch(err => {
                 error.textContent = 'Error occurred: ' + err.message;
                 error.classList.remove('hidden');
