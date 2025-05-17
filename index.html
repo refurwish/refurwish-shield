@@ -1,4 +1,4 @@
-     <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -38,7 +38,6 @@
       color: red;
     }
 
-    /* Optional additional styling */
     #storeIdContainer {
       font-size: 16px;
       margin-bottom: 20px;
@@ -159,6 +158,33 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="script.js"></script>
   <script src="auth.js"></script>
+
+  <!-- Inline script to update Store ID display after login -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const loginForm = document.getElementById('loginForm');
+
+      loginForm.addEventListener('submit', function () {
+        const observer = new MutationObserver(() => {
+          const loginHidden = document.getElementById('loginSection').classList.contains('hidden');
+          const warrantyVisible = !document.getElementById('warrantySection').classList.contains('hidden');
+
+          if (loginHidden && warrantyVisible) {
+            const storeId = document.getElementById('loginStoreId').value.trim();
+            const display = document.getElementById('storeIdDisplay');
+            display.textContent = storeId;
+            display.style.color = 'red';
+            observer.disconnect(); // stop observing
+          }
+        });
+
+        observer.observe(document.body, {
+          attributes: true,
+          childList: true,
+          subtree: true
+        });
+      });
+    });
+  </script>
 </body>
 </html>
-
