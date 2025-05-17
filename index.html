@@ -1,144 +1,234 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Refurwish Shield Warranty Registration</title>
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png" />
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Refurwish Shield Warranty Registration</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png" />
+    <link rel="stylesheet" href="style.css" />
 
-  <style>
-    .loader {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border: 2px solid #f3f3f3;
-      border-top: 2px solid #333;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      vertical-align: middle;
-      margin-right: 5px;
-    }
+    <style>
+        .loader {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #333;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
 
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
-    .hidden {
-      display: none;
-    }
+        .hidden {
+            display: none;
+        }
 
-    .status-message {
-      margin-top: 15px;
-      font-weight: bold;
-    }
+        .status-message {
+            margin-top: 15px;
+            font-weight: bold;
+        }
 
-    .status-message.error {
-      color: red;
-    }
-  </style>
+        .status-message.error {
+            color: red;
+        }
+
+        .store-id-display {
+            color: red;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
 
-  <!-- Store Login Section -->
-  <div class="container" id="loginSection">
-    <img src="logo.png" alt="Refurwish Logo" class="logo" />
-    <h2>Store Login</h2>
-    <form id="loginForm">
-      <div class="form-group">
-        <label for="loginStoreId">Store ID:</label>
-        <input type="text" id="loginStoreId" name="storeId" required />
-      </div>
-      <div class="form-group">
-        <label for="loginPassword">Password:</label>
-        <input type="password" id="loginPassword" name="password" required />
-      </div>
-      <button type="submit" class="submit-button">Login</button>
+    <div class="container" id="loginSection">
+        <img src="logo.png" alt="Refurwish Logo" class="logo" />
+        <h2>Store Login</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="loginStoreId">Store ID:</label>
+                <input type="text" id="loginStoreId" name="storeId" required />
+            </div>
+            <div class="form-group">
+                <label for="loginPassword">Password:</label>
+                <input type="password" id="loginPassword" name="password" required />
+            </div>
+            <button type="submit" class="submit-button">Login</button>
 
-      <div id="loginLoading" class="hidden" style="margin-top: 10px; color: #333;">
-        <span class="loader"></span> Logging in, please wait...
-      </div>
+            <div id="loginLoading" class="hidden" style="margin-top: 10px; color: #333;">
+                <span class="loader"></span> Logging in, please wait...
+            </div>
 
-      <div id="loginError" class="hidden" style="color: red; margin-top: 10px;">
-        Invalid Store ID or Password
-      </div>
-    </form>
-  </div>
+            <div id="loginError" class="hidden" style="color: red; margin-top: 10px;">
+                Invalid Store ID or Password
+            </div>
+        </form>
+    </div>
 
-  <!-- Warranty Registration Section -->
-  <div class="container hidden" id="warrantySection">
-    <img src="logo.png" alt="Refurwish Logo" class="logo" />
-    <h1>Refurwish Shield Warranty Registration</h1>
-    <form id="warrantyForm" novalidate autocomplete="off">
-      <!-- All warranty fields -->
-      <div class="form-group">
-        <label for="customerName">Customer Name:</label>
-        <input type="text" id="customerName" name="customerName" placeholder="Enter customer's full name" autocomplete="off" required />
-      </div>
-      <div class="form-group">
-        <label for="customerEmail">Customer Email:</label>
-        <input type="email" id="customerEmail" name="customerEmail" placeholder="Enter customer's email address" autocomplete="off" required />
-      </div>
-      <div class="form-group">
-        <label for="customerPhone">Customer Phone:</label>
-        <input type="tel" id="customerPhone" name="customerPhone" placeholder="Enter customer's phone number" autocomplete="off" required />
-      </div>
-      <div class="form-group">
-        <label for="storeId">Store ID:</label>
-        <input type="text" id="storeId" name="storeId" placeholder="Enter the Store ID" required />
-      </div>
-      <div class="form-group">
-        <label for="productName">Product Name:</label>
-        <input type="text" id="productName" name="productName" placeholder="Enter the product name" autocomplete="off" required />
-      </div>
-      <div class="form-group">
-        <label for="imeiNumber">IMEI Number:</label>
-        <input type="text" id="imeiNumber" name="imeiNumber" placeholder="Enter the product's IMEI number" autocomplete="off" required />
-      </div>
-      <div class="form-group">
-        <label for="purchaseDate">Phone Purchase Date:</label>
-        <input type="date" id="purchaseDate" name="purchaseDate" required />
-      </div>
-      <div class="form-group">
-        <label for="planOption">Plan Option:</label>
-        <select id="planOption" name="planOption" required>
-          <option value="">-- Select Plan Option --</option>
-          <option value="under_15000" data-price="699">Under ₹15,000 (₹699)</option>
-          <option value="15001_25000" data-price="799">₹15,001 - ₹25,000 (₹799)</option>
-          <option value="25001_35000" data-price="899">₹25,001 - ₹35,000 (₹899)</option>
-          <option value="35001_45000" data-price="999">₹35,001 - ₹45,000 (₹999)</option>
-          <option value="45001_60000" data-price="1299">₹45,001 - ₹60,000 (₹1299)</option>
-          <option value="60001_75000" data-price="1599">₹60,001 - ₹75,000 (₹1599)</option>
-          <option value="75001_100000" data-price="1999">₹75,001 - ₹1,00,000 (₹1999)</option>
-          <option value="100001_150000" data-price="2499">₹1,00,001 - ₹1,50,000 (₹2499)</option>
-          <option value="150001_200000" data-price="2999">₹1,50,001 - ₹2,00,000 (₹2999)</option>
-          <option value="200001_250000" data-price="3499">₹2,00,001 - ₹2,50,000 (₹3499)</option>
-        </select>
-      </div>
+    <div class="container hidden" id="warrantySection">
+        <img src="logo.png" alt="Refurwish Logo" class="logo" />
+        <h1>Refurwish Shield Warranty Registration</h1>
+        <div class="store-id-display">Store ID: <span id="displayedStoreId"></span></div>
+        <form id="warrantyForm" novalidate autocomplete="off">
+            <div class="form-group">
+                <label for="customerName">Customer Name:</label>
+                <input type="text" id="customerName" name="customerName" placeholder="Enter customer's full name" autocomplete="off" required />
+            </div>
+            <div class="form-group">
+                <label for="customerEmail">Customer Email:</label>
+                <input type="email" id="customerEmail" name="customerEmail" placeholder="Enter customer's email address" autocomplete="off" required />
+            </div>
+            <div class="form-group">
+                <label for="customerPhone">Customer Phone:</label>
+                <input type="tel" id="customerPhone" name="customerPhone" placeholder="Enter customer's phone number" autocomplete="off" required />
+            </div>
+            <div class="form-group hidden">
+                <label for="storeId">Store ID:</label>
+                <input type="text" id="storeId" name="storeId" value="" readonly />
+            </div>
+            <div class="form-group">
+                <label for="productName">Product Name:</label>
+                <input type="text" id="productName" name="productName" placeholder="Enter the product name" autocomplete="off" required />
+            </div>
+            <div class="form-group">
+                <label for="imeiNumber">IMEI Number:</label>
+                <input type="text" id="imeiNumber" name="imeiNumber" placeholder="Enter the product's IMEI number" autocomplete="off" required />
+            </div>
+            <div class="form-group">
+                <label for="purchaseDate">Phone Purchase Date:</label>
+                <input type="date" id="purchaseDate" name="purchaseDate" required />
+            </div>
+            <div class="form-group">
+                <label for="planOption">Plan Option:</label>
+                <select id="planOption" name="planOption" required>
+                    <option value="">-- Select Plan Option --</option>
+                    <option value="under_15000" data-price="699">Under ₹15,000 (₹699)</option>
+                    <option value="15001_25000" data-price="799">₹15,001 - ₹25,000 (₹799)</option>
+                    <option value="25001_35000" data-price="899">₹25,001 - ₹35,000 (₹899)</option>
+                    <option value="35001_45000" data-price="999">₹35,001 - ₹45,000 (₹999)</option>
+                    <option value="45001_60000" data-price="1299">₹45,001 - ₹60,000 (₹1299)</option>
+                    <option value="60001_75000" data-price="1599">₹60,001 - ₹75,000 (₹1599)</option>
+                    <option value="75001_100000" data-price="1999">₹75,001 - ₹1,00,000 (₹1999)</option>
+                    <option value="100001_150000" data-price="2499">₹1,00,001 - ₹1,50,000 (₹2499)</option>
+                    <option value="150001_200000" data-price="2999">₹1,50,001 - ₹2,00,000 (₹2999)</option>
+                    <option value="200001_250000" data-price="3499">₹2,00,001 - ₹2,50,000 (₹3499)</option>
+                </select>
+            </div>
 
-      <button type="submit" class="submit-button">Generate Warranty Certificate</button>
+            <button type="submit" class="submit-button">Generate Warranty Certificate</button>
 
-      <div id="loading" class="status-message hidden">Processing...</div>
+            <div id="loading" class="status-message hidden">Processing...</div>
 
-      <div id="successContainer" class="status-message hidden">
-        <p id="successMessage">Warranty certificate generated successfully!</p>
-        <div id="pdfLinkSection" class="qrcode-container hidden">
-          <p><strong>Scan QR to view certificate:</strong></p>
-          <div id="qrcode"></div>
-          <p><a id="downloadLink" href="#" target="_blank">View PDF Certificate</a></p>
-        </div>
-      </div>
+            <div id="successContainer" class="status-message hidden">
+                <p id="successMessage">Warranty certificate generated successfully!</p>
+                <div id="pdfLinkSection" class="qrcode-container hidden">
+                    <p><strong>Scan QR to view certificate:</strong></p>
+                    <div id="qrcode"></div>
+                    <p><a id="downloadLink" href="#" target="_blank">View PDF Certificate</a></p>
+                </div>
+            </div>
 
-      <div id="errorMessage" class="status-message error hidden">
-        An error occurred. Please try again.
-      </div>
-    </form>
-  </div>
+            <div id="errorMessage" class="status-message error hidden">
+                An error occurred. Please try again.
+            </div>
+        </form>
+    </div>
 
-  <!-- Scripts -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="script.js"></script>
-  <script src="auth.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="script.js"></script>
+    <script src="auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.getElementById('loginForm');
+            const loginSection = document.getElementById('loginSection');
+            const warrantySection = document.getElementById('warrantySection');
+            const displayedStoreId = document.getElementById('displayedStoreId');
+            const storeIdInput = document.getElementById('storeId'); // Get the hidden input
+
+            loginForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const storeId = document.getElementById('loginStoreId').value;
+                const password = document.getElementById('loginPassword').value;
+                const loginLoading = document.getElementById('loginLoading');
+                const loginError = document.getElementById('loginError');
+
+                loginLoading.classList.remove('hidden');
+                loginError.classList.add('hidden');
+
+                // Simulate login authentication (replace with your actual logic)
+                setTimeout(() => {
+                    if (storeId === 'RW00072' && password === 'password123') { // Example credentials
+                        loginSection.classList.add('hidden');
+                        warrantySection.classList.remove('hidden');
+                        displayedStoreId.textContent = storeId;
+                        storeIdInput.value = storeId; // Set the value of the hidden input
+                    } else {
+                        loginLoading.classList.add('hidden');
+                        loginError.classList.remove('hidden');
+                    }
+                }, 1500); // Simulate network delay
+            });
+
+            // You'll need to adapt your existing script.js to handle the form submission
+            const warrantyForm = document.getElementById('warrantyForm');
+            const loading = document.getElementById('loading');
+            const successContainer = document.getElementById('successContainer');
+            const errorMessage = document.getElementById('errorMessage');
+            const qrcodeDiv = document.getElementById('qrcode');
+            const downloadLink = document.getElementById('downloadLink');
+
+            warrantyForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                loading.classList.remove('hidden');
+                successContainer.classList.add('hidden');
+                errorMessage.classList.add('hidden');
+
+                const formData = new FormData(warrantyForm);
+                // The 'storeId' will be automatically included from the hidden input
+
+                // Simulate form submission to App Script (replace with your actual fetch/ajax call)
+                fetch('YOUR_APPSCRIPT_URL', { // Replace with your actual App Script URL
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    loading.classList.add('hidden');
+                    if (data.success) {
+                        successContainer.classList.remove('hidden');
+                        document.getElementById('successMessage').textContent = data.message || 'Warranty certificate generated successfully!';
+                        if (data.pdfLink && data.qrCodeUrl) {
+                            qrcodeDiv.innerHTML = '';
+                            new QRCode(qrcodeDiv, data.qrCodeUrl);
+                            downloadLink.href = data.pdfLink;
+                            document.getElementById('pdfLinkSection').classList.remove('hidden');
+                        } else {
+                            document.getElementById('pdfLinkSection').classList.add('hidden');
+                        }
+                        warrantyForm.reset(); // Optionally reset the form
+                        displayedStoreId.textContent = ''; // Clear displayed store ID after submission if needed
+                        storeIdInput.value = ''; // Clear hidden store ID after submission if needed
+                        loginSection.classList.remove('hidden'); // Go back to login
+                        warrantySection.classList.add('hidden');
+                    } else {
+                        errorMessage.classList.remove('hidden');
+                        document.getElementById('errorMessage').textContent = data.error || 'An error occurred. Please try again.';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    loading.classList.add('hidden');
+                    errorMessage.classList.remove('hidden');
+                    document.getElementById('errorMessage').textContent = 'Failed to submit the form. Please check your network.';
+                });
+            });
+        });
+    </script>
 </body>
 </html>
