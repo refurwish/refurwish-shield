@@ -62,12 +62,24 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   // Handle logout
-  logoutButton.addEventListener('click', () => {
-    sessionStorage.removeItem('storeId');
-    warrantyForm.reset();
-    storeIdInput.value = '';
-    displayedStoreId.textContent = '';
-    warrantySection.classList.add('hidden');
-    loginSection.classList.remove('hidden');
-  });
+ 
+logoutButton.addEventListener('click', () => {
+  // Clear session storage
+  sessionStorage.removeItem('storeId');
+
+  // Reset login form
+  loginForm.reset();
+
+  // Reset warranty form and UI
+  displayedStoreId.textContent = '';
+  storeIdInput.value = '';
+  warrantyForm.reset();
+
+  // Switch views
+  warrantySection.classList.add('hidden');
+  loginSection.classList.remove('hidden');
 });
+
+});
+
+
