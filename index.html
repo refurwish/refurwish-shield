@@ -49,9 +49,8 @@
     }
 
     #storeIdDisplay {
-      margin-left: 5px;
-      font-weight: normal;
-      color: #000;
+      font-weight: bold;
+      color: red;
     }
   </style>
 </head>
@@ -90,7 +89,7 @@
 
       <!-- Store ID Display -->
       <div class="form-group" id="storeIdContainer">
-        <label>Store ID:</label>
+        <label>Store ID: </label>
         <span id="storeIdDisplay">N/A</span>
       </div>
 
@@ -172,8 +171,8 @@
           if (loginHidden && warrantyVisible) {
             const storeId = document.getElementById('loginStoreId').value.trim();
             const display = document.getElementById('storeIdDisplay');
-            display.textContent = storeId;
-            display.style.color = 'red';
+            display.innerHTML = `<strong>${storeId}</strong>`;
+            display.style.color = 'red'; // Store ID in red and bold
             observer.disconnect(); // stop observing
           }
         });
