@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const loginButton = loginForm.querySelector('.submit-button'); // Get the login button
     const loginError = document.getElementById('loginError');
     const loginLoading = document.getElementById('loginLoading');
+    const storeIdDisplay = document.getElementById('storeIdValue'); // Get the span to display Store ID
 
     loginForm.addEventListener('submit', function (e) {
         e.preventDefault();
@@ -39,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 // Auto-fill Store ID in warranty form
                 const storeId = formData.get('storeId');
-                document.getElementById('storeId').value = storeId;
+                storeIdDisplay.textContent = storeId; // Set the text content of the span
             } else {
                 // Login failed
                 loginError.textContent = 'Invalid Store ID or Password';
