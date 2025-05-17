@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+     <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -37,6 +37,23 @@
     .status-message.error {
       color: red;
     }
+
+    /* Optional additional styling */
+    #storeIdContainer {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    #storeIdContainer label {
+      color: red;
+      font-weight: bold;
+    }
+
+    #storeIdDisplay {
+      margin-left: 5px;
+      font-weight: normal;
+      color: #000;
+    }
   </style>
 </head>
 <body>
@@ -48,11 +65,11 @@
     <form id="loginForm">
       <div class="form-group">
         <label for="loginStoreId">Store ID:</label>
-        <input type="text" id="loginStoreId" name="storeId" required />
+        <input type="text" id="loginStoreId" name="storeId" required autocomplete="off" />
       </div>
       <div class="form-group">
         <label for="loginPassword">Password:</label>
-        <input type="password" id="loginPassword" name="password" required />
+        <input type="password" id="loginPassword" name="password" required autocomplete="off" />
       </div>
       <button type="submit" class="submit-button">Login</button>
 
@@ -70,39 +87,41 @@
   <div class="container hidden" id="warrantySection">
     <img src="logo.png" alt="Refurwish Logo" class="logo" />
     <h1>Refurwish Shield Warranty Registration</h1>
-    <form id="warrantyForm" novalidate>
-      <!-- All warranty fields -->
+    <form id="warrantyForm" novalidate autocomplete="off">
+
+      <!-- Store ID Display -->
+      <div class="form-group" id="storeIdContainer">
+        <label>Store ID:</label>
+        <span id="storeIdDisplay">N/A</span>
+      </div>
+
       <div class="form-group">
         <label for="customerName">Customer Name:</label>
-        <input type="text" id="customerName" name="customerName" placeholder="Enter customer's full name" required />
+        <input type="text" id="customerName" name="customerName" placeholder="Enter customer's full name" required autocomplete="off" />
       </div>
       <div class="form-group">
         <label for="customerEmail">Customer Email:</label>
-        <input type="email" id="customerEmail" name="customerEmail" placeholder="Enter customer's email address" required />
+        <input type="email" id="customerEmail" name="customerEmail" placeholder="Enter customer's email address" required autocomplete="off" />
       </div>
       <div class="form-group">
         <label for="customerPhone">Customer Phone:</label>
-        <input type="tel" id="customerPhone" name="customerPhone" placeholder="Enter customer's phone number" required />
-      </div>
-      <div class="form-group">
-        <label for="storeId">Store ID:</label>
-        <input type="text" id="storeId" name="storeId" placeholder="Enter the Store ID" required />
+        <input type="tel" id="customerPhone" name="customerPhone" placeholder="Enter customer's phone number" required autocomplete="off" />
       </div>
       <div class="form-group">
         <label for="productName">Product Name:</label>
-        <input type="text" id="productName" name="productName" placeholder="Enter the product name" required />
+        <input type="text" id="productName" name="productName" placeholder="Enter the product name" required autocomplete="off" />
       </div>
       <div class="form-group">
         <label for="imeiNumber">IMEI Number:</label>
-        <input type="text" id="imeiNumber" name="imeiNumber" placeholder="Enter the product's IMEI number" required />
+        <input type="text" id="imeiNumber" name="imeiNumber" placeholder="Enter the product's IMEI number" required autocomplete="off" />
       </div>
       <div class="form-group">
         <label for="purchaseDate">Phone Purchase Date:</label>
-        <input type="date" id="purchaseDate" name="purchaseDate" required />
+        <input type="date" id="purchaseDate" name="purchaseDate" required autocomplete="off" />
       </div>
       <div class="form-group">
         <label for="planOption">Plan Option:</label>
-        <select id="planOption" name="planOption" required>
+        <select id="planOption" name="planOption" required autocomplete="off">
           <option value="">-- Select Plan Option --</option>
           <option value="under_15000" data-price="699">Under ₹15,000 (₹699)</option>
           <option value="15001_25000" data-price="799">₹15,001 - ₹25,000 (₹799)</option>
@@ -142,3 +161,4 @@
   <script src="auth.js"></script>
 </body>
 </html>
+
