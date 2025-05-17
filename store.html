@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Store Registration - Refurwish</title>
   <link rel="icon" type="image/png" sizes="32x32" href="favicon.png" />
-  <link rel="stylesheet" href="style.css" />
+
   <style>
     .container {
       max-width: 400px;
@@ -14,6 +14,7 @@
       border: 1px solid #ccc;
       border-radius: 5px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      font-family: Arial, sans-serif;
     }
 
     .form-group {
@@ -75,12 +76,27 @@
       font-weight: bold;
     }
 
+    #storeSuccess {
+      color: green;
+    }
+
     #storeError {
       color: red;
     }
 
-    #storeSuccess {
-      color: green;
+    #loginCredentials {
+      margin-top: 20px;
+      text-align: center;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+    }
+
+    #submittedCredentials {
+      font-family: monospace;
+      font-size: 1.1em;
+      margin-top: 5px;
     }
   </style>
 </head>
@@ -89,11 +105,64 @@
     <img src="logo.png" alt="Refurwish Logo" class="logo" />
     <h1>Store Registration</h1>
 
-    <div id="storeIdDisplay"></div>
+    <div id="storeIdDisplay">Store ID: Loading...</div>
 
     <form id="storeForm">
-      <!-- form fields -->
-      <!-- [same as before, not repeated for brevity] -->
+      <div class="form-group">
+        <label for="storeName">Store Name:</label>
+        <input type="text" id="storeName" name="storeName" required autocomplete="off" />
+      </div>
+
+      <div class="form-group">
+        <label for="ownerName">Owner Name:</label>
+        <input type="text" id="ownerName" name="ownerName" required autocomplete="off" />
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone Number:</label>
+        <input type="tel" id="phone" name="phone" required autocomplete="off" />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Gmail:</label>
+        <input type="email" id="email" name="email" required autocomplete="off" />
+      </div>
+
+      <div class="form-group">
+        <label for="address">Store Address:</label>
+        <input type="text" id="address" name="address" required autocomplete="off" />
+      </div>
+
+      <div class="form-group">
+        <label for="area">Area:</label>
+        <input type="text" id="area" name="area" required />
+      </div>
+
+      <div class="form-group">
+        <label for="landmark">Landmark:</label>
+        <input type="text" id="landmark" name="landmark" />
+      </div>
+
+      <div class="form-group">
+        <label for="pincode">Pincode:</label>
+        <input type="text" id="pincode" name="pincode" required />
+      </div>
+
+      <div class="form-group">
+        <label for="city">Town/City:</label>
+        <input type="text" id="city" name="city" required />
+      </div>
+
+      <div class="form-group">
+        <label for="state">State:</label>
+        <input type="text" id="state" name="state" required />
+      </div>
+
+      <div class="form-group">
+        <label for="mapLink">Google Map Location Link:</label>
+        <input type="url" id="mapLink" name="mapLink" placeholder="Click to paste location link" required onclick="pasteMapLink()" />
+        <small>Paste the full Google Maps link here.</small>
+      </div>
 
       <button type="submit" class="submit-button">Register Store</button>
 
@@ -101,9 +170,9 @@
       <div id="storeSuccess" class="hidden">Store registered successfully!</div>
       <div id="storeError" class="hidden">Error occurred. Please try again.</div>
 
-      <div id="loginCredentials" class="hidden" style="margin-top: 15px; text-align: center; border: 1px solid #ccc; padding: 10px; border-radius: 5px; background-color: #f9f9f9;">
+      <div id="loginCredentials" class="hidden">
         <strong>Login Credentials:</strong>
-        <div id="submittedCredentials" style="font-family: monospace; font-size: 1.1em; margin-top: 5px;"></div>
+        <div id="submittedCredentials"></div>
       </div>
     </form>
   </div>
@@ -115,6 +184,8 @@
       if (data.status === 'success') {
         document.getElementById('storeIdDisplay').textContent = 'Store ID: ' + data.storeId;
         document.getElementById('storeForm').dataset.storeId = data.storeId;
+      } else {
+        document.getElementById('storeIdDisplay').textContent = 'Store ID: Failed to load';
       }
     }
 
@@ -130,15 +201,17 @@
       const loading = document.getElementById('loading');
       const success = document.getElementById('storeSuccess');
       const error = document.getElementById('storeError');
-      const credentialsContainer = document.getElementById('loginCredentials');
+      const credentialsDiv = document.getElementById('loginCredentials');
+      const submittedCredentials = document.getElementById('submittedCredentials');
 
       loading.classList.remove('hidden');
       success.classList.add('hidden');
       error.classList.add('hidden');
-      credentialsContainer.classList.add('hidden');
+      credentialsDiv.classList.add('hidden');
 
       const formData = new FormData(this);
-      formData.append('storeId', this.dataset.storeId);
+      const submittedStoreId = this.dataset.storeId;
+      formData.append('storeId', submittedStoreId);
 
       fetch('https://script.google.com/macros/s/AKfycbwxhL6X17U5Fr9i7ze3SnqqURZalpVsWRfCZLrSh11tD3yDGqn2bB6SzLAcdo-rGbJs1w/exec', {
         method: 'POST',
@@ -149,14 +222,12 @@
           if (data.status === 'success') {
             success.classList.remove('hidden');
 
-            const submittedStoreId = this.dataset.storeId;
             const generatedPassword = data.generatedPassword || 'N/A';
+            submittedCredentials.innerHTML = `Store ID: ${submittedStoreId}<br>Password: ${generatedPassword}`;
+            credentialsDiv.classList.remove('hidden');
 
-            const credentialsDiv = document.getElementById('submittedCredentials');
-            credentialsDiv.innerHTML = `Store ID: ${submittedStoreId}<br>Password: ${generatedPassword}`;
-            credentialsContainer.classList.remove('hidden');
-
-            credentialsContainer.scrollIntoView({ behavior: 'smooth' });
+            // Scroll to credentials smoothly
+            credentialsDiv.scrollIntoView({ behavior: 'smooth' });
 
             this.reset();
             fetchNextStoreId();
@@ -173,6 +244,7 @@
         });
     });
 
+    // Load next Store ID on page load
     fetchNextStoreId();
   </script>
 </body>
