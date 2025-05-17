@@ -43,13 +43,15 @@
       margin-bottom: 20px;
     }
 
-    #storeIdContainer label {
-      color: black;  /* Label will be black */
+    #storeIdText {
+      color: black;
+      font-weight: normal;
     }
 
-    #storeIdDisplay {
+    #storeIdValue {
+      color: red;
       font-weight: bold;
-      color: red;  /* Store ID will be red and bold */
+      margin-left: 5px;
     }
   </style>
 </head>
@@ -88,10 +90,11 @@
 
       <!-- Store ID Display -->
       <div class="form-group" id="storeIdContainer">
-        <label>Store ID: </label>
-        <span id="storeIdDisplay">N/A</span>
+        <span id="storeIdText">Store ID:</span>
+        <span id="storeIdValue">N/A</span>
       </div>
 
+      <!-- Remaining form fields -->
       <div class="form-group">
         <label for="customerName">Customer Name:</label>
         <input type="text" id="customerName" name="customerName" placeholder="Enter customer's full name" required autocomplete="off" />
@@ -156,32 +159,5 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="script.js"></script>
   <script src="auth.js"></script>
-
-  <!-- Inline script to update Store ID display after login -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const loginForm = document.getElementById('loginForm');
-
-      loginForm.addEventListener('submit', function () {
-        const observer = new MutationObserver(() => {
-          const loginHidden = document.getElementById('loginSection').classList.contains('hidden');
-          const warrantyVisible = !document.getElementById('warrantySection').classList.contains('hidden');
-
-          if (loginHidden && warrantyVisible) {
-            const storeId = document.getElementById('loginStoreId').value.trim();
-            const display = document.getElementById('storeIdDisplay');
-            display.innerHTML = `<strong>${storeId}</strong>`; // Store ID in red and bold
-            observer.disconnect(); // stop observing
-          }
-        });
-
-        observer.observe(document.body, {
-          attributes: true,
-          childList: true,
-          subtree: true
-        });
-      });
-    });
-  </script>
 </body>
 </html>
