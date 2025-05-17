@@ -1,9 +1,10 @@
 document.addEventListener('DOMContentLoaded', function () {
     const loginForm = document.getElementById('loginForm');
-    const loginButton = loginForm.querySelector('.submit-button'); // Get the login button
+    const loginButton = loginForm.querySelector('.submit-button');
     const loginError = document.getElementById('loginError');
     const loginLoading = document.getElementById('loginLoading');
-    const storeIdDisplay = document.getElementById('storeIdValue'); // Get the span to display Store ID
+    const storeIdDisplay = document.getElementById('storeIdValue');
+    const storeIdHiddenInput = document.getElementById('storeIdHidden'); // <-- hidden input
 
     loginForm.addEventListener('submit', function (e) {
         e.preventDefault();
@@ -12,35 +13,37 @@ document.addEventListener('DOMContentLoaded', function () {
         loginError.classList.add('hidden');
         loginError.textContent = '';
 
-        // Show the loading animation and hide the login button
+        // Show loading and hide button
         loginLoading.classList.remove('hidden');
-        loginButton.classList.add('hidden'); // Hide the login button
+        loginButton.classList.add('hidden');
 
-        // Create a new FormData object from the form
-        const formData = new FormData(this); // `this` refers to the form being submitted
-
-        // Add the 'action' to the FormData (required by backend)
+        // Collect form data
+        const formData = new FormData(this);
         formData.append('action', 'verifyLogin');
 
-        // Perform the fetch request using the POST method
+        // Make request
         fetch('https://script.google.com/macros/s/AKfycbwxhL6X17U5Fr9i7ze3SnqqURZalpVsWRfCZLrSh11tD3yDGqn2bB6SzLAcdo-rGbJs1w/exec', {
             method: 'POST',
             body: formData
         })
         .then(response => response.json())
         .then(data => {
-            // Hide loading animation and show the login button again on completion
+            // Hide loading and restore button
             loginLoading.classList.add('hidden');
-            loginButton.classList.remove('hidden'); // Show the button again
+            loginButton.classList.remove('hidden');
 
             if (data.status === 'success') {
                 // Login successful
                 document.getElementById('loginSection').classList.add('hidden');
                 document.getElementById('warrantySection').classList.remove('hidden');
 
-                // Auto-fill Store ID in warranty form
                 const storeId = formData.get('storeId');
-                storeIdDisplay.textContent = storeId; // Set the text content of the span
+                storeIdDisplay.textContent = storeId;
+
+                // Set hidden input value so it submits with the form
+                if (storeIdHiddenInput) {
+                    storeIdHiddenInput.value = storeId;
+                }
             } else {
                 // Login failed
                 loginError.textContent = 'Invalid Store ID or Password';
@@ -48,11 +51,11 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         })
         .catch(err => {
-            // Hide loading animation and show the login button again on error
+            // Hide loading and restore button
             loginLoading.classList.add('hidden');
-            loginButton.classList.remove('hidden'); // Show the button again
+            loginButton.classList.remove('hidden');
 
-            // Show error message
+            // Show error
             loginError.textContent = 'An error occurred: ' + err.message;
             loginError.classList.remove('hidden');
         });
