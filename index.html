@@ -44,13 +44,12 @@
     }
 
     #storeIdContainer label {
-      color: red;
-      font-weight: bold;
+      color: black;  /* Label will be black */
     }
 
     #storeIdDisplay {
       font-weight: bold;
-      color: red;
+      color: red;  /* Store ID will be red and bold */
     }
   </style>
 </head>
@@ -171,8 +170,7 @@
           if (loginHidden && warrantyVisible) {
             const storeId = document.getElementById('loginStoreId').value.trim();
             const display = document.getElementById('storeIdDisplay');
-            display.innerHTML = `<strong>${storeId}</strong>`;
-            display.style.color = 'red'; // Store ID in red and bold
+            display.innerHTML = `<strong>${storeId}</strong>`; // Store ID in red and bold
             observer.disconnect(); // stop observing
           }
         });
