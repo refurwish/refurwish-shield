@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="style.css" />
     <style>
         .container {
-            max-width: 400px;
+            max-width: 400px; /* Adjust as needed for mobile view */
             margin: 20px auto;
             padding: 20px;
             border: 1px solid #ccc;
@@ -28,7 +28,7 @@
         input[type="tel"],
         input[type="email"],
         input[type="url"] {
-            width: calc(100% - 12px);
+            width: calc(100% - 12px); /* Adjust for padding and border */
             padding: 8px;
             border: 1px solid #ddd;
             border-radius: 3px;
@@ -52,18 +52,13 @@
         .logo {
             display: block;
             margin: 0 auto 20px;
-            max-width: 150px;
+            max-width: 150px; /* Adjust logo size as needed */
         }
         #storeIdDisplay {
             text-align: center;
             font-weight: bold;
             margin-bottom: 20px;
         }
-
-        html {
-    scroll-behavior: smooth;
-}
-
     </style>
 </head>
 <body>
@@ -71,32 +66,32 @@
         <img src="logo.png" alt="Refurwish Logo" class="logo" />
         <h1>Store Registration</h1>
 
-        <div id="storeIdDisplay"></div>
+        <div id="storeIdDisplay" style="text-align:center; font-weight:bold; margin-bottom: 20px;"></div>
 
         <form id="storeForm">
             <div class="form-group">
                 <label for="storeName">Store Name:</label>
-                <input type="text" id="storeName" name="storeName" required />
+                <input type="text" id="storeName" name="storeName" required autocomplete="off" />
             </div>
 
             <div class="form-group">
                 <label for="ownerName">Owner Name:</label>
-                <input type="text" id="ownerName" name="ownerName" required />
+                <input type="text" id="ownerName" name="ownerName" required autocomplete="off" />
             </div>
 
             <div class="form-group">
                 <label for="phone">Phone Number:</label>
-                <input type="tel" id="phone" name="phone" required />
+                <input type="tel" id="phone" name="phone" required autocomplete="off" />
             </div>
 
             <div class="form-group">
                 <label for="email">Gmail:</label>
-                <input type="email" id="email" name="email" required />
+                <input type="email" id="email" name="email" required autocomplete="off" />
             </div>
 
             <div class="form-group">
                 <label for="address">Store Address:</label>
-                <input type="text" id="address" name="address" required />
+                <input type="text" id="address" name="address" required autocomplete="off" />
             </div>
 
             <div class="form-group">
@@ -126,7 +121,7 @@
 
             <div class="form-group">
                 <label for="mapLink">Google Map Location Link:</label>
-                <input type="url" id="mapLink" name="mapLink" placeholder="Click to paste location link" required onclick="pasteMapLink()" />
+                <input type="url" id="mapLink" name="mapLink" placeholder="Click to paste location link" required onclick="pasteMapLink()" style="width: calc(100% - 12px);" />
                 <small>Paste the full Google Maps link here.</small>
             </div>
 
@@ -134,14 +129,6 @@
             <div id="loading" class="hidden">Processing...</div>
             <div id="storeSuccess" class="hidden">Store registered successfully!</div>
             <div id="storeError" class="hidden">Error occurred. Please try again.</div>
-            <div id="credentialsDisplay" class="hidden" style="margin-top: 10px; text-align: center;">
-    <strong>Store Credentials</strong>
-    <div style="font-family: monospace; font-size: 1.1em; margin-top: 5px;">
-        <div><strong>Store ID:</strong> <span id="storeIdText">N/A</span></div>
-        <div><strong>Password:</strong> <span id="passwordText">N/A</span></div>
-    </div>
-</div>
-
         </form>
     </div>
 
@@ -166,15 +153,9 @@
             const loading = document.getElementById('loading');
             const success = document.getElementById('storeSuccess');
             const error = document.getElementById('storeError');
-     const credentialsDisplay = document.getElementById('credentialsDisplay');
-const storeIdText = document.getElementById('storeIdText');
-const passwordText = document.getElementById('passwordText');
-
-loading.classList.remove('hidden');
-success.classList.add('hidden');
-error.classList.add('hidden');
-credentialsDisplay.classList.add('hidden'); // ✅ Correct element
-
+            loading.classList.remove('hidden');
+            success.classList.add('hidden');
+            error.classList.add('hidden');
 
             const formData = new FormData(this);
             formData.append('storeId', this.dataset.storeId);
@@ -184,31 +165,15 @@ credentialsDisplay.classList.add('hidden'); // ✅ Correct element
                 body: formData
             })
             .then(res => res.json())
-
-
-.then(data => {
-    if (data.status === 'success') {
-    success.classList.remove('hidden');
-
-    storeIdText.textContent = data.storeId || 'N/A';
-    passwordText.textContent = data.generatedPassword || 'N/A';
-    credentialsDisplay.classList.remove('hidden');
-
-    this.reset();
-    setTimeout(fetchNextStoreId, 3000);
-
-        
-    // Auto scroll to credentials
-    setTimeout(() => {
-        credentialsDisplay.scrollIntoView({ behavior: 'smooth' });
-    }, 300); // Wait for DOM to update before scrolling
-        
-}
- else {
-        throw new Error(data.message);
-    }
-})
-            
+            .then(data => {
+                if (data.status === 'success') {
+                    success.classList.remove('hidden');
+                    this.reset();
+                    fetchNextStoreId(); // refresh ID
+                } else {
+                    throw new Error(data.message);
+                }
+            })
             .catch(err => {
                 error.textContent = 'Error occurred: ' + err.message;
                 error.classList.remove('hidden');
