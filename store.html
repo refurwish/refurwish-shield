@@ -126,6 +126,11 @@
             </div>
 
             <button type="submit" class="submit-button">Register Store</button>
+            <div id="loginCredentials" class="hidden" style="margin-top: 15px; text-align: center; border: 1px solid #ccc; padding: 10px; border-radius: 5px; background-color: #f9f9f9;">
+    <strong>Login Credentials:</strong>
+    <div id="submittedCredentials" style="font-family: monospace; font-size: 1.1em; margin-top: 5px;"></div>
+</div>
+
             <div id="loading" class="hidden">Processing...</div>
             <div id="storeSuccess" class="hidden">Store registered successfully!</div>
             <div id="storeError" class="hidden">Error occurred. Please try again.</div>
@@ -166,11 +171,21 @@
             })
             .then(res => res.json())
             .then(data => {
-                if (data.status === 'success') {
-                    success.classList.remove('hidden');
-                    this.reset();
-                    fetchNextStoreId(); // refresh ID
-                } else {
+               if (data.status === 'success') {
+    success.classList.remove('hidden');
+
+    const submittedStoreId = document.getElementById('storeForm').dataset.storeId;
+    const generatedPassword = data.generatedPassword || 'N/A';
+
+    // Show login credentials
+    const credentialsDiv = document.getElementById('submittedCredentials');
+    credentialsDiv.innerHTML = `Store ID: ${submittedStoreId}<br>Password: ${generatedPassword}`;
+    document.getElementById('loginCredentials').classList.remove('hidden');
+
+    this.reset();
+    fetchNextStoreId(); // update top Store ID
+}
+ else {
                     throw new Error(data.message);
                 }
             })
