@@ -1,54 +1,64 @@
-    document.getElementById('warrantyForm').addEventListener('submit', function (e) {
-      e.preventDefault();
-      const loading = document.getElementById('loading');
-      const successContainer = document.getElementById('successContainer');
-      const errorMessage = document.getElementById('errorMessage');
-      const qrcodeDiv = document.getElementById('qrcode');
-      const downloadLink = document.getElementById('downloadLink');
-      const pdfLinkSection = document.getElementById('pdfLinkSection');
+document.addEventListener('DOMContentLoaded', function () {
+  const form = document.getElementById('warrantyForm');
+  const loading = document.getElementById('loading');
+  const successContainer = document.getElementById('successContainer');
+  const errorMessage = document.getElementById('errorMessage');
+  const qrcodeDiv = document.getElementById('qrcode');
+  const downloadLink = document.getElementById('downloadLink');
+  const pdfLinkSection = document.getElementById('pdfLinkSection');
+  const storeIdInput = document.getElementById('storeId');
 
-      loading.classList.remove('hidden');
-      successContainer.classList.add('hidden');
-      errorMessage.classList.add('hidden');
-      pdfLinkSection.classList.add('hidden');
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
 
-      const formData = new FormData(this);
+    loading.classList.remove('hidden');
+    successContainer.classList.add('hidden');
+    errorMessage.classList.add('hidden');
+    pdfLinkSection.classList.add('hidden');
 
-      fetch('https://script.google.com/macros/s/AKfycby9ut2aVqZZMw7h-yQSrscUb-cXKY7oJ_66T4Sizeazm4183wH-jauCGAkd9wQgQ8Fe/exec', {
-        method: 'POST',
-        body: formData
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.status === 'success') {
-            document.getElementById('successMessage').textContent = 'Warranty certificate generated successfully!';
-            downloadLink.href = data.url;
-            qrcodeDiv.innerHTML = '';
-            new QRCode(qrcodeDiv, {
-              text: data.url,
-              width: 150,
-              height: 150,
-              colorDark: "#000000",
-              colorLight: "#ffffff",
-              correctLevel: QRCode.CorrectLevel.H
-            });
-            pdfLinkSection.classList.remove('hidden');
-            successContainer.classList.remove('hidden');
-            e.target.reset();
+    const formData = new FormData(form);
 
-               // Scroll down to the QR code section
-pdfLinkSection.scrollIntoView({ behavior: 'smooth' });
+    fetch('https://script.google.com/macros/s/AKfycby9ut2aVqZZMw7h-yQSrscUb-cXKY7oJ_66T4Sizeazm4183wH-jauCGAkd9wQgQ8Fe/exec', {
+      method: 'POST',
+      body: formData
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
+          document.getElementById('successMessage').textContent = 'Warranty certificate generated successfully!';
+          downloadLink.href = data.url;
+          qrcodeDiv.innerHTML = '';
+          new QRCode(qrcodeDiv, {
+            text: data.url,
+            width: 150,
+            height: 150,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+          });
 
-              
-          } else {
-            throw new Error(data.message || 'Unknown error');
+          pdfLinkSection.classList.remove('hidden');
+          successContainer.classList.remove('hidden');
+          form.reset();
+
+          // Re-apply store ID after reset
+          const storeId = sessionStorage.getItem('storeId');
+          if (storeId) {
+            storeIdInput.value = storeId;
           }
-        })
-        .catch(error => {
-          errorMessage.classList.remove('hidden');
-          errorMessage.textContent = 'An error occurred: ' + error.message;
-        })
-        .finally(() => {
-          loading.classList.add('hidden');
-        });
-    });
+
+          // Scroll into view
+          pdfLinkSection.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          throw new Error(data.message || 'Unknown error');
+        }
+      })
+      .catch(error => {
+        errorMessage.classList.remove('hidden');
+        errorMessage.textContent = 'An error occurred: ' + error.message;
+      })
+      .finally(() => {
+        loading.classList.add('hidden');
+      });
+  });
+});
