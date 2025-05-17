@@ -39,9 +39,17 @@
         }
 
         .store-id-display {
+            margin-bottom: 10px;
+        }
+
+        .store-id-label {
+            color: black;
+            font-weight: normal;
+        }
+
+        .store-id-value {
             color: red;
             font-weight: bold;
-            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -74,8 +82,12 @@
     <div class="container hidden" id="warrantySection">
         <img src="logo.png" alt="Refurwish Logo" class="logo" />
         <h1>Refurwish Shield Warranty Registration</h1>
-        <div class="store-id-display">Store ID: <span id="displayedStoreId"></span></div>
+        <div class="store-id-display"><span class="store-id-label">Store ID: </span><span class="store-id-value" id="displayedStoreId"></span></div>
         <form id="warrantyForm" novalidate autocomplete="off">
+            <div class="form-group hidden">
+                <label for="storeId">Store ID:</label>
+                <input type="text" id="storeId" name="storeId" value="" readonly />
+            </div>
             <div class="form-group">
                 <label for="customerName">Customer Name:</label>
                 <input type="text" id="customerName" name="customerName" placeholder="Enter customer's full name" autocomplete="off" required />
@@ -87,10 +99,6 @@
             <div class="form-group">
                 <label for="customerPhone">Customer Phone:</label>
                 <input type="tel" id="customerPhone" name="customerPhone" placeholder="Enter customer's phone number" autocomplete="off" required />
-            </div>
-            <div class="form-group hidden">
-                <label for="storeId">Store ID:</label>
-                <input type="text" id="storeId" name="storeId" value="" readonly />
             </div>
             <div class="form-group">
                 <label for="productName">Product Name:</label>
@@ -163,7 +171,7 @@
 
                 // Simulate login authentication (replace with your actual logic)
                 setTimeout(() => {
-                    if (storeId === 'RW00072' && password === 'password123') { // Example credentials
+                    if (storeId === 'RW00073' && password === 'password123') { // Example credentials
                         loginSection.classList.add('hidden');
                         warrantySection.classList.remove('hidden');
                         displayedStoreId.textContent = storeId;
@@ -192,7 +200,7 @@
                 const formData = new FormData(warrantyForm);
                 // The 'storeId' will be automatically included from the hidden input
 
-                // Simulate form submission to App Script (replace with your actual fetch/ajax call)
+                // Simulate form submission to App Script (replace with your actual App Script URL)
                 fetch('YOUR_APPSCRIPT_URL', { // Replace with your actual App Script URL
                     method: 'POST',
                     body: formData
