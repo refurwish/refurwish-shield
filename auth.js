@@ -1,59 +1,73 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const loginForm = document.getElementById('loginForm');
-    const loginButton = loginForm.querySelector('.submit-button'); // Get the login button
-    const loginError = document.getElementById('loginError');
-    const loginLoading = document.getElementById('loginLoading');
+  const loginForm = document.getElementById('loginForm');
+  const loginSection = document.getElementById('loginSection');
+  const warrantySection = document.getElementById('warrantySection');
+  const loginError = document.getElementById('loginError');
+  const loginLoading = document.getElementById('loginLoading');
+  const loginButton = loginForm.querySelector('.submit-button');
+  const displayedStoreId = document.getElementById('displayedStoreId');
+  const storeIdInput = document.getElementById('storeId');
+  const logoutButton = document.getElementById('logoutButton');
+  const warrantyForm = document.getElementById('warrantyForm');
 
-    loginForm.addEventListener('submit', function (e) {
-        e.preventDefault();
+  // Restore session if storeId is saved
+  const savedStoreId = sessionStorage.getItem('storeId');
+  if (savedStoreId) {
+    loginSection.classList.add('hidden');
+    warrantySection.classList.remove('hidden');
+    storeIdInput.value = savedStoreId;
+    displayedStoreId.textContent = savedStoreId;
+  }
 
-        // Hide any previous error
-        loginError.classList.add('hidden');
-        loginError.textContent = '';
+  // Handle login
+  loginForm.addEventListener('submit', function (e) {
+    e.preventDefault();
 
-        // Show the loading animation and hide the login button
-        loginLoading.classList.remove('hidden');
-        loginButton.classList.add('hidden'); // Hide the login button
+    loginError.classList.add('hidden');
+    loginError.textContent = '';
+    loginLoading.classList.remove('hidden');
+    loginButton.classList.add('hidden');
 
-        // Create a new FormData object from the form
-        const formData = new FormData(this); // `this` refers to the form being submitted
+    const formData = new FormData(loginForm);
+    formData.append('action', 'verifyLogin');
 
-        // Add the 'action' to the FormData (required by backend)
-        formData.append('action', 'verifyLogin');
+    fetch('https://script.google.com/macros/s/AKfycbwxhL6X17U5Fr9i7ze3SnqqURZalpVsWRfCZLrSh11tD3yDGqn2bB6SzLAcdo-rGbJs1w/exec', {
+      method: 'POST',
+      body: formData
+    })
+      .then(response => response.json())
+      .then(data => {
+        loginLoading.classList.add('hidden');
+        loginButton.classList.remove('hidden');
 
-        // Perform the fetch request using the POST method
-        fetch('https://script.google.com/macros/s/AKfycbwxhL6X17U5Fr9i7ze3SnqqURZalpVsWRfCZLrSh11tD3yDGqn2bB6SzLAcdo-rGbJs1w/exec', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            // Hide loading animation and show the login button again on completion
-            loginLoading.classList.add('hidden');
-            loginButton.classList.remove('hidden'); // Show the button again
+        if (data.status === 'success') {
+          const storeId = formData.get('storeId');
+          sessionStorage.setItem('storeId', storeId);
 
-            if (data.status === 'success') {
-                // Login successful
-                document.getElementById('loginSection').classList.add('hidden');
-                document.getElementById('warrantySection').classList.remove('hidden');
+          loginSection.classList.add('hidden');
+          warrantySection.classList.remove('hidden');
+          storeIdInput.value = storeId;
+          displayedStoreId.textContent = storeId;
+        } else {
+          loginError.textContent = 'Invalid Store ID or Password';
+          loginError.classList.remove('hidden');
+        }
+      })
+      .catch(err => {
+        loginLoading.classList.add('hidden');
+        loginButton.classList.remove('hidden');
+        loginError.textContent = 'An error occurred: ' + err.message;
+        loginError.classList.remove('hidden');
+      });
+  });
 
-                // Auto-fill Store ID in warranty form
-                const storeId = formData.get('storeId');
-                document.getElementById('storeId').value = storeId;
-            } else {
-                // Login failed
-                loginError.textContent = 'Invalid Store ID or Password';
-                loginError.classList.remove('hidden');
-            }
-        })
-        .catch(err => {
-            // Hide loading animation and show the login button again on error
-            loginLoading.classList.add('hidden');
-            loginButton.classList.remove('hidden'); // Show the button again
-
-            // Show error message
-            loginError.textContent = 'An error occurred: ' + err.message;
-            loginError.classList.remove('hidden');
-        });
-    });
+  // Handle logout
+  logoutButton.addEventListener('click', () => {
+    sessionStorage.removeItem('storeId');
+    warrantyForm.reset();
+    storeIdInput.value = '';
+    displayedStoreId.textContent = '';
+    warrantySection.classList.add('hidden');
+    loginSection.classList.remove('hidden');
+  });
 });
