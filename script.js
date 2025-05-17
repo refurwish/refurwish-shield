@@ -14,7 +14,7 @@
 
       const formData = new FormData(this);
 
-      fetch('https://script.google.com/macros/s/AKfycbzZa98mRP17OJSQcexujFtedgTenuiVI5NwOpMovy9kR_de02-ptyt6CxamK6ft27o/exec', {
+      fetch('https://script.google.com/macros/s/AKfycby9ut2aVqZZMw7h-yQSrscUb-cXKY7oJ_66T4Sizeazm4183wH-jauCGAkd9wQgQ8Fe/exec', {
         method: 'POST',
         body: formData
       })
