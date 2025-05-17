@@ -62,24 +62,23 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   // Handle logout
- 
-logoutButton.addEventListener('click', () => {
-  // Clear session storage
-  sessionStorage.removeItem('storeId');
+  logoutButton.addEventListener('click', () => {
+    // Clear session storage
+    sessionStorage.removeItem('storeId');
 
-  // Reset login form
-  loginForm.reset();
+    // Reset forms (manual reset for mobile autofill issues)
+    loginForm.reset();
+    warrantyForm.reset();
 
-  // Reset warranty form and UI
-  displayedStoreId.textContent = '';
-  storeIdInput.value = '';
-  warrantyForm.reset();
+    // Manually clear the form fields to prevent autofill issues on mobile
+    document.getElementById('loginStoreId').value = '';
+    document.getElementById('loginPassword').value = '';
+    storeIdInput.value = '';
+    displayedStoreId.textContent = '';
 
-  // Switch views
-  warrantySection.classList.add('hidden');
-  loginSection.classList.remove('hidden');
+    // Switch views
+    warrantySection.classList.add('hidden');
+    loginSection.classList.remove('hidden');
+  });
+
 });
-
-});
-
-
