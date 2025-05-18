@@ -90,16 +90,24 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
 
-    // Make a GET request to fetch data for the given date range
-    const url = `https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec?action=getReport&storeId=${storeId}&fromDate=${fromDate}&toDate=${toDate}`;
-    
-    fetch(url)
+    // Collect data to send in the request
+    const formData = new FormData();
+    formData.append('storeId', storeId);
+    formData.append('fromDate', fromDate);
+    formData.append('toDate', toDate);
+
+    // Make a POST request to fetch data for the date range
+    fetch('https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec?action=getReport', {
+      method: 'POST',
+      body: formData
+    })
       .then(response => response.json())
       .then(data => {
         if (data.status === 'success') {
           // Process and display the report data here (for example, in a table or list)
           console.log(data); // Displaying data in the console for now
           // You can display the data here based on your UI design
+          // For example, display the data in a table or another UI component
         } else {
           throw new Error(data.message || 'Unknown error');
         }
