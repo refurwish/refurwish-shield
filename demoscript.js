@@ -7,6 +7,14 @@ document.addEventListener('DOMContentLoaded', function () {
   const downloadLink = document.getElementById('downloadLink');
   const pdfLinkSection = document.getElementById('pdfLinkSection');
   const storeIdInput = document.getElementById('storeId');
+  
+  // Date range input fields
+  const fromDateInput = document.getElementById('fromDate');
+  const toDateInput = document.getElementById('toDate');
+
+  // Make sure to include the fromDate and toDate inputs in your form HTML
+  // <input type="date" id="fromDate" name="fromDate" required />
+  // <input type="date" id="toDate" name="toDate" required />
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();
@@ -17,6 +25,14 @@ document.addEventListener('DOMContentLoaded', function () {
     pdfLinkSection.classList.add('hidden');
 
     const formData = new FormData(form);
+
+    // Collecting fromDate and toDate from input fields
+    const fromDate = fromDateInput.value;
+    const toDate = toDateInput.value;
+
+    // Add these dates into the form data
+    formData.append('fromDate', fromDate);
+    formData.append('toDate', toDate);
 
     fetch('https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec', {
       method: 'POST',
@@ -61,4 +77,42 @@ document.addEventListener('DOMContentLoaded', function () {
         loading.classList.add('hidden');
       });
   });
+
+  // Function to fetch and display data based on date range
+  function fetchReportData() {
+    const storeId = storeIdInput.value;
+    const fromDate = fromDateInput.value;
+    const toDate = toDateInput.value;
+
+    if (!storeId || !fromDate || !toDate) {
+      errorMessage.classList.remove('hidden');
+      errorMessage.textContent = 'Please provide all required inputs (store ID, from date, and to date).';
+      return;
+    }
+
+    // Make a GET request to fetch data for the given date range
+    const url = `https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec?action=getReport&storeId=${storeId}&fromDate=${fromDate}&toDate=${toDate}`;
+    
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
+          // Process and display the report data here (for example, in a table or list)
+          console.log(data); // Displaying data in the console for now
+          // You can display the data here based on your UI design
+        } else {
+          throw new Error(data.message || 'Unknown error');
+        }
+      })
+      .catch(error => {
+        errorMessage.classList.remove('hidden');
+        errorMessage.textContent = 'An error occurred while fetching the report: ' + error.message;
+      });
+  }
+
+  // Trigger fetching report data when the user selects the date range
+  const reportButton = document.getElementById('getReportButton');
+  if (reportButton) {
+    reportButton.addEventListener('click', fetchReportData);
+  }
 });
