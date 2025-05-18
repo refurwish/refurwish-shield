@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Function to fetch and display data based on date range
     function fetchReportData() {
-        const storeId = storeIdInput.value; // Assuming store ID is still relevant for reports
+        const storeId = storeIdInput.value;
         const fromDate = fromDateInput.value;
         const toDate = toDateInput.value;
 
@@ -90,24 +90,23 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        // Collect data to send in the request
-        const formData = new FormData();
-        formData.append('storeId', storeId);
-        formData.append('fromDate', fromDate);
-        formData.append('toDate', toDate);
+        // Construct the URL with query parameters
+        const url = `https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec?action=getReport&storeId=${storeId}&fromDate=${fromDate}&toDate=${toDate}`;
 
-        // Make a POST request to fetch data for the date range
-        fetch('https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec?action=getReport', {
-            method: 'POST',
-            body: formData
+        // Make a GET request to fetch data for the date range
+        fetch(url, {
+            method: 'GET',
         })
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                // Process and display the report data here (for example, in a table or list)
-                console.log("Report Data:", data.reportData); // Assuming your backend returns reportData
-                // You will need to update your UI to display this data.
-                // For example, create a new div in your HTML to show the report.
+                // Process and display the report data here
+                console.log("Report Data:", data.reportData);
+                //  Update the UI to display the report data.  For example:
+                //  1. Create a new <div> in your HTML (e.g., <div id="reportContainer"></div>)
+                //  2.  Then, in this function, update that div's content:
+                //     document.getElementById('reportContainer').innerHTML = generateReportHTML(data.reportData);
+                //  3.  Create a function generateReportHTML() to format the data as HTML (table, list, etc.)
             } else {
                 throw new Error(data.message || 'Unknown error');
             }
@@ -117,12 +116,13 @@ document.addEventListener('DOMContentLoaded', function () {
             errorMessage.textContent = 'An error occurred while fetching the report: ' + error.message;
         });
     }
+
+    //  The openSideDrawer and closeSideDrawer functions are called from HTML.
+    window.openSideDrawer = function() {
+        document.getElementById("sideDrawer").style.width = "250px";
+    };
+
+    window.closeSideDrawer = function() {
+        document.getElementById("sideDrawer").style.width = "0";
+    };
 });
-
-function openSideDrawer() {
-    document.getElementById("sideDrawer").style.width = "250px";
-}
-
-function closeSideDrawer() {
-    document.getElementById("sideDrawer").style.width = "0";
-}
