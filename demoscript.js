@@ -1,128 +1,222 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const warrantyForm = document.getElementById('warrantyForm');
-    const loading = document.getElementById('loading');
-    const successContainer = document.getElementById('successContainer');
-    const errorMessage = document.getElementById('errorMessage');
-    const qrcodeDiv = document.getElementById('qrcode');
-    const downloadLink = document.getElementById('downloadLink');
-    const pdfLinkSection = document.getElementById('pdfLinkSection');
-    const storeIdInput = document.getElementById('storeId');
+  const warrantyForm = document.getElementById('warrantyForm');
+  const loading = document.getElementById('loading');
+  const successContainer = document.getElementById('successContainer');
+  const errorMessage = document.getElementById('errorMessage');
+  const qrcodeDiv = document.getElementById('qrcode');
+  const downloadLink = document.getElementById('downloadLink');
+  const pdfLinkSection = document.getElementById('pdfLinkSection');
+  const storeIdInput = document.getElementById('storeId');
 
-    // Date range form and input fields in the side drawer
-    const dateRangeForm = document.getElementById('dateRangeForm');
-    const fromDateInput = document.getElementById('fromDate');
-    const toDateInput = document.getElementById('toDate');
-    const getReportButton = document.getElementById('getReportButton'); // Get the "Get Report" button
+  const loginForm = document.getElementById('loginForm');
+  const loginSection = document.getElementById('loginSection');
+  const warrantySection = document.getElementById('warrantySection');
+  const mainApp = document.getElementById('mainApp');
+  const loginLoading = document.getElementById('loginLoading');
+  const loginError = document.getElementById('loginError');
+  const logoutButton = document.getElementById('logoutButton');
+  const logoutButtonDrawer = document.getElementById('logoutButtonDrawer');
+  const displayedStoreId = document.getElementById('displayedStoreId');
 
-    // Event listener for the warranty form submission (Generate Warranty)
-    warrantyForm.addEventListener('submit', function (e) {
-        e.preventDefault();
+  // Handle login
+  loginForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    loginLoading.classList.remove('hidden');
+    loginError.classList.add('hidden');
 
-        loading.classList.remove('hidden');
-        successContainer.classList.add('hidden');
-        errorMessage.classList.add('hidden');
-        pdfLinkSection.classList.add('hidden');
+    const storeId = document.getElementById('loginStoreId').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
 
-        const formData = new FormData(warrantyForm);
+    if (storeId && password) {
+      // Example hardcoded check - replace with real validation
+      if (password === 'admin123') {
+        localStorage.setItem('storeId', storeId);
+        storeIdInput.value = storeId;
+        displayedStoreId.textContent = storeId;
 
-        fetch('https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                document.getElementById('successMessage').textContent = 'Warranty certificate generated successfully!';
-                downloadLink.href = data.url;
-                qrcodeDiv.innerHTML = '';
-                new QRCode(qrcodeDiv, {
-                    text: data.url,
-                    width: 150,
-                    height: 150,
-                    colorDark: "#000000",
-                    colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.H
-                });
-
-                pdfLinkSection.classList.remove('hidden');
-                successContainer.classList.remove('hidden');
-                warrantyForm.reset();
-
-                // Re-apply store ID after reset
-                const storeId = sessionStorage.getItem('storeId');
-                if (storeId) {
-                    storeIdInput.value = storeId;
-                }
-
-                // Scroll into view
-                pdfLinkSection.scrollIntoView({ behavior: 'smooth' });
-            } else {
-                throw new Error(data.message || 'Unknown error');
-            }
-        })
-        .catch(error => {
-            errorMessage.classList.remove('hidden');
-            errorMessage.textContent = 'An error occurred: ' + error.message;
-        })
-        .finally(() => {
-            loading.classList.add('hidden');
-        });
-    });
-
-    // Event listener for the date range form submission (Get Report)
-    if (getReportButton) {
-        getReportButton.addEventListener('click', function (e) {
-            e.preventDefault(); // Prevent the default form submission
-            fetchReportData();
-            closeSideDrawer();
-        });
+        loginSection.classList.add('hidden');
+        mainApp.classList.remove('hidden');
+        warrantySection.classList.remove('hidden');
+      } else {
+        loginError.classList.remove('hidden');
+      }
     }
 
-    // Function to fetch and display data based on date range
-    function fetchReportData() {
-        const storeId = storeIdInput.value;
-        const fromDate = fromDateInput.value;
-        const toDate = toDateInput.value;
+    loginLoading.classList.add('hidden');
+  });
 
-        if (!storeId || !fromDate || !toDate) {
-            errorMessage.classList.remove('hidden');
-            errorMessage.textContent = 'Please provide all required inputs (store ID, from date, and to date).';
-            return;
+  // Handle logout (both buttons)
+  function handleLogout() {
+    localStorage.clear();
+    loginForm.reset();
+    warrantyForm.reset();
+    document.getElementById('sidebar').classList.add('hidden');
+    loginSection.classList.remove('hidden');
+    mainApp.classList.add('hidden');
+    successContainer.classList.add('hidden');
+    errorMessage.classList.add('hidden');
+    pdfLinkSection.classList.add('hidden');
+  }
+
+  logoutButton.addEventListener('click', handleLogout);
+  logoutButtonDrawer.addEventListener('click', handleLogout);
+
+  // Handle warranty form submission
+  warrantyForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    loading.classList.remove('hidden');
+    successContainer.classList.add('hidden');
+    errorMessage.classList.add('hidden');
+    pdfLinkSection.classList.add('hidden');
+
+    const formData = new FormData(warrantyForm);
+
+    fetch('https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec', {
+      method: 'POST',
+      body: formData
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
+          document.getElementById('successMessage').textContent = 'Warranty certificate generated successfully!';
+          downloadLink.href = data.url;
+          qrcodeDiv.innerHTML = '';
+          new QRCode(qrcodeDiv, {
+            text: data.url,
+            width: 150,
+            height: 150,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+          });
+
+          pdfLinkSection.classList.remove('hidden');
+          successContainer.classList.remove('hidden');
+          warrantyForm.reset();
+
+          const storeId = localStorage.getItem('storeId');
+          if (storeId) {
+            storeIdInput.value = storeId;
+          }
+
+          pdfLinkSection.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          throw new Error(data.message || 'Unknown error');
         }
+      })
+      .catch(error => {
+        errorMessage.classList.remove('hidden');
+        errorMessage.textContent = 'An error occurred: ' + error.message;
+      })
+      .finally(() => {
+        loading.classList.add('hidden');
+      });
+  });
 
-        // Construct the URL with query parameters
-        const url = `https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec?action=getReport&storeId=${storeId}&fromDate=${fromDate}&toDate=${toDate}`;
+  // Sidebar Navigation
+  window.toggleSidebar = function () {
+    document.getElementById("sidebar").classList.toggle("hidden");
+  };
 
-        // Make a GET request to fetch data for the date range
-        fetch(url, {
-            method: 'GET',
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                // Process and display the report data here
-                console.log("Report Data:", data.reportData);
-                //  Update the UI to display the report data.  For example:
-                //  1. Create a new <div> in your HTML (e.g., <div id="reportContainer"></div>)
-                //  2.  Then, in this function, update that div's content:
-                //     document.getElementById('reportContainer').innerHTML = generateReportHTML(data.reportData);
-                //  3.  Create a function generateReportHTML() to format the data as HTML (table, list, etc.)
-            } else {
-                throw new Error(data.message || 'Unknown error');
-            }
-        })
-        .catch(error => {
-            errorMessage.classList.remove('hidden');
-            errorMessage.textContent = 'An error occurred while fetching the report: ' + error.message;
-        });
+  window.showPage = function (pageId) {
+    const pages = document.querySelectorAll('.page-content');
+    pages.forEach(page => page.classList.add('hidden'));
+    document.getElementById(pageId).classList.remove('hidden');
+    document.getElementById("sidebar").classList.add("hidden");
+  };
+
+  // Fetch Submitted Data
+  window.fetchSubmittedData = function () {
+    const fromDate = document.getElementById('fromDate').value;
+    const toDate = document.getElementById('toDate').value;
+    google.script.run.withSuccessHandler(displaySubmittedData).getSubmittedData(fromDate, toDate);
+  };
+
+  window.displaySubmittedData = function (data) {
+    const container = document.getElementById('submittedData');
+    if (data && data.length > 0) {
+      let tableHtml = `
+        <table>
+          <thead>
+            <tr>
+              <th>Customer Name</th>
+              <th>Product Name</th>
+              <th>IMEI Number</th>
+              <th>Phone Purchase Date</th>
+              <th>Plan Option</th>
+              <th>Date Registered</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+      data.forEach(row => {
+        tableHtml += `
+          <tr>
+            <td>${row.customerName}</td>
+            <td>${row.productName}</td>
+            <td>${row.imeiNumber}</td>
+            <td>${row.purchaseDate}</td>
+            <td>${row.planOption}</td>
+            <td>${row.dateRegistered}</td>
+          </tr>
+        `;
+      });
+      tableHtml += `</tbody></table>`;
+      container.innerHTML = tableHtml;
+    } else {
+      container.innerHTML = "<p>No data found for the selected date range.</p>";
     }
+  };
 
-    //  The openSideDrawer and closeSideDrawer functions are called from HTML.
-    window.openSideDrawer = function() {
-        document.getElementById("sideDrawer").style.width = "250px";
-    };
+  // Fetch Financial Report
+  window.fetchFinancialReport = function () {
+    const fromDate = document.getElementById('fromDateReport').value;
+    const toDate = document.getElementById('toDateReport').value;
+    google.script.run.withSuccessHandler(displayFinancialReport).getFinancialReport(fromDate, toDate);
+  };
 
-    window.closeSideDrawer = function() {
-        document.getElementById("sideDrawer").style.width = "0";
-    };
+  window.displayFinancialReport = function (data) {
+    const container = document.getElementById('financialReport');
+    if (data && data.length > 0) {
+      let tableHtml = `
+        <table>
+          <thead>
+            <tr>
+              <th>Store ID</th>
+              <th>Total Sales</th>
+              <th>Total Warranty Fees</th>
+              <th>Revenue</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+      data.forEach(row => {
+        tableHtml += `
+          <tr>
+            <td>${row.storeId}</td>
+            <td>${row.totalSales}</td>
+            <td>${row.totalWarrantyFees}</td>
+            <td>${row.revenue}</td>
+            <td>${row.date}</td>
+          </tr>
+        `;
+      });
+      tableHtml += `</tbody></table>`;
+      container.innerHTML = tableHtml;
+    } else {
+      container.innerHTML = "<p>No financial data found for the selected date range.</p>";
+    }
+  };
+
+  // On page load, check if the user is already logged in
+  const storedStoreId = localStorage.getItem('storeId');
+  if (storedStoreId) {
+    storeIdInput.value = storedStoreId;
+    displayedStoreId.textContent = storedStoreId;
+    loginSection.classList.add('hidden');
+    mainApp.classList.remove('hidden');
+    warrantySection.classList.remove('hidden');
+  }
 });
