@@ -335,7 +335,7 @@
         <button onclick="fetchSubmittedData()">View Data</button>
     </div>
     <div id="submittedDataTable">
-        </div>
+    </div>
 </div>
 
 <div class="container hidden" id="financialReportSection">
@@ -360,383 +360,410 @@
         <button onclick="fetchFinancialReport()">View Report</button>
     </div>
     <div id="financialReportTable">
-        </div>
+    </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="auth.js"></script>
 <script>
     const hamburgerIcon = document.querySelectorAll('.hamburger-icon');
-const drawerOverlay = document.querySelectorAll('.drawer-overlay');
-const drawer = document.querySelectorAll('.drawer');
-const warrantyFormLink = document.querySelectorAll('#warrantyFormLink');
-const viewDataLink = document.querySelectorAll('#viewDataLink');
-const financialReportLink = document.querySelectorAll('#financialReportLink');
-const logoutButtonDrawer = document.querySelectorAll('.logout-button-drawer');
+    const drawerOverlay = document.querySelectorAll('.drawer-overlay');
+    const drawer = document.querySelectorAll('.drawer');
+    const warrantyFormLink = document.querySelectorAll('#warrantyFormLink');
+    const viewDataLink = document.querySelectorAll('#viewDataLink');
+    const financialReportLink = document.querySelectorAll('#financialReportLink');
+    const logoutButtonDrawer = document.querySelectorAll('.logout-button-drawer');
+    const logoutButtonViewData = document.querySelector('#logoutButtonViewData');  // Specific ID for View Data
+    const logoutButtonFinancial = document.querySelector('#logoutButtonFinancial'); //Specific ID
+    const warrantyFormLinkFinancial = document.querySelector('#warrantyFormLinkFinancial');
+    const viewDataLinkFinancial = document.querySelector('#viewDataLinkFinancial');
 
-const loginSection = document.getElementById('loginSection');
-const warrantySection = document.getElementById('warrantySection');
-const viewDataSection = document.getElementById('viewDataSection');
-const financialReportSection = document.getElementById('financialReportSection');
 
-hamburgerIcon.forEach((icon, index) => {
-    icon.addEventListener('click', () => {
-        drawer[index].classList.add('open');
-        drawerOverlay[index].classList.remove('hidden');
+    const loginSection = document.getElementById('loginSection');
+    const warrantySection = document.getElementById('warrantySection');
+    const viewDataSection = document.getElementById('viewDataSection');
+    const financialReportSection = document.getElementById('financialReportSection');
+
+    hamburgerIcon.forEach((icon, index) => {
+        icon.addEventListener('click', () => {
+            drawer[index].classList.add('open');
+            drawerOverlay[index].classList.remove('hidden');
+        });
     });
-});
 
-drawerOverlay.forEach((overlay, index) => {
-    overlay.addEventListener('click', () => {
+    drawerOverlay.forEach((overlay, index) => {
+        overlay.addEventListener('click', () => {
+            drawer[index].classList.remove('open');
+            overlay.classList.add('hidden');
+        });
+    });
+
+    function closeDrawer(index) {
         drawer[index].classList.remove('open');
-        overlay.classList.add('hidden');
+        drawerOverlay[index].classList.add('hidden');
+    }
+
+    // Event listeners for drawer navigation links
+    viewDataLink.forEach(link => {
+        link.addEventListener('click', (event) => {
+            event.preventDefault();
+            warrantySection.classList.add('hidden');
+            financialReportSection.classList.add('hidden');
+            viewDataSection.classList.remove('hidden');
+            closeDrawer(0);
+        });
     });
-});
 
-function closeDrawer(index) {
-    drawer[index].classList.remove('open');
-    drawerOverlay[index].classList.add('hidden');
-}
-
-// Event listeners for drawer navigation links
-viewDataLink.forEach(link => {
-    link.addEventListener('click', (event) => { // Add 'event' parameter
-        event.preventDefault(); // Prevent default link behavior
-        warrantySection.classList.add('hidden');
-        financialReportSection.classList.add('hidden');
-        viewDataSection.classList.remove('hidden');
-        closeDrawer(0);
+    financialReportLink.forEach(link => {
+        link.addEventListener('click', (event) => {
+            event.preventDefault();
+            warrantySection.classList.add('hidden');
+            viewDataSection.classList.add('hidden');
+            financialReportSection.classList.remove('hidden');
+            closeDrawer(0);
+        });
     });
-});
 
-financialReportLink.forEach(link => {
-    link.addEventListener('click', (event) => { // Add 'event' parameter
-        event.preventDefault(); // Prevent default link behavior
-        warrantySection.classList.add('hidden');
-        viewDataSection.classList.add('hidden');
-        financialReportSection.classList.remove('hidden');
-        closeDrawer(0);
+    warrantyFormLink.forEach(link => {
+        link.addEventListener('click', (event) => {
+            event.preventDefault();
+            viewDataSection.classList.add('hidden');
+            financialReportSection.classList.add('hidden');
+            warrantySection.classList.remove('hidden');
+            closeDrawer(0);
+        });
     });
-});
 
-warrantyFormLink.forEach(link => { // Added event listener for Warranty link
-    link.addEventListener('click', (event) => { // Add 'event' parameter
-        event.preventDefault(); // Prevent default link behavior
+    //logout buttons in each section
+    logoutButtonDrawer.forEach(button => {
+        button.addEventListener('click', () => {
+            logout();
+        });
+    });
+    logoutButtonViewData.addEventListener('click', () => {
+        logout();
+    });
+    logoutButtonFinancial.addEventListener('click', () => {
+        logout();
+    });
+
+    warrantyFormLinkFinancial.addEventListener('click', (event) => {
+        event.preventDefault();
         viewDataSection.classList.add('hidden');
         financialReportSection.classList.add('hidden');
         warrantySection.classList.remove('hidden');
         closeDrawer(0);
     });
-});
 
-logoutButtonDrawer.forEach(button => {
-    button.addEventListener('click', () => {
-        logout(); // Call the logout function from auth.js
+    viewDataLinkFinancial.addEventListener('click', (event) => {
+        event.preventDefault();
+        warrantySection.classList.add('hidden');
+        financialReportSection.classList.add('hidden');
+        viewDataSection.classList.remove('hidden');
+        closeDrawer(0);
     });
-});
 
 
-// --- Global Variables ---
-let storeId = null;
-let qrcode = null;
+    // --- Global Variables ---
+    let storeId = null;
+    let qrcode = null;
 
-// --- Functions ---
+    // --- Functions ---
 
-/**
- * Displays a message in the specified message container.
- * @param {string} containerId - The ID of the message container.
- * @param {string} message - The message to display.
- * @param {string} type - The type of message ('success', 'error', or null).
- */
-function showMessage(containerId, message, type = null) {
-    const container = document.getElementById(containerId);
-    container.textContent = message;
-    container.className = 'status-message'; // Reset class
-    if (type) {
-        container.classList.add(type);
-    }
-    container.classList.remove('hidden');
-}
-
-/**
- * Hides the specified message container.
- * @param {string} containerId - The ID of the message container.
- */
-function hideMessage(containerId) {
-    document.getElementById(containerId).classList.add('hidden');
-}
-
-/**
- * Initializes the QR code generator.
- */
-function initializeQRCode() {
-    qrcode = new QRCode(document.getElementById('qrcode'), {
-        width: 128,
-        height: 128,
-        colorDark: '#000000',
-        colorLight: '#ffffff',
-        correctLevel: QRCode.CorrectLevel.H,
-    });
-}
-
-/**
- * Updates the QR code with the given URL.
- * @param {string} url - The URL to encode in the QR code.
- */
-function updateQRCode(url) {
-    qrcode.clear();
-    qrcode.makeCode(url);
-}
-
-/**
- * Handles the form submission for warranty registration.
- * @param {Event} event - The form submission event.
- */
-function handleWarrantyFormSubmit(event) {
-    event.preventDefault();
-
-    const form = event.target;
-    if (!form.checkValidity()) {
-        form.reportValidity();
-        return;
+    /**
+     * Displays a message in the specified message container.
+     * @param {string} containerId - The ID of the message container.
+     * @param {string} message - The message to display.
+     * @param {string} type - The type of message ('success', 'error', or null).
+     */
+    function showMessage(containerId, message, type = null) {
+        const container = document.getElementById(containerId);
+        container.textContent = message;
+        container.className = 'status-message'; // Reset class
+        if (type) {
+            container.classList.add(type);
+        }
+        container.classList.remove('hidden');
     }
 
-    hideMessage('errorMessage');
-    showMessage('loading', 'Processing...');
-
-    const formData = new FormData(form);
-    const data = {};
-    formData.forEach((value, key) => {
-        data[key] = value;
-    });
-    data.storeId = storeId; // Add the store ID to the form data.
-
-    // Use Google Apps Script to process the form data
-    google.script.run
-        .withSuccessHandler((response) => {
-            hideMessage('loading');
-            if (response.status === 'success') {
-                showMessage('successContainer', 'Warranty certificate generated successfully!');
-                document.getElementById('pdfLinkSection').classList.remove('hidden');
-                document.getElementById('downloadLink').href = response.url;
-                updateQRCode(response.url);
-                form.reset(); // Clear the form
-            } else {
-                showMessage('errorMessage', response.message || 'An error occurred. Please try again.');
-            }
-        })
-        .withFailureHandler((error) => {
-            hideMessage('loading');
-            showMessage('errorMessage', error.message || 'An error occurred. Please try again.');
-            console.error(error);
-        })
-        .doPost(data);
-}
-
-/**
- * Fetches and displays submitted warranty data based on date range.
- */
-function fetchSubmittedData() {
-    const fromDate = document.getElementById('fromDateView').value;
-    const toDate = document.getElementById('toDateView').value;
-
-    if (!fromDate || !toDate) {
-        alert('Please select both From and To dates.');
-        return;
+    /**
+     * Hides the specified message container.
+     * @param {string} containerId - The ID of the message container.
+     */
+    function hideMessage(containerId) {
+        document.getElementById(containerId).classList.add('hidden');
     }
 
-    // Basic date validation (you can add more robust validation)
-    if (new Date(fromDate) > new Date(toDate)) {
-        alert('From date cannot be after To date.');
-        return;
-    }
-
-    showMessage('submittedDataTable', 'Fetching data...', null); // Use showMessage for consistent UI
-    google.script.run
-        .withSuccessHandler((data) => {
-            hideMessage('submittedDataTable');
-            displaySubmittedData(data);
-        })
-        .withFailureHandler((error) => {
-            hideMessage('submittedDataTable');
-            showMessage('submittedDataTable', 'Error fetching data: ' + error.message, 'error');
-            console.error(error);
-        })
-        .getSubmittedData(fromDate, toDate, storeId); // Pass storeId
-}
-
-/**
- * Displays the submitted warranty data in a table.
- * @param {Array<Array<string>>} data - The data to display.
- */
-function displaySubmittedData(data) {
-    const container = document.getElementById('submittedDataTable');
-    if (!data || data.length === 0) {
-        container.innerHTML = '<p>No data found for the selected date range.</p>';
-        return;
-    }
-
-    let html = '<table class="data-table"><thead><tr>';
-    // Use the first row of data (if available) as headers
-    const headers = ['Timestamp', 'Customer Name', 'Customer Email', 'Customer Phone', 'Store ID', 'Product Name', 'IMEI Number', 'Start Date', 'End Date', 'Purchase Date', 'Plan Option', 'Certificate URL'];
-    headers.forEach(header => {
-        html += `<th>${header}</th>`;
-    });
-    html += '</tr></thead><tbody>';
-
-    data.forEach(row => {
-        html += '<tr>';
-        row.forEach(cell => {
-            html += `<td>${cell}</td>`;
+    /**
+     * Initializes the QR code generator.
+     */
+    function initializeQRCode() {
+        qrcode = new QRCode(document.getElementById('qrcode'), {
+            width: 128,
+            height: 128,
+            colorDark: '#000000',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.H,
         });
-        html += '</tr>';
-    });
-    html += '</tbody></table>';
-    container.innerHTML = html;
-}
-
-/**
- * Fetches financial report data based on the date range.
- */
-function fetchFinancialReport() {
-    const fromDate = document.getElementById('fromDateFinancial').value;
-    const toDate = document.getElementById('toDateFinancial').value;
-
-    if (!fromDate || !toDate) {
-        alert('Please select both From and To dates.');
-        return;
     }
 
-    // Basic date validation
-    if (new Date(fromDate) > new Date(toDate)) {
-        alert('From date cannot be after To date.');
-        return;
-    }
-    showMessage('financialReportTable', 'Fetching report...', null);
-    google.script.run
-        .withSuccessHandler((reportData) => {
-            hideMessage('financialReportTable');
-            displayFinancialReport(reportData);
-        })
-        .withFailureHandler((error) => {
-            hideMessage('financialReportTable');
-            showMessage('financialReportTable', "Error fetching financial data", 'error');
-            console.error(error);
-        })
-        .getFinancialReport(fromDate, toDate, storeId);
-}
-
-/**
- * Displays the financial report in a table.
- * @param {object} reportData - An object containing the report data.
- */
-function displayFinancialReport(reportData) {
-    const container = document.getElementById('financialReportTable');
-    if (!reportData) {
-        container.innerHTML = "<p>No financial data found for the selected date range.</p>";
-        return;
+    /**
+     * Updates the QR code with the given URL.
+     * @param {string} url - The URL to encode in the QR code.
+     */
+    function updateQRCode(url) {
+        qrcode.clear();
+        qrcode.makeCode(url);
     }
 
-    let html = '<table class="data-table"><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody>';
-    for (const key in reportData) {
-        html += `<tr><td>${key}</td><td>${reportData[key]}</td></tr>`;
-    }
-    html += '</tbody></table>';
-    container.innerHTML = html;
-}
+    /**
+     * Handles the form submission for warranty registration.
+     * @param {Event} event - The form submission event.
+     */
+    function handleWarrantyFormSubmit(event) {
+        event.preventDefault();
 
-/**
- * Initializes the application.
- */
-function init() {
-    // Check if the user is logged in
-    google.script.run
-        .withSuccessHandler((user) => {
-            if (user) {
-                // User is logged in, show the warranty form and set the store ID
-                storeId = user.storeId;
-                document.getElementById('displayedStoreId').textContent = storeId;
-                loginSection.classList.add('hidden');
-                warrantySection.classList.remove('hidden');
-                initializeQRCode();
-                document.getElementById('warrantyForm').addEventListener('submit', handleWarrantyFormSubmit);
-            } else {
-                // User is not logged in, show the login form
+        const form = event.target;
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        hideMessage('errorMessage');
+        showMessage('loading', 'Processing...');
+
+        const formData = new FormData(form);
+        const data = {};
+        formData.forEach((value, key) => {
+            data[key] = value;
+        });
+        data.storeId = storeId; // Add the store ID to the form data.
+
+        // Use Google Apps Script to process the form data
+        google.script.run
+            .withSuccessHandler((response) => {
+                hideMessage('loading');
+                if (response.status === 'success') {
+                    showMessage('successContainer', 'Warranty certificate generated successfully!');
+                    document.getElementById('pdfLinkSection').classList.remove('hidden');
+                    document.getElementById('downloadLink').href = response.url;
+                    updateQRCode(response.url);
+                    form.reset(); // Clear the form
+                } else {
+                    showMessage('errorMessage', response.message || 'An error occurred. Please try again.');
+                }
+            })
+            .withFailureHandler((error) => {
+                hideMessage('loading');
+                showMessage('errorMessage', error.message || 'An error occurred. Please try again.');
+                console.error(error);
+            })
+            .doPost(data);
+    }
+
+    /**
+     * Fetches and displays submitted warranty data based on date range.
+     */
+    function fetchSubmittedData() {
+        const fromDate = document.getElementById('fromDateView').value;
+        const toDate = document.getElementById('toDateView').value;
+
+        if (!fromDate || !toDate) {
+            alert('Please select both From and To dates.');
+            return;
+        }
+
+        // Basic date validation (you can add more robust validation)
+        if (new Date(fromDate) > new Date(toDate)) {
+            alert('From date cannot be after To date.');
+            return;
+        }
+
+        showMessage('submittedDataTable', 'Fetching data...', null); // Use showMessage for consistent UI
+        google.script.run
+            .withSuccessHandler((data) => {
+                hideMessage('submittedDataTable');
+                displaySubmittedData(data);
+            })
+            .withFailureHandler((error) => {
+                hideMessage('submittedDataTable');
+                showMessage('submittedDataTable', 'Error fetching data: ' + error.message, 'error');
+                console.error(error);
+            })
+            .getSubmittedData(fromDate, toDate, storeId); // Pass storeId
+    }
+
+    /**
+     * Displays the submitted warranty data in a table.
+     * @param {Array<Array<string>>} data - The data to display.
+     */
+    function displaySubmittedData(data) {
+        const container = document.getElementById('submittedDataTable');
+        if (!data || data.length === 0) {
+            container.innerHTML = '<p>No data found for the selected date range.</p>';
+            return;
+        }
+
+        let html = '<table class="data-table"><thead><tr>';
+        // Use the first row of data (if available) as headers
+        const headers = ['Timestamp', 'Customer Name', 'Customer Email', 'Customer Phone', 'Store ID', 'Product Name', 'IMEI Number', 'Start Date', 'End Date', 'Purchase Date', 'Plan Option', 'Certificate URL'];
+        headers.forEach(header => {
+            html += `<th>${header}</th>`;
+        });
+        html += '</tr></thead><tbody>';
+
+        data.forEach(row => {
+            html += '<tr>';
+            row.forEach(cell => {
+                html += `<td>${cell}</td>`;
+            });
+            html += '</tr>';
+        });
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    }
+
+    /**
+     * Fetches financial report data based on the date range.
+     */
+    function fetchFinancialReport() {
+        const fromDate = document.getElementById('fromDateFinancial').value;
+        const toDate = document.getElementById('toDateFinancial').value;
+
+        if (!fromDate || !toDate) {
+            alert('Please select both From and To dates.');
+            return;
+        }
+
+        // Basic date validation
+        if (newDate(fromDate) > new Date(toDate)) {
+            alert('From date cannot be after To date.');
+            return;
+        }
+        showMessage('financialReportTable', 'Fetching report...', null);
+        google.script.run
+            .withSuccessHandler((reportData) => {
+                hideMessage('financialReportTable');
+                displayFinancialReport(reportData);
+            })
+            .withFailureHandler((error) => {
+                hideMessage('financialReportTable');
+                showMessage('financialReportTable', "Error fetching financial data", 'error');
+                console.error(error);
+            })
+            .getFinancialReport(fromDate, toDate, storeId);
+    }
+
+    /**
+     * Displays the financial report in a table.
+     * @param {object} reportData - An object containing the report data.
+     */
+    function displayFinancialReport(reportData) {
+        const container = document.getElementById('financialReportTable');
+        if (!reportData) {
+            container.innerHTML = "<p>No financial data found for the selected date range.</p>";
+            return;
+        }
+
+        let html = '<table class="data-table"><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody>';
+        for (const key in reportData) {
+            html += `<tr><td>${key}</td><td>${reportData[key]}</td></tr>`;
+        }
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    }
+
+    /**
+     * Initializes the application.
+     */
+    function init() {
+        // Check if the user is logged in
+        google.script.run
+            .withSuccessHandler((user) => {
+                if (user) {
+                    // User is logged in, show the warranty form and set the store ID
+                    storeId = user.storeId;
+                    document.getElementById('displayedStoreId').textContent = storeId;
+                    loginSection.classList.add('hidden');
+                    warrantySection.classList.remove('hidden');
+                    initializeQRCode();
+                    document.getElementById('warrantyForm').addEventListener('submit', handleWarrantyFormSubmit);
+                } else {
+                    // User is not logged in, show the login form
+                    loginSection.classList.remove('hidden');
+                    document.getElementById('loginForm').addEventListener('submit', handleLoginFormSubmit);
+                }
+            })
+            .withFailureHandler((error) => {
+                showMessage('loginError', error.message || 'Failed to initialize application.');
+                console.error(error);
+            })
+            .getUser();
+    }
+
+    // --- Event Listeners ---
+
+    /**
+     * Handles the login form submission.
+     * @param {Event} event - The form submission event.
+     */
+    function handleLoginFormSubmit(event) {
+        event.preventDefault();
+
+        const form = event.target;
+        const storeId = form.loginStoreId.value;
+        const password = form.loginPassword.value;
+
+        hideMessage('loginError');
+        showMessage('loginLoading', 'Logging in, please wait...');
+
+        google.script.run
+            .withSuccessHandler((user) => {
+                hideMessage('loginLoading');
+                if (user) {
+                    // Login successful, show the warranty form and set the store ID
+                    storeId = user.storeId;
+                    document.getElementById('displayedStoreId').textContent = storeId;
+                    loginSection.classList.add('hidden');
+                    warrantySection.classList.remove('hidden');
+                    initializeQRCode();
+                    document.getElementById('warrantyForm').addEventListener('submit', handleWarrantyFormSubmit);
+                } else {
+                    showMessage('loginError', 'Invalid Store ID or Password');
+                }
+            })
+            .withFailureHandler((error) => {
+                hideMessage('loginLoading');
+                showMessage('loginError', error.message || 'An error occurred during login.');
+                console.error(error);
+            })
+            .login(storeId, password);
+    }
+
+
+
+    /**
+     * Logs the user out.
+     */
+    function logout() {
+        google.script.run
+            .withSuccessHandler(() => {
+                // Clear the store ID and show the login form
+                storeId = null;
                 loginSection.classList.remove('hidden');
-                document.getElementById('loginForm').addEventListener('submit', handleLoginFormSubmit);
-            }
-        })
-        .withFailureHandler((error) => {
-            showMessage('loginError', error.message || 'Failed to initialize application.');
-            console.error(error);
-        })
-        .getUser();
-}
+                warrantySection.classList.add('hidden');
+                viewDataSection.classList.add('hidden');
+                financialReportSection.classList.add('hidden');
+                document.getElementById('loginForm').reset();
+            })
+            .withFailureHandler((error) => {
+                alert('Failed to log out. Please try again.');
+                console.error(error);
+            })
+            .logout();
+    }
 
-// --- Event Listeners ---
-
-/**
- * Handles the login form submission.
- * @param {Event} event - The form submission event.
- */
-function handleLoginFormSubmit(event) {
-    event.preventDefault();
-
-    const form = event.target;
-    const storeId = form.loginStoreId.value;
-    const password = form.loginPassword.value;
-
-    hideMessage('loginError');
-    showMessage('loginLoading', 'Logging in, please wait...');
-
-    google.script.run
-        .withSuccessHandler((user) => {
-            hideMessage('loginLoading');
-            if (user) {
-                // Login successful, show the warranty form and set the store ID
-                storeId = user.storeId;
-                document.getElementById('displayedStoreId').textContent = storeId;
-                loginSection.classList.add('hidden');
-                warrantySection.classList.remove('hidden');
-                initializeQRCode();
-                document.getElementById('warrantyForm').addEventListener('submit', handleWarrantyFormSubmit);
-            } else {
-                showMessage('loginError', 'Invalid Store ID or Password');
-            }
-        })
-        .withFailureHandler((error) => {
-            hideMessage('loginLoading');
-            showMessage('loginError', error.message || 'An error occurred during login.');
-            console.error(error);
-        })
-        .login(storeId, password);
-}
-
-
-
-/**
- * Logs the user out.
- */
-function logout() {
-    google.script.run
-        .withSuccessHandler(() => {
-            // Clear the store ID and show the login form
-            storeId = null;
-            loginSection.classList.remove('hidden');
-            warrantySection.classList.add('hidden');
-            viewDataSection.classList.add('hidden');
-            financialReportSection.classList.add('hidden');
-            document.getElementById('loginForm').reset();
-        })
-        .withFailureHandler((error) => {
-            alert('Failed to log out. Please try again.');
-            console.error(error);
-        })
-        .logout();
-}
-
-// --- Initialize ---
-window.onload = init;
+    // --- Initialize ---
+    window.onload = init;
 </script>
 </body>
 </html>
