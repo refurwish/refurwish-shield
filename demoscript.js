@@ -16,6 +16,15 @@ document.addEventListener('DOMContentLoaded', function () {
   // <input type="date" id="fromDate" name="fromDate" required />
   // <input type="date" id="toDate" name="toDate" required />
 
+  // Handle opening and closing of the date range drawer
+  document.getElementById("openDrawerButton").addEventListener("click", function() {
+    document.getElementById("dateRangeDrawer").style.display = "flex";
+  });
+
+  document.getElementById("closeDrawerButton").addEventListener("click", function() {
+    document.getElementById("dateRangeDrawer").style.display = "none";
+  });
+
   form.addEventListener('submit', function (e) {
     e.preventDefault();
 
