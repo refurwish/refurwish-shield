@@ -22,16 +22,12 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-    .hidden {
-      display: none;
-    }
+    .hidden { display: none; }
     .status-message {
       margin-top: 15px;
       font-weight: bold;
     }
-    .status-message.error {
-      color: red;
-    }
+    .status-message.error { color: red; }
     .store-id-display {
       margin-bottom: 10px;
     }
@@ -44,22 +40,20 @@
       font-weight: bold;
     }
     .logout-button {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background-color: #f44336;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    cursor: pointer;
-    border-radius: 4px;
-    z-index: 10;
-}
-
-.logout-button:hover {
-    background-color: #d32f2f;
-}
-
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: #f44336;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      cursor: pointer;
+      border-radius: 4px;
+      z-index: 10;
+    }
+    .logout-button:hover {
+      background-color: #d32f2f;
+    }
   </style>
 </head>
 <body>
@@ -89,9 +83,8 @@
 
 <!-- WARRANTY FORM SECTION -->
 <div class="container hidden" id="warrantySection">
-    <button class="logout-button" id="logoutButton">Logout</button>
+  <button class="logout-button" id="logoutButton">Logout</button>
   <img src="logo.png" alt="Refurwish Logo" class="logo" />
-
   <h1>Refurwish Shield Warranty Registration</h1>
 
   <div class="store-id-display">
@@ -100,10 +93,8 @@
   </div>
 
   <form id="warrantyForm" novalidate autocomplete="off">
-    <div class="form-group hidden">
-      <label for="storeId">Store ID:</label>
-      <input type="text" id="storeId" name="storeId" value="" readonly />
-    </div>
+    <input type="hidden" id="storeId" name="storeId" value="" readonly />
+
     <div class="form-group">
       <label for="customerName">Customer Name:</label>
       <input type="text" id="customerName" name="customerName" placeholder="Enter customer's full name" required />
@@ -132,16 +123,16 @@
       <label for="planOption">Plan Option:</label>
       <select id="planOption" name="planOption" required>
         <option value="">-- Select Plan Option --</option>
-        <option value="under_15000" data-price="699">Under ₹15,000 (₹699)</option>
-        <option value="15001_25000" data-price="799">₹15,001 - ₹25,000 (₹799)</option>
-        <option value="25001_35000" data-price="899">₹25,001 - ₹35,000 (₹899)</option>
-        <option value="35001_45000" data-price="999">₹35,001 - ₹45,000 (₹999)</option>
-        <option value="45001_60000" data-price="1299">₹45,001 - ₹60,000 (₹1299)</option>
-        <option value="60001_75000" data-price="1599">₹60,001 - ₹75,000 (₹1599)</option>
-        <option value="75001_100000" data-price="1999">₹75,001 - ₹1,00,000 (₹1999)</option>
-        <option value="100001_150000" data-price="2499">₹1,00,001 - ₹1,50,000 (₹2499)</option>
-        <option value="150001_200000" data-price="2999">₹1,50,001 - ₹2,00,000 (₹2999)</option>
-        <option value="200001_250000" data-price="3499">₹2,00,001 - ₹2,50,000 (₹3499)</option>
+        <option value="under_15000">Under ₹15,000 (₹699)</option>
+        <option value="15001_25000">₹15,001 - ₹25,000 (₹799)</option>
+        <option value="25001_35000">₹25,001 - ₹35,000 (₹899)</option>
+        <option value="35001_45000">₹35,001 - ₹45,000 (₹999)</option>
+        <option value="45001_60000">₹45,001 - ₹60,000 (₹1299)</option>
+        <option value="60001_75000">₹60,001 - ₹75,000 (₹1599)</option>
+        <option value="75001_100000">₹75,001 - ₹1,00,000 (₹1999)</option>
+        <option value="100001_150000">₹1,00,001 - ₹1,50,000 (₹2499)</option>
+        <option value="150001_200000">₹1,50,001 - ₹2,00,000 (₹2999)</option>
+        <option value="200001_250000">₹2,00,001 - ₹2,50,000 (₹3499)</option>
       </select>
     </div>
 
