@@ -4,7 +4,7 @@
     * This file handles user authentication (login and logout) using Google Apps Script.
     */
 
-   const appsScriptUrl = 'YOUR_APPS_SCRIPT_URL'; // Replace with your Apps Script URL
+   const appsScriptUrl = 'https://script.google.com/macros/s/AKfycbwxhL6X17U5Fr9i7ze3SnqqURZalpVsWRfCZLrSh11tD3yDGqn2bB6SzLAcdo-rGbJs1w/exec'; // Replace with your Apps Script URL
 
    // --- Helper Functions ---
 
