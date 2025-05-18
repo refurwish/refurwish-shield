@@ -8,58 +8,30 @@ document.addEventListener('DOMContentLoaded', function () {
   const pdfLinkSection = document.getElementById('pdfLinkSection');
   const storeIdInput = document.getElementById('storeId');
 
-  const loginForm = document.getElementById('loginForm');
-  const loginSection = document.getElementById('loginSection');
-  const warrantySection = document.getElementById('warrantySection');
-  const mainApp = document.getElementById('mainApp');
-  const loginLoading = document.getElementById('loginLoading');
-  const loginError = document.getElementById('loginError');
-  const logoutButton = document.getElementById('logoutButton');
-  const logoutButtonDrawer = document.getElementById('logoutButtonDrawer');
-  const displayedStoreId = document.getElementById('displayedStoreId');
-
-  // Handle login
-  loginForm.addEventListener('submit', function (e) {
-    e.preventDefault();
-    loginLoading.classList.remove('hidden');
-    loginError.classList.add('hidden');
-
-    const storeId = document.getElementById('loginStoreId').value.trim();
-    const password = document.getElementById('loginPassword').value.trim();
-
-    if (storeId && password) {
-      // Example hardcoded check - replace with real validation
-      if (password === 'admin123') {
-        localStorage.setItem('storeId', storeId);
-        storeIdInput.value = storeId;
-        displayedStoreId.textContent = storeId;
-
-        loginSection.classList.add('hidden');
-        mainApp.classList.remove('hidden');
-        warrantySection.classList.remove('hidden');
-      } else {
-        loginError.classList.remove('hidden');
-      }
-    }
-
-    loginLoading.classList.add('hidden');
-  });
+  // Removed all login section-related elements:
+  // const loginForm = document.getElementById('loginForm');
+  // const loginSection = document.getElementById('loginSection');
+  // const warrantySection = document.getElementById('warrantySection');
+  // const mainApp = document.getElementById('mainApp');
+  // const loginLoading = document.getElementById('loginLoading');
+  // const loginError = document.getElementById('loginError');
+  // const logoutButton = document.getElementById('logoutButton');
+  // const logoutButtonDrawer = document.getElementById('logoutButtonDrawer');
+  // const displayedStoreId = document.getElementById('displayedStoreId');
 
   // Handle logout (both buttons)
   function handleLogout() {
     localStorage.clear();
-    loginForm.reset();
     warrantyForm.reset();
     document.getElementById('sidebar').classList.add('hidden');
-    loginSection.classList.remove('hidden');
-    mainApp.classList.add('hidden');
     successContainer.classList.add('hidden');
     errorMessage.classList.add('hidden');
     pdfLinkSection.classList.add('hidden');
   }
 
-  logoutButton.addEventListener('click', handleLogout);
-  logoutButtonDrawer.addEventListener('click', handleLogout);
+  // Removed logout buttons because login functionality is removed
+  // logoutButton.addEventListener('click', handleLogout);
+  // logoutButtonDrawer.addEventListener('click', handleLogout);
 
   // Handle warranty form submission
   warrantyForm.addEventListener('submit', function (e) {
@@ -215,8 +187,9 @@ document.addEventListener('DOMContentLoaded', function () {
   if (storedStoreId) {
     storeIdInput.value = storedStoreId;
     displayedStoreId.textContent = storedStoreId;
-    loginSection.classList.add('hidden');
-    mainApp.classList.remove('hidden');
-    warrantySection.classList.remove('hidden');
+    // Removed login section toggle
+    // loginSection.classList.add('hidden');
+    // mainApp.classList.remove('hidden');
+    // warrantySection.classList.remove('hidden');
   }
 });
