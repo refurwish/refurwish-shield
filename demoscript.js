@@ -12,8 +12,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const dateRangeForm = document.getElementById('dateRangeForm');
     const fromDateInput = document.getElementById('fromDate');
     const toDateInput = document.getElementById('toDate');
+    const getReportButton = document.getElementById('getReportButton'); // Get the "Get Report" button
 
-    // Event listener for the warranty form submission
+    // Event listener for the warranty form submission (Generate Warranty)
     warrantyForm.addEventListener('submit', function (e) {
         e.preventDefault();
 
@@ -68,12 +69,14 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Event listener for the date range form submission in the side drawer
-    dateRangeForm.addEventListener('submit', function (e) {
-        e.preventDefault();
-        fetchReportData(); // Call the function to fetch and display the report
-        closeSideDrawer(); // Close the side drawer after submitting the date range
-    });
+    // Event listener for the date range form submission (Get Report)
+    if (getReportButton) {
+        getReportButton.addEventListener('click', function (e) {
+            e.preventDefault(); // Prevent the default form submission
+            fetchReportData();
+            closeSideDrawer();
+        });
+    }
 
     // Function to fetch and display data based on date range
     function fetchReportData() {
@@ -104,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Process and display the report data here (for example, in a table or list)
                 console.log("Report Data:", data.reportData); // Assuming your backend returns reportData
                 // You will need to update your UI to display this data.
-                // For example, you might create a new div in your HTML to show the report.
+                // For example, create a new div in your HTML to show the report.
             } else {
                 throw new Error(data.message || 'Unknown error');
             }
@@ -114,8 +117,6 @@ document.addEventListener('DOMContentLoaded', function () {
             errorMessage.textContent = 'An error occurred while fetching the report: ' + error.message;
         });
     }
-
-    // The open and close side drawer functions are now in the HTML
 });
 
 function openSideDrawer() {
