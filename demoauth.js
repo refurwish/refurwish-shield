@@ -9,7 +9,10 @@ document.addEventListener('DOMContentLoaded', function () {
   const storeIdInput = document.getElementById('storeId');
   const logoutButton = document.getElementById('logoutButton');
   const warrantyForm = document.getElementById('warrantyForm');
-
+  const getReportButton = document.getElementById('getReportButton');
+  const fromDateInput = document.getElementById('fromDate');
+  const toDateInput = document.getElementById('toDate');
+  
   // Restore session if storeId is saved
   const savedStoreId = sessionStorage.getItem('storeId');
   if (savedStoreId) {
@@ -81,4 +84,45 @@ document.addEventListener('DOMContentLoaded', function () {
     loginSection.classList.remove('hidden');
   });
 
+  // Handle report generation based on date range
+  getReportButton.addEventListener('click', function () {
+    const fromDate = fromDateInput.value;
+    const toDate = toDateInput.value;
+
+    // Check if both dates are provided
+    if (!fromDate || !toDate) {
+      alert('Please select both "From Date" and "To Date"!');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('action', 'generateReport');
+    formData.append('storeId', storeIdInput.value);
+    formData.append('fromDate', fromDate);
+    formData.append('toDate', toDate);
+
+    // Show loading spinner while fetching data
+    const loadingMessage = document.getElementById('loading');
+    loadingMessage.classList.remove('hidden');
+
+    fetch('https://script.google.com/macros/s/AKfycbwxhL6X17U5Fr9i7ze3SnqqURZalpVsWRfCZLrSh11tD3yDGqn2bB6SzLAcdo-rGbJs1w/exec', {
+      method: 'POST',
+      body: formData
+    })
+      .then(response => response.json())
+      .then(data => {
+        loadingMessage.classList.add('hidden');
+
+        if (data.status === 'success') {
+          // Process the report data (you may need to customize this part)
+          alert('Report generated successfully!');
+        } else {
+          alert('Error generating report: ' + data.message);
+        }
+      })
+      .catch(err => {
+        loadingMessage.classList.add('hidden');
+        alert('An error occurred: ' + err.message);
+      });
+  });
 });
