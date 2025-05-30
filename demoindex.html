@@ -22,55 +22,44 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-    .hidden { display: none; }
+    .hidden {
+      display: none;
+    }
     .status-message {
       margin-top: 15px;
       font-weight: bold;
     }
-    .status-message.error { color: red; }
+    .status-message.error {
+      color: red;
+    }
     .store-id-display {
       margin-bottom: 10px;
     }
-    .store-id-label { color: black; font-weight: normal; }
-    .store-id-value { color: red; font-weight: bold; }
+    .store-id-label {
+      color: black;
+      font-weight: normal;
+    }
+    .store-id-value {
+      color: red;
+      font-weight: bold;
+    }
     .logout-button {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background-color: #f44336;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      cursor: pointer;
-      border-radius: 4px;
-      z-index: 10;
-    }
-    .logout-button:hover { background-color: #d32f2f; }
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    z-index: 10;
+}
 
-    .sidebar {
-      height: 100%;
-      width: 250px;
-      position: fixed;
-      z-index: 1000;
-      top: 0;
-      left: 0;
-      background-color: #111;
-      overflow-x: hidden;
-      padding-top: 60px;
-    }
-    .sidebar a {
-      padding: 10px 15px;
-      text-decoration: none;
-      font-size: 18px;
-      color: #fff;
-      display: block;
-    }
-    .sidebar .closebtn {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      font-size: 30px;
-    }
+.logout-button:hover {
+    background-color: #d32f2f;
+}
+
   </style>
 </head>
 <body>
@@ -98,114 +87,81 @@
   </form>
 </div>
 
-<!-- MAIN APP PAGES -->
-<div class="hidden" id="mainApp">
+<!-- WARRANTY FORM SECTION -->
+<div class="container hidden" id="warrantySection">
+    <button class="logout-button" id="logoutButton">Logout</button>
+  <img src="logo.png" alt="Refurwish Logo" class="logo" />
 
-  <!-- Hamburger Icon -->
-  <span style="font-size:30px;cursor:pointer" onclick="toggleSidebar()">&#9776;</span>
+  <h1>Refurwish Shield Warranty Registration</h1>
 
-  <!-- Sidebar Navigation -->
-  <div id="sidebar" class="sidebar hidden">
-    <a href="javascript:void(0)" class="closebtn" onclick="toggleSidebar()">&times;</a>
-    <a href="#" onclick="showPage('warrantySection')">Warranty Registration</a>
-    <a href="#" onclick="showPage('viewSubmittedData')">View Submitted Data</a>
-    <a href="#" onclick="showPage('trackFinancialReport')">Track Financial Report</a>
-    <a href="#" id="logoutButtonDrawer">Logout</a>
+  <div class="store-id-display">
+    <span class="store-id-label">Store ID: </span>
+    <span class="store-id-value" id="displayedStoreId"></span>
   </div>
 
-  <!-- WARRANTY FORM SECTION -->
-  <div class="container page-content" id="warrantySection">
-    <button class="logout-button" id="logoutButton">Logout</button>
-    <img src="logo.png" alt="Refurwish Logo" class="logo" />
-    <h1>Refurwish Shield Warranty Registration</h1>
-
-    <div class="store-id-display">
-      <span class="store-id-label">Store ID: </span>
-      <span class="store-id-value" id="displayedStoreId"></span>
+  <form id="warrantyForm" novalidate autocomplete="off">
+    <div class="form-group hidden">
+      <label for="storeId">Store ID:</label>
+      <input type="text" id="storeId" name="storeId" value="" readonly />
+    </div>
+    <div class="form-group">
+      <label for="customerName">Customer Name:</label>
+      <input type="text" id="customerName" name="customerName" placeholder="Enter customer's full name" required />
+    </div>
+    <div class="form-group">
+      <label for="customerEmail">Customer Email:</label>
+      <input type="email" id="customerEmail" name="customerEmail" placeholder="Enter customer's email address" required />
+    </div>
+    <div class="form-group">
+      <label for="customerPhone">Customer Phone:</label>
+      <input type="tel" id="customerPhone" name="customerPhone" placeholder="Enter customer's phone number" required />
+    </div>
+    <div class="form-group">
+      <label for="productName">Product Name:</label>
+      <input type="text" id="productName" name="productName" placeholder="Enter the product name" required />
+    </div>
+    <div class="form-group">
+      <label for="imeiNumber">IMEI Number:</label>
+      <input type="text" id="imeiNumber" name="imeiNumber" placeholder="Enter the product's IMEI number" required />
+    </div>
+    <div class="form-group">
+      <label for="purchaseDate">Phone Purchase Date:</label>
+      <input type="date" id="purchaseDate" name="purchaseDate" required />
+    </div>
+    <div class="form-group">
+      <label for="planOption">Plan Option:</label>
+      <select id="planOption" name="planOption" required>
+        <option value="">-- Select Plan Option --</option>
+        <option value="under_15000" data-price="699">Under ₹15,000 (₹699)</option>
+        <option value="15001_25000" data-price="799">₹15,001 - ₹25,000 (₹799)</option>
+        <option value="25001_35000" data-price="899">₹25,001 - ₹35,000 (₹899)</option>
+        <option value="35001_45000" data-price="999">₹35,001 - ₹45,000 (₹999)</option>
+        <option value="45001_60000" data-price="1299">₹45,001 - ₹60,000 (₹1299)</option>
+        <option value="60001_75000" data-price="1599">₹60,001 - ₹75,000 (₹1599)</option>
+        <option value="75001_100000" data-price="1999">₹75,001 - ₹1,00,000 (₹1999)</option>
+        <option value="100001_150000" data-price="2499">₹1,00,001 - ₹1,50,000 (₹2499)</option>
+        <option value="150001_200000" data-price="2999">₹1,50,001 - ₹2,00,000 (₹2999)</option>
+        <option value="200001_250000" data-price="3499">₹2,00,001 - ₹2,50,000 (₹3499)</option>
+      </select>
     </div>
 
-    <form id="warrantyForm" novalidate autocomplete="off">
-      <div class="form-group hidden">
-        <label for="storeId">Store ID:</label>
-        <input type="text" id="storeId" name="storeId" value="" readonly />
-      </div>
-      <div class="form-group">
-        <label for="customerName">Customer Name:</label>
-        <input type="text" id="customerName" name="customerName" placeholder="Enter customer's full name" required />
-      </div>
-      <div class="form-group">
-        <label for="customerEmail">Customer Email:</label>
-        <input type="email" id="customerEmail" name="customerEmail" placeholder="Enter customer's email address" required />
-      </div>
-      <div class="form-group">
-        <label for="customerPhone">Customer Phone:</label>
-        <input type="tel" id="customerPhone" name="customerPhone" placeholder="Enter customer's phone number" required />
-      </div>
-      <div class="form-group">
-        <label for="productName">Product Name:</label>
-        <input type="text" id="productName" name="productName" placeholder="Enter the product name" required />
-      </div>
-      <div class="form-group">
-        <label for="imeiNumber">IMEI Number:</label>
-        <input type="text" id="imeiNumber" name="imeiNumber" placeholder="Enter the product's IMEI number" required />
-      </div>
-      <div class="form-group">
-        <label for="purchaseDate">Phone Purchase Date:</label>
-        <input type="date" id="purchaseDate" name="purchaseDate" required />
-      </div>
-      <div class="form-group">
-        <label for="planOption">Plan Option:</label>
-        <select id="planOption" name="planOption" required>
-          <option value="">-- Select Plan Option --</option>
-          <option value="under_15000" data-price="699">Under ₹15,000 (₹699)</option>
-          <option value="15001_25000" data-price="799">₹15,001 - ₹25,000 (₹799)</option>
-          <option value="25001_35000" data-price="899">₹25,001 - ₹35,000 (₹899)</option>
-          <option value="35001_45000" data-price="999">₹35,001 - ₹45,000 (₹999)</option>
-          <option value="45001_60000" data-price="1299">₹45,001 - ₹60,000 (₹1299)</option>
-          <option value="60001_75000" data-price="1599">₹60,001 - ₹75,000 (₹1599)</option>
-          <option value="75001_100000" data-price="1999">₹75,001 - ₹1,00,000 (₹1999)</option>
-          <option value="100001_150000" data-price="2499">₹1,00,001 - ₹1,50,000 (₹2499)</option>
-          <option value="150001_200000" data-price="2999">₹1,50,001 - ₹2,00,000 (₹2999)</option>
-          <option value="200001_250000" data-price="3499">₹2,00,001 - ₹2,50,000 (₹3499)</option>
-        </select>
-      </div>
+    <button type="submit" class="submit-button">Generate Warranty Certificate</button>
 
-      <button type="submit" class="submit-button">Generate Warranty Certificate</button>
+    <div id="loading" class="status-message hidden">Processing...</div>
 
-      <div id="loading" class="status-message hidden">Processing...</div>
-
-      <div id="successContainer" class="status-message hidden">
-        <p id="successMessage">Warranty certificate generated successfully!</p>
-        <div id="pdfLinkSection" class="qrcode-container hidden">
-          <p><strong>Scan QR to view certificate:</strong></p>
-          <div id="qrcode"></div>
-          <p><a id="downloadLink" href="#" target="_blank">View PDF Certificate</a></p>
-        </div>
+    <div id="successContainer" class="status-message hidden">
+      <p id="successMessage">Warranty certificate generated successfully!</p>
+      <div id="pdfLinkSection" class="qrcode-container hidden">
+        <p><strong>Scan QR to view certificate:</strong></p>
+        <div id="qrcode"></div>
+        <p><a id="downloadLink" href="#" target="_blank">View PDF Certificate</a></p>
       </div>
+    </div>
 
-      <div id="errorMessage" class="status-message error hidden">
-        An error occurred. Please try again.
-      </div>
-    </form>
-  </div>
-
-  <!-- VIEW SUBMITTED DATA -->
-  <div class="container page-content hidden" id="viewSubmittedData">
-    <h2>View Submitted Data</h2>
-    <label>From: <input type="date" id="fromDate" /></label>
-    <label>To: <input type="date" id="toDate" /></label>
-    <button onclick="fetchSubmittedData()">Fetch</button>
-    <pre id="submittedData"></pre>
-  </div>
-
-  <!-- FINANCIAL REPORT -->
-  <div class="container page-content hidden" id="trackFinancialReport">
-    <h2>Track Financial Report</h2>
-    <label>From: <input type="date" id="fromDateReport" /></label>
-    <label>To: <input type="date" id="toDateReport" /></label>
-    <button onclick="fetchFinancialReport()">Fetch</button>
-    <pre id="financialReport"></pre>
-  </div>
+    <div id="errorMessage" class="status-message error hidden">
+      An error occurred. Please try again.
+    </div>
+  </form>
 </div>
 
 <!-- External Scripts -->
