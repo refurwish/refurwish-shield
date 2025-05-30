@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-  const warrantyForm = document.getElementById('warrantyForm');
+  const form = document.getElementById('warrantyForm');
   const loading = document.getElementById('loading');
   const successContainer = document.getElementById('successContainer');
   const errorMessage = document.getElementById('errorMessage');
@@ -8,41 +8,51 @@ document.addEventListener('DOMContentLoaded', function () {
   const pdfLinkSection = document.getElementById('pdfLinkSection');
   const storeIdInput = document.getElementById('storeId');
 
-  // Removed all login section-related elements:
-  // const loginForm = document.getElementById('loginForm');
-  // const loginSection = document.getElementById('loginSection');
-  // const warrantySection = document.getElementById('warrantySection');
-  // const mainApp = document.getElementById('mainApp');
-  // const loginLoading = document.getElementById('loginLoading');
-  // const loginError = document.getElementById('loginError');
-  // const logoutButton = document.getElementById('logoutButton');
-  // const logoutButtonDrawer = document.getElementById('logoutButtonDrawer');
-  // const displayedStoreId = document.getElementById('displayedStoreId');
-
-  // Handle logout (both buttons)
-  function handleLogout() {
-    localStorage.clear();
-    warrantyForm.reset();
-    document.getElementById('sidebar').classList.add('hidden');
-    successContainer.classList.add('hidden');
-    errorMessage.classList.add('hidden');
-    pdfLinkSection.classList.add('hidden');
-  }
-
-  // Removed logout buttons because login functionality is removed
-  // logoutButton.addEventListener('click', handleLogout);
-  // logoutButtonDrawer.addEventListener('click', handleLogout);
-
-  // Handle warranty form submission
-  warrantyForm.addEventListener('submit', function (e) {
+  form.addEventListener('submit', function (e) {
     e.preventDefault();
 
+    // ====== VALIDATION LOGIC ======
+    let isValid = true;
+    const requiredFields = [
+      'customerName',
+      'customerEmail',
+      'customerPhone',
+      'productName',
+      'imeiNumber',
+      'purchaseDate',
+      'planOption'
+    ];
+
+    requiredFields.forEach(fieldId => {
+      const field = document.getElementById(fieldId);
+      if (!field.value.trim()) {
+        field.classList.add('error');
+        isValid = false;
+      } else {
+        field.classList.remove('error');
+      }
+    });
+
+    // Simple email validation
+    const email = document.getElementById('customerEmail');
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email.value)) {
+      email.classList.add('error');
+      isValid = false;
+    }
+
+    if (!isValid) {
+      alert('Please fill in all required fields correctly before submitting.');
+      return; // stop submission
+    }
+
+    // ====== SUBMISSION LOGIC ======
     loading.classList.remove('hidden');
     successContainer.classList.add('hidden');
     errorMessage.classList.add('hidden');
     pdfLinkSection.classList.add('hidden');
 
-    const formData = new FormData(warrantyForm);
+    const formData = new FormData(form);
 
     fetch('https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec', {
       method: 'POST',
@@ -65,13 +75,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
           pdfLinkSection.classList.remove('hidden');
           successContainer.classList.remove('hidden');
-          warrantyForm.reset();
+          form.reset();
 
-          const storeId = localStorage.getItem('storeId');
+          // Re-apply store ID after reset
+          const storeId = sessionStorage.getItem('storeId');
           if (storeId) {
             storeIdInput.value = storeId;
           }
 
+          // Scroll into view
           pdfLinkSection.scrollIntoView({ behavior: 'smooth' });
         } else {
           throw new Error(data.message || 'Unknown error');
@@ -85,111 +97,4 @@ document.addEventListener('DOMContentLoaded', function () {
         loading.classList.add('hidden');
       });
   });
-
-  // Sidebar Navigation
-  window.toggleSidebar = function () {
-    document.getElementById("sidebar").classList.toggle("hidden");
-  };
-
-  window.showPage = function (pageId) {
-    const pages = document.querySelectorAll('.page-content');
-    pages.forEach(page => page.classList.add('hidden'));
-    document.getElementById(pageId).classList.remove('hidden');
-    document.getElementById("sidebar").classList.add("hidden");
-  };
-
-  // Fetch Submitted Data
-  window.fetchSubmittedData = function () {
-    const fromDate = document.getElementById('fromDate').value;
-    const toDate = document.getElementById('toDate').value;
-    google.script.run.withSuccessHandler(displaySubmittedData).getSubmittedData(fromDate, toDate);
-  };
-
-  window.displaySubmittedData = function (data) {
-    const container = document.getElementById('submittedData');
-    if (data && data.length > 0) {
-      let tableHtml = `
-        <table>
-          <thead>
-            <tr>
-              <th>Customer Name</th>
-              <th>Product Name</th>
-              <th>IMEI Number</th>
-              <th>Phone Purchase Date</th>
-              <th>Plan Option</th>
-              <th>Date Registered</th>
-            </tr>
-          </thead>
-          <tbody>
-      `;
-      data.forEach(row => {
-        tableHtml += `
-          <tr>
-            <td>${row.customerName}</td>
-            <td>${row.productName}</td>
-            <td>${row.imeiNumber}</td>
-            <td>${row.purchaseDate}</td>
-            <td>${row.planOption}</td>
-            <td>${row.dateRegistered}</td>
-          </tr>
-        `;
-      });
-      tableHtml += `</tbody></table>`;
-      container.innerHTML = tableHtml;
-    } else {
-      container.innerHTML = "<p>No data found for the selected date range.</p>";
-    }
-  };
-
-  // Fetch Financial Report
-  window.fetchFinancialReport = function () {
-    const fromDate = document.getElementById('fromDateReport').value;
-    const toDate = document.getElementById('toDateReport').value;
-    google.script.run.withSuccessHandler(displayFinancialReport).getFinancialReport(fromDate, toDate);
-  };
-
-  window.displayFinancialReport = function (data) {
-    const container = document.getElementById('financialReport');
-    if (data && data.length > 0) {
-      let tableHtml = `
-        <table>
-          <thead>
-            <tr>
-              <th>Store ID</th>
-              <th>Total Sales</th>
-              <th>Total Warranty Fees</th>
-              <th>Revenue</th>
-              <th>Date</th>
-            </tr>
-          </thead>
-          <tbody>
-      `;
-      data.forEach(row => {
-        tableHtml += `
-          <tr>
-            <td>${row.storeId}</td>
-            <td>${row.totalSales}</td>
-            <td>${row.totalWarrantyFees}</td>
-            <td>${row.revenue}</td>
-            <td>${row.date}</td>
-          </tr>
-        `;
-      });
-      tableHtml += `</tbody></table>`;
-      container.innerHTML = tableHtml;
-    } else {
-      container.innerHTML = "<p>No financial data found for the selected date range.</p>";
-    }
-  };
-
-  // On page load, check if the user is already logged in
-  const storedStoreId = localStorage.getItem('storeId');
-  if (storedStoreId) {
-    storeIdInput.value = storedStoreId;
-    displayedStoreId.textContent = storedStoreId;
-    // Removed login section toggle
-    // loginSection.classList.add('hidden');
-    // mainApp.classList.remove('hidden');
-    // warrantySection.classList.remove('hidden');
-  }
 });
