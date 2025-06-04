@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const planSelectionSection = document.getElementById('planSelectionSection');
     const generateCertificateButton = document.getElementById('generateCertificateButton');
 
-    const planType = document.getElementById('planType');
+    // Removed planType as it's no longer a separate dropdown
     const planOption = document.getElementById('planOption');
 
     // Define extended warranty base prices
@@ -41,84 +41,58 @@ document.addEventListener('DOMContentLoaded', function () {
         return extendedWarrantyPrices[extendedWarrantyPrices.length - 1].price;
     }
 
-    // Function to populate plan options
+    // Function to populate plan options into the single dropdown
     function populatePlanOptions(phonePrice) {
-        planOption.innerHTML = '<option value="">-- Select Plan Option --</option>'; // Clear existing options
+        planOption.innerHTML = '<option value="">-- Select Plan --</option>'; // Clear existing options
 
-        const plans = [
-            {
-                type: 'extended',
-                value: 'extended_warranty',
-                text: `Extended Warranty (₹${getExtendedWarrantyPrice(phonePrice)})`,
-                price: getExtendedWarrantyPrice(phonePrice)
-            },
-            {
-                type: 'screen_protection',
-                value: 'screen_protection',
-                text: `Screen Protection Plan (₹${Math.round(phonePrice * 0.075)})`,
-                price: Math.round(phonePrice * 0.075)
-            },
-            {
-                type: 'total_damage',
-                value: 'total_damage_protection',
-                text: `Total Damage Protection (₹${Math.round(phonePrice * 0.125)})`,
-                price: Math.round(phonePrice * 0.125)
-            }
-        ];
-
-        // Combo plans
         const extendedPrice = getExtendedWarrantyPrice(phonePrice);
         const screenDamagePrice = Math.round(phonePrice * 0.075);
         const totalDamagePrice = Math.round(phonePrice * 0.125);
 
-        plans.push({
-            type: 'combo_screen_extended',
-            value: 'combo_screen_extended',
-            text: `Combo (Screen Damage + Extended Warranty) (₹${Math.round(screenDamagePrice + (extendedPrice * 0.5))})`,
-            price: Math.round(screenDamagePrice + (extendedPrice * 0.5))
-        });
+        const allPlans = [
+            {
+                // This value will be sent as formData.planOption to the backend
+                // The planType will be sent as a separate hidden attribute.
+                value: 'extended_warranty',
+                text: `Extended Warranty (₹${extendedPrice})`,
+                price: extendedPrice,
+                internalType: 'extended' // Internal identifier for backend date logic
+            },
+            {
+                value: 'screen_protection',
+                text: `Screen Protection Plan (₹${screenDamagePrice})`,
+                price: screenDamagePrice,
+                internalType: 'screen_protection'
+            },
+            {
+                value: 'total_damage_protection',
+                text: `Total Damage Protection (₹${totalDamagePrice})`,
+                price: totalDamagePrice,
+                internalType: 'total_damage'
+            },
+            {
+                value: 'combo_screen_extended',
+                text: `Combo (Screen Damage + Extended Warranty) (₹${Math.round(screenDamagePrice + (extendedPrice * 0.5))})`,
+                price: Math.round(screenDamagePrice + (extendedPrice * 0.5)),
+                internalType: 'combo_screen_extended'
+            },
+            {
+                value: 'combo_total_extended',
+                text: `Combo (Total Damage Protection + Extended Warranty) (₹${Math.round(totalDamagePrice + (extendedPrice * 0.5))})`,
+                price: Math.round(totalDamagePrice + (extendedPrice * 0.5)),
+                internalType: 'combo_total_extended'
+            }
+        ];
 
-        plans.push({
-            type: 'combo_total_extended',
-            value: 'combo_total_extended',
-            text: `Combo (Total Damage Protection + Extended Warranty) (₹${Math.round(totalDamagePrice + (extendedPrice * 0.5))})`,
-            price: Math.round(totalDamagePrice + (extendedPrice * 0.5))
-        });
-
-        // Add options to planType and planOption
-        // First, clear existing options for planType
-        planType.innerHTML = '<option value="">-- Select Plan Type --</option>';
-
-        // Use a Set to store unique plan types
-        const uniquePlanTypes = new Set();
-        plans.forEach(plan => uniquePlanTypes.add(plan.type));
-
-        uniquePlanTypes.forEach(type => {
+        allPlans.forEach(plan => {
             const opt = document.createElement('option');
-            opt.value = type;
-            // Make display names more user-friendly
-            if (type === 'extended') opt.textContent = 'Extended Warranty';
-            else if (type === 'screen_protection') opt.textContent = 'Screen Protection Plan';
-            else if (type === 'total_damage') opt.textContent = 'Total Damage Protection';
-            else if (type === 'combo_screen_extended') opt.textContent = 'Combo (Screen Damage + Extended Warranty)';
-            else if (type === 'combo_total_extended') opt.textContent = 'Combo (Total Damage Protection + Extended Warranty)';
-            planType.appendChild(opt);
-        });
-
-        // Add options to planOption based on initial selection (or all if no type selected)
-        planType.addEventListener('change', function() {
-            const selectedType = planType.value;
-            planOption.innerHTML = '<option value="">-- Select Plan Option --</option>'; // Clear existing
-            plans.filter(p => p.type === selectedType).forEach(option => {
-                const opt = document.createElement('option');
-                opt.value = option.value;
-                opt.textContent = option.text;
-                opt.setAttribute('data-price', option.price);
-                planOption.appendChild(opt);
-            });
+            opt.value = plan.value;
+            opt.textContent = plan.text;
+            opt.setAttribute('data-price', plan.price);
+            opt.setAttribute('data-plantype', plan.internalType); // Store internal type for backend
+            planOption.appendChild(opt);
         });
     }
-
 
     // Validate customer and phone details
     function validateCustomerAndPhoneDetails() {
@@ -182,13 +156,11 @@ document.addEventListener('DOMContentLoaded', function () {
         e.preventDefault(); // Prevent default form submission
 
         // Validate plan selection
-        if (!planType.value || !planOption.value) {
-            alert('Please select a Plan Type and Plan Option.');
-            planType.classList.add('error');
+        if (!planOption.value) { // Only check planOption now
+            alert('Please select a Plan.');
             planOption.classList.add('error');
             return;
         } else {
-            planType.classList.remove('error');
             planOption.classList.remove('error');
         }
 
@@ -199,10 +171,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const formData = new FormData(form);
         const selectedPlanOption = planOption.options[planOption.selectedIndex];
+
+        // Send the plan price and the internal type for backend logic
         formData.append('planPrice', selectedPlanOption.getAttribute('data-price'));
+        formData.append('planType', selectedPlanOption.getAttribute('data-plantype')); // Sending internalType as planType
         formData.append('selectedPlanDetails', selectedPlanOption.textContent); // Send the full text like "Extended Warranty (₹699)"
 
-        // ***** THIS IS THE LINE TO VERIFY/UPDATE FOR YOUR GITHUB REPO *****
+        // ***** YOUR DEPLOYED GOOGLE APPS SCRIPT WEB APP URL *****
         fetch('YOUR_DEPLOYED_GOOGLE_APPS_SCRIPT_WEB_APP_URL', {
             method: 'POST',
             body: formData
