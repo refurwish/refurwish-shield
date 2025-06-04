@@ -7,6 +7,43 @@
   <link rel="icon" type="image/png" sizes="32x32" href="favicon.png" />
   <link rel="stylesheet" href="demostyle.css" />
   <style>
+    /* Add styles for the new plan selection buttons */
+    .plan-options-container {
+      display: flex;
+      flex-wrap: wrap; /* Allows plans to wrap to the next line */
+      gap: 10px; /* Space between plan buttons */
+      margin-top: 15px;
+      margin-bottom: 20px;
+      padding: 10px;
+      border: 1px solid #ddd; /* Light border around the container */
+      border-radius: 5px;
+    }
+    .plan-button {
+      background-color: #f0f0f0;
+      border: 1px solid #ccc;
+      padding: 12px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.2s ease-in-out;
+      flex: 1 1 calc(50% - 10px); /* Two columns on larger screens, full width on small */
+      min-width: 150px; /* Minimum width for each button */
+      box-sizing: border-box; /* Include padding and border in the element's total width and height */
+      text-align: center;
+    }
+
+    .plan-button:hover {
+      background-color: #e0e0e0;
+      border-color: #999;
+    }
+    .plan-button.selected {
+      background-color: #28a745; /* Green for selected */
+      color: white;
+      border-color: #218838;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    /* Styles for loader and messages */
     .loader {
       display: inline-block;
       width: 16px;
@@ -60,8 +97,30 @@
     }
     /* Added for error highlighting */
     .form-group input.error,
-    .form-group select.error {
+    .form-group select.error { /* Keep select.error for other dropdowns if any exist or for fallback */
       border-color: red;
+    }
+    /* Adjust input box sizing for all inputs */
+    .form-group input[type="text"],
+    .form-group input[type="email"],
+    .form-group input[type="tel"],
+    .form-group input[type="date"],
+    .form-group input[type="number"], /* Target phone price input */
+    .form-group select {
+      width: calc(100% - 20px); /* Full width minus padding */
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box; /* Include padding and border in the element's total width and height */
+      font-size: 1rem; /* Ensure consistent font size */
+    }
+    /* Responsive adjustment for plan buttons */
+    @media (max-width: 600px) {
+      .plan-button {
+        flex: 1 1 100%; /* Full width on small screens */
+      }
     }
   </style>
 </head>
@@ -137,12 +196,13 @@
     <button type="button" class="submit-button" id="showPlanPricesButton">Show Plan Prices</button>
 
     <div id="planSelectionSection" class="hidden">
-      <div class="form-group">
-        <label for="planOption">Select Plan:</label>
-        <select id="planOption" name="planOption" required>
-          <option value="">-- Select Plan --</option>
-          </select>
-      </div>
+      <p style="margin-top: 15px; font-weight: bold;">Select your plan:</p>
+      <div id="planOptionsContainer" class="plan-options-container">
+        </div>
+      <input type="hidden" id="selectedPlanValue" name="planOption" />
+      <input type="hidden" id="selectedPlanPrice" name="planPrice" />
+      <input type="hidden" id="selectedPlanType" name="planType" />
+      <input type="hidden" id="selectedPlanDetails" name="selectedPlanDetails" />
 
       <button type="submit" class="submit-button" id="generateCertificateButton">Generate Warranty Certificate</button>
     </div>
