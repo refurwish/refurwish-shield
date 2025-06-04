@@ -13,8 +13,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const planSelectionSection = document.getElementById('planSelectionSection');
     const generateCertificateButton = document.getElementById('generateCertificateButton');
 
-    // Removed planType as it's no longer a separate dropdown
-    const planOption = document.getElementById('planOption');
+    // New element references for direct plan selection
+    const planOptionsContainer = document.getElementById('planOptionsContainer');
+    const selectedPlanValueInput = document.getElementById('selectedPlanValue');
+    const selectedPlanPriceInput = document.getElementById('selectedPlanPrice');
+    const selectedPlanTypeInput = document.getElementById('selectedPlanType');
+    const selectedPlanDetailsInput = document.getElementById('selectedPlanDetails');
 
     // Define extended warranty base prices
     const extendedWarrantyPrices = [
@@ -41,9 +45,9 @@ document.addEventListener('DOMContentLoaded', function () {
         return extendedWarrantyPrices[extendedWarrantyPrices.length - 1].price;
     }
 
-    // Function to populate plan options into the single dropdown
+    // Function to populate plan options as buttons
     function populatePlanOptions(phonePrice) {
-        planOption.innerHTML = '<option value="">-- Select Plan --</option>'; // Clear existing options
+        planOptionsContainer.innerHTML = ''; // Clear existing buttons
 
         const extendedPrice = getExtendedWarrantyPrice(phonePrice);
         const screenDamagePrice = Math.round(phonePrice * 0.075);
@@ -51,47 +55,81 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const allPlans = [
             {
-                // This value will be sent as formData.planOption to the backend
-                // The planType will be sent as a separate hidden attribute.
                 value: 'extended_warranty',
                 text: `Extended Warranty (₹${extendedPrice})`,
                 price: extendedPrice,
-                internalType: 'extended' // Internal identifier for backend date logic
+                internalType: 'extended',
+                periodText: '12 Months Extended' // For display, if needed
             },
             {
                 value: 'screen_protection',
                 text: `Screen Protection Plan (₹${screenDamagePrice})`,
                 price: screenDamagePrice,
-                internalType: 'screen_protection'
+                internalType: 'screen_protection',
+                periodText: '12 Months'
             },
             {
                 value: 'total_damage_protection',
                 text: `Total Damage Protection (₹${totalDamagePrice})`,
                 price: totalDamagePrice,
-                internalType: 'total_damage'
+                internalType: 'total_damage',
+                periodText: '12 Months'
             },
             {
                 value: 'combo_screen_extended',
                 text: `Combo (Screen Damage + Extended Warranty) (₹${Math.round(screenDamagePrice + (extendedPrice * 0.5))})`,
                 price: Math.round(screenDamagePrice + (extendedPrice * 0.5)),
-                internalType: 'combo_screen_extended'
+                internalType: 'combo_screen_extended',
+                periodText: '24 Months Total'
             },
             {
                 value: 'combo_total_extended',
                 text: `Combo (Total Damage Protection + Extended Warranty) (₹${Math.round(totalDamagePrice + (extendedPrice * 0.5))})`,
                 price: Math.round(totalDamagePrice + (extendedPrice * 0.5)),
-                internalType: 'combo_total_extended'
+                internalType: 'combo_total_extended',
+                periodText: '24 Months Total'
             }
         ];
 
         allPlans.forEach(plan => {
-            const opt = document.createElement('option');
-            opt.value = plan.value;
-            opt.textContent = plan.text;
-            opt.setAttribute('data-price', plan.price);
-            opt.setAttribute('data-plantype', plan.internalType); // Store internal type for backend
-            planOption.appendChild(opt);
+            const button = document.createElement('button');
+            button.type = 'button'; // Important: set type to button to prevent form submission
+            button.classList.add('plan-button');
+            button.textContent = plan.text;
+
+            // Store data attributes on the button
+            button.setAttribute('data-value', plan.value);
+            button.setAttribute('data-price', plan.price);
+            button.setAttribute('data-plantype', plan.internalType);
+            button.setAttribute('data-details', plan.text); // Full text for selectedPlanDetails
+
+            button.addEventListener('click', function() {
+                // Remove 'selected' class from all other buttons
+                const currentSelected = planOptionsContainer.querySelector('.plan-button.selected');
+                if (currentSelected) {
+                    currentSelected.classList.remove('selected');
+                }
+                // Add 'selected' class to the clicked button
+                button.classList.add('selected');
+
+                // Update hidden input fields
+                selectedPlanValueInput.value = plan.value;
+                selectedPlanPriceInput.value = plan.price;
+                selectedPlanTypeInput.value = plan.internalType;
+                selectedPlanDetailsInput.value = plan.text;
+
+                // Remove error class if previously applied
+                planOptionsContainer.classList.remove('error');
+            });
+
+            planOptionsContainer.appendChild(button);
         });
+
+        // Clear previously selected values if repopulating
+        selectedPlanValueInput.value = '';
+        selectedPlanPriceInput.value = '';
+        selectedPlanTypeInput.value = '';
+        selectedPlanDetailsInput.value = '';
     }
 
     // Validate customer and phone details
@@ -139,13 +177,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Event listener for "Show Plan Prices" button
     showPlanPricesButton.addEventListener('click', function (e) {
-        e.preventDefault(); // Prevent default form submission
+        e.preventDefault();
 
         if (validateCustomerAndPhoneDetails()) {
             const phonePrice = parseFloat(phonePriceInput.value);
             populatePlanOptions(phonePrice);
             planSelectionSection.classList.remove('hidden');
-            showPlanPricesButton.classList.add('hidden'); // Hide "Show Plan Prices" button
+            showPlanPricesButton.classList.add('hidden');
+            planOptionsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' }); // Scroll to plans
         } else {
             alert('Please fill in all customer and phone details correctly before proceeding to plan selection.');
         }
@@ -153,15 +192,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Event listener for the form submission (Generate Warranty Certificate)
     form.addEventListener('submit', function (e) {
-        e.preventDefault(); // Prevent default form submission
+        e.preventDefault();
 
-        // Validate plan selection
-        if (!planOption.value) { // Only check planOption now
+        // Validate plan selection (check if hidden inputs have values)
+        if (!selectedPlanValueInput.value) {
             alert('Please select a Plan.');
-            planOption.classList.add('error');
+            // Add a visual indicator to the plan options container
+            planOptionsContainer.classList.add('error');
             return;
         } else {
-            planOption.classList.remove('error');
+            planOptionsContainer.classList.remove('error');
         }
 
         loading.classList.remove('hidden');
@@ -169,13 +209,8 @@ document.addEventListener('DOMContentLoaded', function () {
         errorMessage.classList.add('hidden');
         pdfLinkSection.classList.add('hidden');
 
+        // FormData will automatically pick up values from hidden inputs due to their 'name' attributes
         const formData = new FormData(form);
-        const selectedPlanOption = planOption.options[planOption.selectedIndex];
-
-        // Send the plan price and the internal type for backend logic
-        formData.append('planPrice', selectedPlanOption.getAttribute('data-price'));
-        formData.append('planType', selectedPlanOption.getAttribute('data-plantype')); // Sending internalType as planType
-        formData.append('selectedPlanDetails', selectedPlanOption.textContent); // Send the full text like "Extended Warranty (₹699)"
 
         // ***** YOUR DEPLOYED GOOGLE APPS SCRIPT WEB APP URL *****
         fetch('YOUR_DEPLOYED_GOOGLE_APPS_SCRIPT_WEB_APP_URL', {
@@ -209,6 +244,17 @@ document.addEventListener('DOMContentLoaded', function () {
                     // Hide plan selection section and show "Show Plan Prices" button again
                     planSelectionSection.classList.add('hidden');
                     showPlanPricesButton.classList.remove('hidden');
+
+                    // Clear selected plan styling and hidden inputs
+                    const currentSelected = planOptionsContainer.querySelector('.plan-button.selected');
+                    if (currentSelected) {
+                        currentSelected.classList.remove('selected');
+                    }
+                    selectedPlanValueInput.value = '';
+                    selectedPlanPriceInput.value = '';
+                    selectedPlanTypeInput.value = '';
+                    selectedPlanDetailsInput.value = '';
+
 
                     // Scroll into view
                     pdfLinkSection.scrollIntoView({ behavior: 'smooth' });
