@@ -22,38 +22,51 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-    .hidden { display: none; }
-    .status-message { margin-top: 15px; font-weight: bold; }
-    .status-message.error { color: red; }
-    .store-id-display { margin-bottom: 10px; }
-    .store-id-label { color: black; font-weight: normal; }
-    .store-id-value { color: red; font-weight: bold; }
+    .hidden {
+      display: none;
+    }
+    .status-message {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    .status-message.error {
+      color: red;
+    }
+    .store-id-display {
+      margin-bottom: 10px;
+    }
+    .store-id-label {
+      color: black;
+      font-weight: normal;
+    }
+    .store-id-value {
+      color: red;
+      font-weight: bold;
+    }
     .logout-button {
-      position: absolute; top: 20px; right: 20px;
-      background-color: #f44336; color: white;
-      border: none; padding: 8px 16px;
-      cursor: pointer; border-radius: 4px;
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: #f44336;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      cursor: pointer;
+      border-radius: 4px;
       z-index: 10;
     }
-    .logout-button:hover { background-color: #d32f2f; }
-    .plans-list button {
-      margin: 5px 0;
-      padding: 10px;
-      width: 100%;
-      text-align: left;
-      border: 1px solid #ccc;
-      background-color: #f8f8f8;
-      cursor: pointer;
+    .logout-button:hover {
+      background-color: #d32f2f;
     }
-    .plans-list button.selected {
-      background-color: #d0f0d0;
-      border-color: green;
+    /* Added for error highlighting */
+    .form-group input.error,
+    .form-group select.error {
+      border-color: red;
     }
   </style>
 </head>
 <body>
 
-<!-- LOGIN SECTION -->
 <div class="container" id="loginSection">
   <img src="logo.png" alt="Refurwish Logo" class="logo" />
   <h2>Store Login</h2>
@@ -76,7 +89,6 @@
   </form>
 </div>
 
-<!-- WARRANTY FORM SECTION -->
 <div class="container hidden" id="warrantySection">
   <button class="logout-button" id="logoutButton">Logout</button>
   <img src="logo.png" alt="Refurwish Logo" class="logo" />
@@ -91,51 +103,56 @@
   <form id="warrantyForm" novalidate autocomplete="off">
     <div class="form-group hidden">
       <label for="storeId">Store ID:</label>
-      <input type="text" id="storeId" name="storeId" readonly />
+      <input type="text" id="storeId" name="storeId" value="" readonly />
     </div>
     <div class="form-group">
       <label for="customerName">Customer Name:</label>
-      <input type="text" id="customerName" name="customerName" required />
+      <input type="text" id="customerName" name="customerName" placeholder="Enter customer's full name" required />
     </div>
     <div class="form-group">
       <label for="customerEmail">Customer Email:</label>
-      <input type="email" id="customerEmail" name="customerEmail" required />
+      <input type="email" id="customerEmail" name="customerEmail" placeholder="Enter customer's email address" required />
     </div>
     <div class="form-group">
       <label for="customerPhone">Customer Phone:</label>
-      <input type="tel" id="customerPhone" name="customerPhone" required />
+      <input type="tel" id="customerPhone" name="customerPhone" placeholder="Enter customer's phone number" required />
     </div>
     <div class="form-group">
       <label for="productName">Product Name:</label>
-      <input type="text" id="productName" name="productName" required />
+      <input type="text" id="productName" name="productName" placeholder="Enter the product name" required />
     </div>
     <div class="form-group">
       <label for="imeiNumber">IMEI Number:</label>
-      <input type="text" id="imeiNumber" name="imeiNumber" required />
+      <input type="text" id="imeiNumber" name="imeiNumber" placeholder="Enter the product's IMEI number" required />
     </div>
     <div class="form-group">
       <label for="purchaseDate">Phone Purchase Date:</label>
       <input type="date" id="purchaseDate" name="purchaseDate" required />
     </div>
-
-    <!-- Phone Price & Plan Selection -->
     <div class="form-group">
-      <label for="phonePrice">Enter Phone Price (₹):</label>
-      <input type="number" id="phonePrice" placeholder="e.g. 13000" />
-    </div>
-    <button type="button" id="showPlansButton">Show Plans</button>
-
-    <!-- Dynamically Loaded Plan Options -->
-    <div id="plansContainer" class="form-group hidden">
-      <label>Select a Plan:</label>
-      <div class="plans-list" id="plansList"></div>
+      <label for="phonePrice">Phone Price (₹):</label>
+      <input type="number" id="phonePrice" name="phonePrice" placeholder="Enter phone's purchase price" required min="1" />
     </div>
 
-    <!-- Hidden inputs for selected plan -->
-    <input type="hidden" id="selectedPlanType" name="planType" />
-    <input type="hidden" id="selectedPlanValue" name="planOption" />
+    <button type="button" class="submit-button" id="showPlanPricesButton">Show Plan Prices</button>
 
-    <button type="submit" class="submit-button">Generate Warranty Certificate</button>
+    <div id="planSelectionSection" class="hidden">
+      <div class="form-group">
+        <label for="planType">Plan Type:</label>
+        <select id="planType" name="planType" required>
+          <option value="">-- Select Plan Type --</option>
+          </select>
+      </div>
+
+      <div class="form-group">
+        <label for="planOption">Plan Option:</label>
+        <select id="planOption" name="planOption" required>
+          <option value="">-- Select Plan Option --</option>
+          </select>
+      </div>
+
+      <button type="submit" class="submit-button" id="generateCertificateButton">Generate Warranty Certificate</button>
+    </div>
 
     <div id="loading" class="status-message hidden">Processing...</div>
 
@@ -154,7 +171,6 @@
   </form>
 </div>
 
-<!-- External Scripts -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="demoauth.js"></script>
 <script src="demoscript.js"></script>
