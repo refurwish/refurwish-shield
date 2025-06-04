@@ -202,7 +202,8 @@ document.addEventListener('DOMContentLoaded', function () {
         formData.append('planPrice', selectedPlanOption.getAttribute('data-price'));
         formData.append('selectedPlanDetails', selectedPlanOption.textContent); // Send the full text like "Extended Warranty (₹699)"
 
-        fetch('https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec', {
+        // ***** THIS IS THE LINE TO VERIFY/UPDATE FOR YOUR GITHUB REPO *****
+        fetch('YOUR_DEPLOYED_GOOGLE_APPS_SCRIPT_WEB_APP_URL', {
             method: 'POST',
             body: formData
         })
