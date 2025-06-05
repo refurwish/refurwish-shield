@@ -19,7 +19,7 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     width: 90%;
     max-width: 500px;
-    position: relative; /* Added for logout button positioning */
+    position: relative;
 }
 
 .logo {
@@ -50,9 +50,9 @@ input[type="text"],
 input[type="email"],
 input[type="tel"],
 input[type="date"],
-input[type="number"], /* Added to ensure consistent styling for phone price input */
+input[type="number"],
 select {
-    width: calc(100% - 12px); /* Kept original width from demostyle.css */
+    width: calc(100% - 12px);
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -97,23 +97,26 @@ select {
     background-color: #0056b3;
 }
 
-/* New: Back button styles */
+/* Updated: Back button styles for a better UI */
 .back-button {
-    background-color: #6c757d; /* Grey */
-    color: white;
+    background-color: transparent; /* Changed to transparent */
+    color: #6c757d; /* Text color is the grey */
     padding: 12px 20px;
-    border: none; /* Align with submit-button */
+    border: 1px solid #6c757d; /* Border is the grey */
     border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
     width: 100%;
     display: block;
-    transition: background-color 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out; /* Transition all for better hover effect */
+    margin-top: 10px; /* Added margin for spacing */
 }
 
 .back-button:hover {
-    background-color: #5a6268;
+    background-color: #6c757d; /* Fills with grey on hover */
+    color: white; /* Text becomes white on hover */
 }
+
 
 .hidden {
     display: none;
@@ -186,7 +189,7 @@ select.error {
     background-color: #ffe6e6;
 }
 
-/* Dynamic Plan Buttons Container (Original from demostyle.css) */
+/* Dynamic Plan Buttons Container */
 #plansList {
     display: flex;
     flex-direction: column;
@@ -261,8 +264,8 @@ select.error {
 /* Logout button */
 #logoutButton {
     position: absolute;
-    top: 15px; /* Adjusted from 20px to give more space */
-    right: 15px; /* Adjusted from 20px to give more space */
+    top: 15px;
+    right: 15px;
     background-color: #dc3545;
     color: white;
     border: none;
@@ -270,10 +273,9 @@ select.error {
     border-radius: 4px;
     cursor: pointer;
     font-weight: bold;
-    /* Removed float and negative margin, relying on absolute positioning */
-    z-index: 10; /* Ensures it's above other content */
-    white-space: nowrap; /* Prevents text from wrapping */
-    font-size: 0.9rem; /* Slightly smaller font for mobile */
+    z-index: 10;
+    white-space: nowrap;
+    font-size: 0.9rem;
     transition: background-color 0.2s ease-in-out;
 }
 
@@ -313,7 +315,7 @@ select.error {
         padding: 8px 12px;
     }
 
-    #plansList button { /* Kept original selector */
+    #plansList button {
         font-size: 14px;
         padding: 10px;
     }
