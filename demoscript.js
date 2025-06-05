@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const planSelectionSection = document.getElementById('planSelectionSection');
     const generateCertificateButton = document.getElementById('generateCertificateButton');
 
-    // New element references for direct plan selection
     const planOptionsContainer = document.getElementById('planOptionsContainer');
     const selectedPlanValueInput = document.getElementById('selectedPlanValue');
     const selectedPlanPriceInput = document.getElementById('selectedPlanPrice');
@@ -23,12 +22,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // NEW: Back button element
     const backToPhonePriceButton = document.createElement('button');
     backToPhonePriceButton.textContent = '← Change Phone Price';
-    backToPhonePriceButton.classList.add('submit-button'); // Reusing some styling, adjust as needed
+    backToPhonePriceButton.classList.add('back-button'); // Use a specific class for styling (added in CSS previously)
+    backToPhonePriceButton.type = 'button'; // <<-- CRITICAL FIX: Set type to button to prevent submission
     backToPhonePriceButton.style.marginTop = '10px';
-    backToPhonePriceButton.style.backgroundColor = '#6c757d'; // A greyish color for a back button
-    backToPhonePriceButton.style.borderColor = '#6c757d';
-    backToPhonePriceButton.style.color = 'white';
-    backToPhonePriceButton.style.cursor = 'pointer';
     backToPhonePriceButton.style.display = 'none'; // Initially hidden
     // Insert it after the "Show Plan Prices" button for better UX
     showPlanPricesButton.parentNode.insertBefore(backToPhonePriceButton, showPlanPricesButton.nextSibling);
@@ -107,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         allPlans.forEach(plan => {
             const button = document.createElement('button');
-            button.type = 'button';
+            button.type = 'button'; // Important: set type to button to prevent form submission
             button.classList.add('plan-button');
             button.textContent = plan.text;
 
@@ -197,6 +193,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // NEW: Event listener for the "Back to Phone Price" button
     backToPhonePriceButton.addEventListener('click', function() {
+        // This button now has type="button", so it won't submit the form
         planSelectionSection.classList.add('hidden'); // Hide plan selection
         showPlanPricesButton.classList.remove('hidden'); // Show "Show Plan Prices" button
         backToPhonePriceButton.style.display = 'none'; // Hide back button
@@ -211,16 +208,21 @@ document.addEventListener('DOMContentLoaded', function () {
         selectedPlanDetailsInput.value = '';
         // Scroll back to the phone price input
         phonePriceInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        // IMPORTANT: Also clear any error highlighting from the plan container
+        planOptionsContainer.classList.remove('error');
     });
 
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();
 
+        // Validate plan selection (check if hidden inputs have values)
         if (!selectedPlanValueInput.value) {
             alert('Please select a Plan.');
+            // Add a visual indicator to the plan options container
             planOptionsContainer.classList.add('error');
-            return;
+            return; // Stop form submission here
         } else {
             planOptionsContainer.classList.remove('error');
         }
@@ -259,10 +261,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (storeId) {
                         storeIdInput.value = storeId;
                     }
+                    // Hide plan selection section and show "Show Plan Prices" button again
                     planSelectionSection.classList.add('hidden');
                     showPlanPricesButton.classList.remove('hidden');
                     backToPhonePriceButton.style.display = 'none'; // Hide back button after successful submission
 
+                    // Clear selected plan styling and hidden inputs
                     const currentSelected = planOptionsContainer.querySelector('.plan-button.selected');
                     if (currentSelected) {
                         currentSelected.classList.remove('selected');
@@ -272,6 +276,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     selectedPlanTypeInput.value = '';
                     selectedPlanDetailsInput.value = '';
 
+
+                    // Scroll into view
                     pdfLinkSection.scrollIntoView({ behavior: 'smooth' });
                 } else {
                     throw new Error(data.message || 'Unknown error');
