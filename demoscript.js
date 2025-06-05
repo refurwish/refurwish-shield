@@ -20,6 +20,20 @@ document.addEventListener('DOMContentLoaded', function () {
     const selectedPlanTypeInput = document.getElementById('selectedPlanType');
     const selectedPlanDetailsInput = document.getElementById('selectedPlanDetails');
 
+    // NEW: Back button element
+    const backToPhonePriceButton = document.createElement('button');
+    backToPhonePriceButton.textContent = '← Change Phone Price';
+    backToPhonePriceButton.classList.add('submit-button'); // Reusing some styling, adjust as needed
+    backToPhonePriceButton.style.marginTop = '10px';
+    backToPhonePriceButton.style.backgroundColor = '#6c757d'; // A greyish color for a back button
+    backToPhonePriceButton.style.borderColor = '#6c757d';
+    backToPhonePriceButton.style.color = 'white';
+    backToPhonePriceButton.style.cursor = 'pointer';
+    backToPhonePriceButton.style.display = 'none'; // Initially hidden
+    // Insert it after the "Show Plan Prices" button for better UX
+    showPlanPricesButton.parentNode.insertBefore(backToPhonePriceButton, showPlanPricesButton.nextSibling);
+
+
     // Define extended warranty base prices
     const extendedWarrantyPrices = [
         { maxPrice: 15000, planText: 'Under ₹15,000', price: 699 },
@@ -59,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 text: `Extended Warranty (₹${extendedPrice})`,
                 price: extendedPrice,
                 internalType: 'extended',
-                periodText: '12 Months Extended' // For display, if needed
+                periodText: '12 Months Extended'
             },
             {
                 value: 'screen_protection',
@@ -93,46 +107,39 @@ document.addEventListener('DOMContentLoaded', function () {
 
         allPlans.forEach(plan => {
             const button = document.createElement('button');
-            button.type = 'button'; // Important: set type to button to prevent form submission
+            button.type = 'button';
             button.classList.add('plan-button');
             button.textContent = plan.text;
 
-            // Store data attributes on the button
             button.setAttribute('data-value', plan.value);
             button.setAttribute('data-price', plan.price);
             button.setAttribute('data-plantype', plan.internalType);
-            button.setAttribute('data-details', plan.text); // Full text for selectedPlanDetails
+            button.setAttribute('data-details', plan.text);
 
             button.addEventListener('click', function() {
-                // Remove 'selected' class from all other buttons
                 const currentSelected = planOptionsContainer.querySelector('.plan-button.selected');
                 if (currentSelected) {
                     currentSelected.classList.remove('selected');
                 }
-                // Add 'selected' class to the clicked button
                 button.classList.add('selected');
 
-                // Update hidden input fields
                 selectedPlanValueInput.value = plan.value;
                 selectedPlanPriceInput.value = plan.price;
                 selectedPlanTypeInput.value = plan.internalType;
                 selectedPlanDetailsInput.value = plan.text;
 
-                // Remove error class if previously applied
                 planOptionsContainer.classList.remove('error');
             });
 
             planOptionsContainer.appendChild(button);
         });
 
-        // Clear previously selected values if repopulating
         selectedPlanValueInput.value = '';
         selectedPlanPriceInput.value = '';
         selectedPlanTypeInput.value = '';
         selectedPlanDetailsInput.value = '';
     }
 
-    // Validate customer and phone details
     function validateCustomerAndPhoneDetails() {
         let isValid = true;
         const requiredFields = [
@@ -155,7 +162,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        // Simple email validation
         const email = document.getElementById('customerEmail');
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(email.value)) {
@@ -163,7 +169,6 @@ document.addEventListener('DOMContentLoaded', function () {
             isValid = false;
         }
 
-        // Phone Price validation
         const phonePrice = parseFloat(phonePriceInput.value);
         if (isNaN(phonePrice) || phonePrice <= 0) {
             phonePriceInput.classList.add('error');
@@ -175,7 +180,6 @@ document.addEventListener('DOMContentLoaded', function () {
         return isValid;
     }
 
-    // Event listener for "Show Plan Prices" button
     showPlanPricesButton.addEventListener('click', function (e) {
         e.preventDefault();
 
@@ -184,20 +188,37 @@ document.addEventListener('DOMContentLoaded', function () {
             populatePlanOptions(phonePrice);
             planSelectionSection.classList.remove('hidden');
             showPlanPricesButton.classList.add('hidden');
-            planOptionsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' }); // Scroll to plans
+            backToPhonePriceButton.style.display = 'block'; // Show the back button
+            planOptionsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
         } else {
             alert('Please fill in all customer and phone details correctly before proceeding to plan selection.');
         }
     });
 
-    // Event listener for the form submission (Generate Warranty Certificate)
+    // NEW: Event listener for the "Back to Phone Price" button
+    backToPhonePriceButton.addEventListener('click', function() {
+        planSelectionSection.classList.add('hidden'); // Hide plan selection
+        showPlanPricesButton.classList.remove('hidden'); // Show "Show Plan Prices" button
+        backToPhonePriceButton.style.display = 'none'; // Hide back button
+        // Optional: clear selected plan to force re-selection if user goes back
+        const currentSelected = planOptionsContainer.querySelector('.plan-button.selected');
+        if (currentSelected) {
+            currentSelected.classList.remove('selected');
+        }
+        selectedPlanValueInput.value = '';
+        selectedPlanPriceInput.value = '';
+        selectedPlanTypeInput.value = '';
+        selectedPlanDetailsInput.value = '';
+        // Scroll back to the phone price input
+        phonePriceInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+
+
     form.addEventListener('submit', function (e) {
         e.preventDefault();
 
-        // Validate plan selection (check if hidden inputs have values)
         if (!selectedPlanValueInput.value) {
             alert('Please select a Plan.');
-            // Add a visual indicator to the plan options container
             planOptionsContainer.classList.add('error');
             return;
         } else {
@@ -209,10 +230,8 @@ document.addEventListener('DOMContentLoaded', function () {
         errorMessage.classList.add('hidden');
         pdfLinkSection.classList.add('hidden');
 
-        // FormData will automatically pick up values from hidden inputs due to their 'name' attributes
         const formData = new FormData(form);
 
-        // ***** YOUR DEPLOYED GOOGLE APPS SCRIPT WEB APP URL *****
         fetch('https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec', {
             method: 'POST',
             body: formData
@@ -236,16 +255,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     successContainer.classList.remove('hidden');
                     form.reset();
 
-                    // Re-apply store ID after reset
                     const storeId = sessionStorage.getItem('storeId');
                     if (storeId) {
                         storeIdInput.value = storeId;
                     }
-                    // Hide plan selection section and show "Show Plan Prices" button again
                     planSelectionSection.classList.add('hidden');
                     showPlanPricesButton.classList.remove('hidden');
+                    backToPhonePriceButton.style.display = 'none'; // Hide back button after successful submission
 
-                    // Clear selected plan styling and hidden inputs
                     const currentSelected = planOptionsContainer.querySelector('.plan-button.selected');
                     if (currentSelected) {
                         currentSelected.classList.remove('selected');
@@ -255,8 +272,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     selectedPlanTypeInput.value = '';
                     selectedPlanDetailsInput.value = '';
 
-
-                    // Scroll into view
                     pdfLinkSection.scrollIntoView({ behavior: 'smooth' });
                 } else {
                     throw new Error(data.message || 'Unknown error');
