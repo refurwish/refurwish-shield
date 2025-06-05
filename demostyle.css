@@ -1,3 +1,4 @@
+/* --- Reverted to your original general styles, keeping only necessary refinements --- */
 html {
     scroll-behavior: smooth;
 }
@@ -46,34 +47,25 @@ label {
     font-weight: bold;
 }
 
-input[type="text"],
-input[type="email"],
-input[type="tel"],
-input[type="date"],
-input[type="number"],
-select {
-    width: calc(100% - 20px); /* Adjusted to match your inline HTML styling */
+/* Reverted input styling to use your more specific form-group selector,
+   ensuring width: 100% minus padding is respected */
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="tel"],
+.form-group input[type="date"],
+.form-group input[type="number"],
+.form-group select,
+input[type="password"] { /* Also include password here if not already */
+    width: calc(100% - 20px); /* Full width minus padding, consistent with your HTML's style */
     padding: 10px;
-    margin-top: 5px; /* Added to match your inline HTML styling */
-    margin-bottom: 10px; /* Added to match your inline HTML styling */
-    border: 1px solid #ccc; /* Adjusted to match your inline HTML styling */
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
     border-radius: 4px;
-    box-sizing: border-box;
-    font-size: 1rem; /* Adjusted to match your inline HTML styling */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    font-size: 1rem; /* Ensure consistent font size */
 }
 
-/* Password input styling */
-input[type="password"] {
-    width: calc(100% - 20px); /* Adjusted to match your inline HTML styling */
-    padding: 10px;
-    margin-top: 5px; /* Added to match your inline HTML styling */
-    margin-bottom: 10px; /* Added to match your inline HTML styling */
-    border: 1px solid #ccc; /* Adjusted to match your inline HTML styling */
-    border-radius: 4px;
-    box-sizing: border-box;
-    font-size: 1rem; /* Adjusted to match your inline HTML styling */
-    height: auto;
-}
 
 select {
     appearance: none;
@@ -101,43 +93,39 @@ select {
     background-color: #0056b3;
 }
 
-/* --- UPDATED: Back button styles for better UI --- */
+/* --- REVISED: Back button styles - More subtle, block-level, good spacing --- */
 .back-button {
-    background-color: transparent;
+    background-color: transparent; /* No fill */
     color: #6c757d; /* Grey text */
-    padding: 8px 15px; /* Slightly less padding */
+    padding: 10px 15px; /* Comfortable padding */
     border: 1px solid #6c757d; /* Grey border */
-    border-radius: 20px; /* More rounded corners, like a pill */
+    border-radius: 4px; /* Standard button corners */
     cursor: pointer;
-    font-size: 14px; /* Slightly smaller font */
-    display: inline-flex; /* Use flexbox for icon and text alignment */
-    align-items: center; /* Vertically align icon and text */
-    justify-content: center; /* Center content horizontally */
-    gap: 5px; /* Space between icon and text */
+    font-size: 15px; /* Slightly smaller than submit, clearly readable */
+    width: 100%; /* Occupy full width, like other buttons */
+    display: block; /* Make it a block element */
+    margin-top: 15px; /* Clear space above it */
     transition: all 0.2s ease-in-out;
-    margin-top: 15px; /* More margin to separate it */
-    width: auto; /* Allow width to adjust to content */
-    float: right; /* Float it to the right */
-    text-decoration: none; /* In case it's an anchor */
+    text-align: center; /* Center content (text + icon) */
 }
 
 .back-button:hover {
-    background-color: #6c757d;
-    color: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow on hover */
+    background-color: #6c757d; /* Fill with grey on hover */
+    color: white; /* White text on hover */
 }
 
-/* --- MOVED FROM HTML <style> AND REFINED FOR ANIMATION --- */
-.plan-options-container { /* This is the container for the plan buttons themselves */
+
+/* --- MOVED FROM HTML <style> - General plan container and button styles --- */
+.plan-options-container {
     display: flex;
     flex-wrap: wrap; /* Allows plans to wrap to the next line */
     gap: 10px; /* Space between plan buttons */
-    margin-top: 15px; /* Re-added margin for internal spacing within the section */
-    margin-bottom: 20px; /* Re-added margin for internal spacing within the section */
+    margin-top: 15px; /* Keep consistent spacing */
+    margin-bottom: 20px; /* Keep consistent spacing */
+    padding: 10px;
     border: 1px solid #ddd; /* Light border around the container */
     border-radius: 5px;
 }
-
 .plan-button {
     background-color: #f0f0f0;
     border: 1px solid #ccc;
@@ -164,6 +152,7 @@ select {
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
+
 /* --- NEW: Classes for slide-down animation on #planSelectionSection --- */
 #planSelectionSection { /* Targeting the specific ID for animation */
     max-height: 0; /* Initially collapsed */
@@ -172,14 +161,16 @@ select {
     transition: max-height 0.7s ease-in-out, opacity 0.7s ease-in-out; /* Smooth transition */
     padding-top: 0; /* Remove initial padding */
     padding-bottom: 0; /* Remove initial padding */
+    /* Add padding for the section itself when it's visible, this helps spacing */
+    box-sizing: border-box; /* Crucial for max-height animation with padding */
 }
 
 #planSelectionSection.show {
     max-height: 500px; /* Enough height to show all content, adjust if content grows significantly */
     opacity: 1; /* Fully visible */
     /* Restore the original padding of the section when visible */
-    padding-top: 15px;
-    padding-bottom: 15px;
+    padding-top: 15px; /* Example padding, adjust as needed for spacing */
+    padding-bottom: 15px; /* Example padding, adjust as needed for spacing */
 }
 
 /* Ensure the transition properties are reset instantly when hiding for the "back" click */
@@ -192,7 +183,7 @@ select {
 }
 
 
-/* --- MOVED FROM HTML <style> --- */
+/* --- MOVED FROM HTML <style> - Loader and Status Messages --- */
 .loader {
     display: inline-block;
     width: 16px;
@@ -240,8 +231,8 @@ select {
     cursor: pointer;
     border-radius: 4px;
     z-index: 10;
-    white-space: nowrap; /* Prevents text from wrapping */
-    font-size: 0.9rem; /* Slightly smaller font for mobile */
+    white-space: nowrap;
+    font-size: 0.9rem;
     transition: background-color 0.2s ease-in-out;
 }
 .logout-button:hover {
@@ -277,7 +268,7 @@ select {
     padding: 10px;
     border-radius: 4px;
     border: 1px solid #ddd;
-    width: calc(100% - 20px); /* Adjusted to match your inline HTML styling */
+    width: calc(100% - 20px);
     box-sizing: border-box;
 }
 
@@ -384,21 +375,19 @@ select {
         margin-bottom: 10px;
     }
 
-    input[type="text"],
-    input[type="email"],
-    input[type="tel"],
-    input[type="date"],
-    input[type="number"],
-    select,
-    .submit-button {
+    /* All inputs should be 100% width on small screens */
+    .form-group input[type="text"],
+    .form-group input[type="email"],
+    .form-group input[type="tel"],
+    .form-group input[type="date"],
+    .form-group input[type="number"],
+    .form-group select,
+    input[type="password"],
+    .submit-button,
+    .back-button { /* Apply responsive styles to back button too */
         font-size: 14px;
         padding: 10px;
-    }
-
-    /* Back button adjustments for smaller screens */
-    .back-button {
-        font-size: 12px;
-        padding: 6px 10px;
+        width: 100%; /* Ensure full width on mobile */
     }
 
     #downloadLink {
@@ -407,6 +396,7 @@ select {
     }
 
     .plan-button { /* Still targeting this class which is now in demostyle.css */
+        flex: 1 1 100%; /* Full width on small screens */
         font-size: 14px;
         padding: 10px;
     }
