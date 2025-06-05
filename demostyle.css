@@ -1,301 +1,463 @@
+/* General Reset & Base Styles */
 html {
     scroll-behavior: smooth;
+    box-sizing: border-box; /* Global box-sizing for easier layout */
+}
+
+*, *::before, *::after {
+    box-sizing: inherit;
 }
 
 body {
-    font-family: sans-serif;
-    background-color: #f4f4f4;
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; /* Modern font stack */
+    background: linear-gradient(135deg, #e0f2f7 0%, #c1e0e7 100%); /* Soft, animated gradient background */
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     margin: 0;
+    overflow-x: hidden; /* Prevent horizontal scroll from subtle animations */
+    color: #333; /* Default text color */
 }
 
+/* Container Styling */
 .container {
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff; /* Pure white for a clean look */
+    padding: 40px; /* More generous padding */
+    border-radius: 12px; /* Softer rounded corners */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1); /* Deeper, more subtle shadow */
     width: 90%;
-    max-width: 500px;
+    max-width: 550px; /* Slightly wider for better layout */
     position: relative;
+    opacity: 0; /* Start hidden for entrance animation */
+    transform: translateY(20px); /* Start slightly below for slide-up */
+    animation: fadeInSlideUp 0.8s ease-out forwards; /* Entrance animation */
+    transition: all 0.3s ease-in-out; /* For hidden/shown state changes */
 }
 
+/* Animation for container entrance */
+@keyframes fadeInSlideUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Logo Styling */
 .logo {
     display: block;
-    margin: 0 auto 20px;
-    max-width: 150px;
+    margin: 0 auto 30px; /* More space below logo */
+    max-width: 180px; /* Slightly larger logo */
     height: auto;
+    transition: transform 0.3s ease-in-out; /* Subtle bounce on hover */
 }
 
-h1 {
+.logo:hover {
+    transform: scale(1.03);
+}
+
+/* Headings */
+h1, h2 {
     text-align: center;
-    color: #333;
-    margin-bottom: 20px;
+    color: #2c3e50; /* Darker, more professional blue-grey */
+    margin-bottom: 25px;
+    font-weight: 600; /* Slightly bolder */
+    letter-spacing: -0.5px; /* Tighter letter spacing for modern feel */
 }
 
+/* Form Group & Labels */
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 20px; /* Increased spacing between form groups */
 }
 
 label {
     display: block;
-    margin-bottom: 5px;
-    color: #555;
-    font-weight: bold;
+    margin-bottom: 8px; /* More space between label and input */
+    color: #4a4a4a; /* Softer dark grey */
+    font-weight: 500; /* Medium weight */
+    font-size: 0.95rem; /* Slightly smaller for elegance */
 }
 
+/* Input Fields & Selects */
 input[type="text"],
 input[type="email"],
 input[type="tel"],
 input[type="date"],
 input[type="number"],
+input[type="password"], /* Combined password input */
 select {
-    width: calc(100% - 12px);
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    width: 100%; /* Full width */
+    padding: 12px 15px; /* More padding */
+    border: 1px solid #dcdcdc; /* Lighter border */
+    border-radius: 6px; /* Softer border-radius */
     box-sizing: border-box;
-    font-size: 16px;
+    font-size: 1rem;
+    color: #333;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Smooth transitions */
 }
 
-/* Password input styling */
-input[type="password"] {
-    width: calc(100% - 12px);
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-sizing: border-box;
-    font-size: 16px;
-    height: auto;
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
+input[type="date"]:focus,
+input[type="number"]:focus,
+input[type="password"]:focus,
+select:focus {
+    outline: none;
+    border-color: #007bff; /* Highlight on focus */
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2); /* Soft focus glow */
 }
 
+/* Custom Select Arrow */
 select {
     appearance: none;
-    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007bff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E');
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%23666' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: right 10px top 50%;
-    background-size: 16px;
-    padding-right: 30px;
+    background-position: right 12px center;
+    background-size: 18px;
+    padding-right: 40px; /* Space for custom arrow */
 }
 
+/* Submit & General Buttons */
 .submit-button {
-    background-color: #007bff;
+    background-color: #007bff; /* Primary blue */
     color: white;
-    padding: 12px 20px;
+    padding: 14px 25px; /* Larger padding */
     border: none;
-    border-radius: 4px;
+    border-radius: 8px; /* More rounded */
     cursor: pointer;
-    font-size: 16px;
+    font-size: 1.1rem; /* Slightly larger font */
+    font-weight: 600; /* Bolder text */
     width: 100%;
     display: block;
-    transition: background-color 0.2s ease-in-out;
+    margin-top: 25px; /* More space above button */
+    transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2); /* Subtle shadow for depth */
 }
 
 .submit-button:hover {
     background-color: #0056b3;
+    transform: translateY(-2px); /* Slight lift on hover */
+    box-shadow: 0 6px 12px rgba(0, 123, 255, 0.3);
 }
 
-/* Updated: Back button styles for a better UI */
+.submit-button:active {
+    transform: translateY(0); /* Press effect */
+    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.1);
+}
+
+/* Back Button */
 .back-button {
-    background-color: transparent; /* Changed to transparent */
-    color: #6c757d; /* Text color is the grey */
+    background-color: #e9ecef; /* Light grey background */
+    color: #495057; /* Darker grey text */
     padding: 12px 20px;
-    border: 1px solid #6c757d; /* Border is the grey */
-    border-radius: 4px;
+    border: 1px solid #ced4da; /* Subtle border */
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 1rem;
+    font-weight: 500;
     width: 100%;
     display: block;
-    transition: all 0.2s ease-in-out; /* Transition all for better hover effect */
-    margin-top: 10px; /* Added margin for spacing */
+    margin-top: 15px; /* Consistent spacing */
+    transition: all 0.3s ease-in-out;
 }
 
 .back-button:hover {
-    background-color: #6c757d; /* Fills with grey on hover */
-    color: white; /* Text becomes white on hover */
+    background-color: #dee2e6;
+    border-color: #adb5bd;
+    transform: translateY(-1px);
 }
 
+.back-button:active {
+    transform: translateY(0);
+}
 
+/* Utility Class for Hidden Elements */
 .hidden {
-    display: none;
+    display: none !important; /* Use !important to override other display properties */
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
 }
 
+/* Visible class for animated appearance */
+.visible {
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+/* Loading, Success, Error Messages */
 #loading,
 #successContainer,
 #errorMessage {
-    margin-top: 15px;
+    margin-top: 25px;
+    padding: 15px;
+    border-radius: 8px;
     text-align: center;
-    font-weight: bold;
+    font-weight: 500;
+    opacity: 0; /* Start hidden for animation */
+    transition: opacity 0.4s ease-in-out;
+    transform: translateY(10px);
+}
+
+#loading.visible,
+#successContainer.visible,
+#errorMessage.visible {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 #loading {
-    color: #555;
+    color: #007bff;
+    background-color: #e6f7ff; /* Light blue background */
+    border: 1px solid #b3e0ff;
 }
 
 #successMessage {
-    color: green;
+    color: #28a745;
+    background-color: #e6ffe6; /* Light green background */
+    border: 1px solid #a4e6a4;
 }
 
 #errorMessage {
-    color: red;
+    color: #dc3545;
+    background-color: #ffe6e6; /* Light red background */
+    border: 1px solid #e6a4a4;
 }
 
+/* Loader Animation */
+.loader {
+    display: inline-block;
+    width: 20px; /* Slightly larger */
+    height: 20px;
+    border: 3px solid rgba(0, 123, 255, 0.3); /* Lighter border for loader */
+    border-top: 3px solid #007bff; /* Primary blue loader */
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* QR Code and Download Link Section */
 #pdfLinkSection {
-    margin-top: 20px;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: #f9f9f9;
+    margin-top: 30px;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    background-color: #f8f9fa; /* Very light grey */
     text-align: center;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); /* Subtle inner shadow */
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fadeInSlideUp 0.6s ease-out forwards 0.2s; /* Delayed appearance */
 }
 
 #pdfLinkSection p {
-    margin-bottom: 10px;
-    font-size: 15px;
+    margin-bottom: 12px;
+    font-size: 1rem;
+    color: #555;
 }
 
 #qrcode {
-    text-align: center;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 #qrcode canvas {
-    margin: 5px;
-    border: 1px solid #ccc;
+    border: 4px solid #fff; /* White border for QR */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* Shadow for QR */
+    border-radius: 4px;
 }
 
-/* Link styled as button */
+/* Download Link as Button */
 #downloadLink {
     display: inline-block;
-    background-color: #28a745;
+    background-color: #28a745; /* Green for success action */
     color: white;
-    padding: 10px 15px;
-    border-radius: 4px;
+    padding: 12px 25px;
+    border-radius: 8px;
     text-decoration: none;
     font-weight: bold;
-    transition: background-color 0.2s ease-in-out;
+    font-size: 1.05rem;
+    transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2);
 }
 
 #downloadLink:hover {
-    background-color: #1e7e34;
+    background-color: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(40, 167, 69, 0.3);
 }
 
-/* Validation Error Highlight */
+#downloadLink:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(40, 167, 69, 0.1);
+}
+
+/* Validation Error Highlighting */
 input.error,
 select.error {
-    border: 2px solid red;
-    background-color: #ffe6e6;
+    border-color: #dc3545; /* Red border */
+    background-color: #fffafa; /* Very light red background */
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2); /* Red glow */
 }
 
-/* Dynamic Plan Buttons Container */
-#plansList {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 15px;
+/* Plan Options Container & Buttons */
+.plan-options-container {
+    display: grid; /* Use CSS Grid for flexible layout */
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsive grid */
+    gap: 15px; /* More space between buttons */
+    margin-top: 20px;
+    margin-bottom: 25px;
+    padding: 15px;
+    border: 1px solid #e9ecef; /* Lighter border */
+    border-radius: 10px;
+    background-color: #f8f9fa;
+    transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
-#plansList button {
-    background-color: #e7e7e7;
-    border: 1px solid #ccc;
-    padding: 12px;
-    border-radius: 6px;
-    font-size: 15px;
+.plan-options-container.error {
+    border-color: #dc3545; /* Red border for validation error */
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2);
+}
+
+.plan-button {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    padding: 15px 20px; /* More padding */
+    border-radius: 10px; /* Softer corners */
     cursor: pointer;
-    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-    text-align: left;
+    font-size: 1.05rem; /* Slightly larger text */
+    font-weight: 500;
+    text-align: left; /* Align text to the left */
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Subtle shadow for each button */
+    display: flex; /* For icon/text alignment */
+    align-items: center;
+    justify-content: space-between; /* To push price to right */
 }
 
-#plansList button:hover {
-    background-color: #d4e3fc;
-    border-color: #007bff;
+.plan-button:hover {
+    background-color: #f0f8ff; /* Very light blue on hover */
+    border-color: #007bff; /* Primary blue border */
+    transform: translateY(-3px); /* Subtle lift */
+    box-shadow: 0 5px 12px rgba(0, 123, 255, 0.1);
 }
 
-#plansList button.selected {
-    background-color: #007bff;
+.plan-button.selected {
+    background-color: #007bff; /* Primary blue when selected */
     color: white;
     border-color: #0056b3;
+    box-shadow: 0 6px 12px rgba(0, 123, 255, 0.3);
+    transform: scale(1.02); /* Slightly larger when selected */
 }
 
-/* Login Section */
-#loginSection {
-    width: 90%;
-    max-width: 400px;
+.plan-button .plan-text {
+    flex-grow: 1; /* Allows text to take up space */
+    margin-right: 10px;
 }
 
-#loginSection form {
+.plan-button .plan-price {
+    font-weight: 600;
+    font-size: 1.15rem; /* Make price stand out */
+    color: inherit; /* Inherit color from parent (white when selected) */
+}
+
+
+/* Login Section Specific Styles */
+#loginSection h2 {
+    font-size: 2rem;
+    margin-bottom: 30px;
+}
+
+#loginSection .submit-button {
+    margin-top: 30px;
+}
+
+#loginSection .loader {
+    border-top: 3px solid #007bff; /* Ensure consistent loader color for login */
+}
+
+/* Store ID Display */
+.store-id-display {
+    margin-bottom: 25px;
+    padding: 10px 15px;
+    background-color: #f0f0f0; /* Light grey background */
+    border-radius: 6px;
+    font-size: 0.95rem;
     display: flex;
-    flex-direction: column;
-    gap: 15px;
+    justify-content: center;
+    align-items: center;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
 }
 
-#loginSection label {
-    font-weight: bold;
-    color: #444;
+.store-id-label {
+    color: #555;
+    font-weight: 500;
+    margin-right: 5px;
 }
 
-#loginSection input[type="text"],
-#loginSection input[type="password"] {
-    font-size: 16px;
-    padding: 10px;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-    width: calc(100% - 12px);
-    box-sizing: border-box;
+.store-id-value {
+    color: #dc3545; /* Red for store ID for prominence */
+    font-weight: 700; /* Bolder */
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
 }
 
-#loginSection button {
-    background-color: #007bff;
-    color: white;
-    padding: 12px 0;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
-}
-
-#loginSection button:hover {
-    background-color: #0056b3;
-}
-
-/* Logout button */
+/* Logout Button */
 #logoutButton {
     position: absolute;
-    top: 15px;
-    right: 15px;
-    background-color: #dc3545;
+    top: 20px;
+    right: 20px;
+    background-color: #dc3545; /* Red for danger action */
     color: white;
     border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
+    padding: 10px 18px;
+    border-radius: 8px;
     cursor: pointer;
-    font-weight: bold;
+    font-weight: 600;
     z-index: 10;
     white-space: nowrap;
     font-size: 0.9rem;
-    transition: background-color 0.2s ease-in-out;
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.2);
+    transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
 #logoutButton:hover {
     background-color: #b02a37;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(220, 53, 69, 0.3);
 }
 
-/* Responsive adjustments */
-@media (max-width: 600px) {
+#logoutButton:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.1);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
     .container {
-        padding: 20px;
+        padding: 30px 20px;
+        border-radius: 10px;
     }
 
-    h1 {
-        font-size: 1.5em;
-        margin-bottom: 15px;
+    h1, h2 {
+        font-size: 1.8em;
+        margin-bottom: 20px;
+    }
+
+    .logo {
+        max-width: 160px;
+        margin-bottom: 25px;
     }
 
     .form-group {
-        margin-bottom: 10px;
+        margin-bottom: 18px;
     }
 
     input[type="text"],
@@ -303,28 +465,70 @@ select.error {
     input[type="tel"],
     input[type="date"],
     input[type="number"],
-    select,
+    input[type="password"],
+    select {
+        padding: 10px 12px;
+        font-size: 0.95rem;
+    }
+
     .submit-button,
-    .back-button { /* Apply responsive styles to back button too */
-        font-size: 14px;
-        padding: 10px;
-    }
-
+    .back-button,
     #downloadLink {
-        font-size: 14px;
-        padding: 8px 12px;
+        padding: 12px 20px;
+        font-size: 1rem;
     }
 
-    #plansList button {
-        font-size: 14px;
-        padding: 10px;
+    .plan-button {
+        font-size: 0.95rem;
+        padding: 12px 15px;
     }
 
-    /* Adjust logout button for smaller screens */
+    .plan-button .plan-price {
+        font-size: 1.05rem;
+    }
+
+    #pdfLinkSection {
+        padding: 15px;
+    }
+
     #logoutButton {
-        top: 10px;
-        right: 10px;
-        padding: 6px 10px;
-        font-size: 0.8rem;
+        top: 15px;
+        right: 15px;
+        padding: 8px 14px;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 20px 15px;
+        border-radius: 8px;
+    }
+
+    h1, h2 {
+        font-size: 1.5em;
+        margin-bottom: 15px;
+    }
+
+    .logo {
+        max-width: 140px;
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .plan-options-container {
+        grid-template-columns: 1fr; /* Stack buttons on very small screens */
+        gap: 10px;
+    }
+    
+    .plan-button .plan-text {
+        margin-right: 5px;
+    }
+
+    .plan-button .plan-price {
+        font-size: 1rem;
     }
 }
