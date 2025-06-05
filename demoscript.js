@@ -1,10 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
     // --- DOM Element References ---
-    const loginSection = document.getElementById('loginSection');
+    // Removed login-specific DOM references here as they are handled by demoauth.js
     const warrantySection = document.getElementById('warrantySection');
-    const loginForm = document.getElementById('loginForm');
     const warrantyForm = document.getElementById('warrantyForm');
-    const logoutButton = document.getElementById('logoutButton');
+    const logoutButton = document.getElementById('logoutButton'); // Keep logout here
     const displayedStoreId = document.getElementById('displayedStoreId');
     const storeIdInput = document.getElementById('storeId'); // Hidden store ID input in warranty form
 
@@ -24,8 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const selectedPlanTypeInput = document.getElementById('selectedPlanType');
     const selectedPlanDetailsInput = document.getElementById('selectedPlanDetails');
 
-    const loginLoadingSpinner = document.getElementById('loginLoading');
-    const loginErrorMsg = document.getElementById('loginError');
+    // Removed login-specific loaders/messages here
     const formLoadingSpinner = document.getElementById('formLoading');
     const successContainer = document.getElementById('successContainer');
     const successMessage = document.getElementById('successMessage');
@@ -40,9 +38,9 @@ document.addEventListener('DOMContentLoaded', function () {
     function show(element) { element.classList.remove('hidden'); }
     function hide(element) { element.classList.add('hidden'); }
 
-    // Clear and Show Status Message
+    // Clear and Show Status Message (for warranty form)
     function showStatusMessage(element, message, isError = false) {
-        hide(successContainer);
+        hide(successContainer); // Always hide both before showing one
         hide(errorMessage);
         if (isError) {
             errorMessage.innerHTML = `<i class="fas fa-times-circle"></i> ${message}`;
@@ -96,10 +94,14 @@ document.addEventListener('DOMContentLoaded', function () {
         markInvalid(phonePriceInput, !isNaN(price) && price > 0);
     });
     // For other required fields, a simple check on blur is often sufficient
-    warrantyForm.querySelectorAll('input[required]:not([type="email"]):not([type="tel"]):not([type="number"])').forEach(input => {
+    warrantyForm.querySelectorAll('input[required]:not([type="email"]):not([type="tel"]):not([type="number"]):not([type="date"])').forEach(input => {
         input.addEventListener('blur', () => {
             markInvalid(input, input.value.trim() !== '');
         });
+    });
+    // Specific validation for purchaseDateInput
+    purchaseDateInput.addEventListener('blur', () => {
+        markInvalid(purchaseDateInput, purchaseDateInput.value.trim() !== '');
     });
 
 
@@ -215,7 +217,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 selectedPlanValueInput.value = plan.value;
                 selectedPlanPriceInput.value = plan.price;
                 selectedPlanTypeInput.value = plan.internalType;
-                selectedPlanDetailsInput.value = plan.getAttribute('data-details'); // Use clean text
+                selectedPlanDetailsInput.value = button.getAttribute('data-details'); // Use clean text from attribute
 
                 planOptionsContainer.classList.remove('error'); // Clear plan error on selection
             });
@@ -232,60 +234,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- Event Listeners ---
 
-    // Login Form Submission
-    loginForm.addEventListener('submit', function (e) {
-        e.preventDefault();
-        show(loginLoadingSpinner);
-        hide(loginErrorMsg);
-
-        const formData = new FormData(loginForm);
-        // Replace with your actual login endpoint
-        fetch('https://script.google.com/macros/s/YOUR_LOGIN_ENDPOINT/exec', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                sessionStorage.setItem('storeId', data.storeId);
-                sessionStorage.setItem('loggedIn', 'true');
-                displayedStoreId.textContent = data.storeId;
-                storeIdInput.value = data.storeId; // Set hidden input value
-
-                hide(loginSection);
-                show(warrantySection);
-                // Reset form state for a fresh start
-                warrantyForm.reset();
-                hide(planSelectionSection);
-                hide(backToPhonePriceButton);
-                show(showPlanPricesButton);
-                hide(successContainer);
-                hide(errorMessage);
-                planOptionsContainer.classList.remove('error'); // Ensure plan error is cleared
-                selectedPlanValueInput.value = ''; // Clear selected plan data
-            } else {
-                show(loginErrorMsg);
-            }
-        })
-        .catch(error => {
-            console.error('Login error:', error);
-            show(loginErrorMsg);
-            loginErrorMsg.innerHTML = `<i class="fas fa-exclamation-circle"></i> Login failed. Please try again.`;
-        })
-        .finally(() => {
-            hide(loginLoadingSpinner);
-        });
-    });
-
-    // Logout Button
+    // Logout Button (Handles visibility logic for login/warranty sections)
     logoutButton.addEventListener('click', function () {
         sessionStorage.removeItem('storeId');
         sessionStorage.removeItem('loggedIn');
-        hide(warrantySection);
-        show(loginSection);
-        loginForm.reset(); // Clear login fields
-        loginErrorMsg.classList.add('hidden'); // Hide login error
-        loginLoadingSpinner.classList.add('hidden'); // Hide login loader
+        hide(warrantySection); // Hide warranty section
+        // Note: demoauth.js should handle showing the login section
+        // or a page reload will naturally bring it up as per demoauth.js logic.
+        location.reload(); // A simple way to ensure demoauth.js re-initializes
     });
 
     // "Show Plan Prices" Button Click
@@ -295,6 +251,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Clear any previous success/error messages
         hide(successContainer);
         hide(errorMessage);
+        hide(pdfLinkSection); // Hide QR code section if shown
 
         if (validateCustomerAndPhoneDetails()) {
             const phonePrice = parseFloat(phonePriceInput.value);
@@ -312,7 +269,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 planSelectionSection.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
             }, 100);
         } else {
-            showStatusMessage(errorMessage, 'Please correct the highlighted fields in Customer and Product Details.', true);
+            showStatusMessage(errorMessage, 'Please correct the highlighted fields in Customer and Product Details before proceeding.', true);
         }
     });
 
@@ -345,6 +302,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Clear any previous success/error messages
         hide(successContainer);
         hide(errorMessage);
+        hide(pdfLinkSection); // Hide QR code section
 
         // Scroll back to the phone price input field
         phonePriceInput.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
@@ -374,11 +332,11 @@ document.addEventListener('DOMContentLoaded', function () {
         generateCertificateButton.disabled = true; // Disable button during submission
         hide(successContainer);
         hide(errorMessage);
-        hide(pdfLinkSection); // Hide QR code section
+        hide(pdfLinkSection); // Hide QR code section if shown
 
         const formData = new FormData(warrantyForm);
 
-        // Replace with your actual Google Apps Script URL
+        // Replace with your actual Google Apps Script URL for warranty submission
         fetch('https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULX/exec', {
             method: 'POST',
             body: formData
@@ -401,7 +359,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     show(pdfLinkSection);
                     warrantyForm.reset(); // Clear form fields
 
-                    // Maintain store ID after reset
+                    // Maintain store ID after reset (fetched from sessionStorage)
                     const storeId = sessionStorage.getItem('storeId');
                     if (storeId) {
                         storeIdInput.value = storeId;
@@ -443,27 +401,14 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // --- Initial Load Logic ---
-    function initializeApp() {
-        const loggedIn = sessionStorage.getItem('loggedIn');
+    // This function will be called by demoauth.js to populate the store ID
+    // and correctly display the warranty section after a successful login.
+    // It also sets the default purchase date.
+    window.initializeWarrantyForm = function() {
         const storeId = sessionStorage.getItem('storeId');
-
-        if (loggedIn === 'true' && storeId) {
-            hide(loginSection);
-            show(warrantySection);
+        if (storeId) {
             displayedStoreId.textContent = storeId;
             storeIdInput.value = storeId;
-            // Ensure warranty form starts in a clean state
-            warrantyForm.reset();
-            hide(planSelectionSection);
-            hide(backToPhonePriceButton);
-            show(showPlanPricesButton);
-            hide(successContainer);
-            hide(errorMessage);
-            planOptionsContainer.classList.remove('error');
-            selectedPlanValueInput.value = '';
-        } else {
-            show(loginSection);
-            hide(warrantySection);
         }
 
         // Set today's date as default for purchase date input
@@ -472,7 +417,28 @@ document.addEventListener('DOMContentLoaded', function () {
         const mm = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
         const dd = String(today.getDate()).padStart(2, '0');
         purchaseDateInput.value = `${yyyy}-${mm}-${dd}`;
-    }
 
-    initializeApp();
+        // Ensure form starts in a clean state
+        warrantyForm.reset();
+        hide(planSelectionSection);
+        hide(backToPhonePriceButton);
+        show(showPlanPricesButton);
+        hide(successContainer);
+        hide(errorMessage);
+        hide(pdfLinkSection);
+        planOptionsContainer.classList.remove('error');
+        selectedPlanValueInput.value = '';
+    };
+
+    // Call initializeWarrantyForm if already logged in on direct page load
+    // This is primarily for when the user refreshes an already logged-in page.
+    // In a full SPA, demoauth.js would call this after a successful login.
+    if (sessionStorage.getItem('loggedIn') === 'true') {
+        window.initializeWarrantyForm();
+        show(warrantySection); // Ensure warranty section is visible
+        hide(document.getElementById('loginSection')); // Hide login section
+    } else {
+        hide(warrantySection); // Ensure warranty section is hidden if not logged in
+        show(document.getElementById('loginSection')); // Ensure login section is visible
+    }
 });
