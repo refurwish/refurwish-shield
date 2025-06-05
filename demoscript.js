@@ -10,24 +10,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const phonePriceInput = document.getElementById('phonePrice');
     const showPlanPricesButton = document.getElementById('showPlanPricesButton');
-    const planSelectionSection = document.getElementById('planSelectionSection');
+    const planSelectionSection = document.getElementById('planSelectionSection'); // This now gets animated
     const generateCertificateButton = document.getElementById('generateCertificateButton');
 
-    const planOptionsContainer = document.getElementById('planOptionsContainer');
+    const planOptionsContainer = document.getElementById('planOptionsContainer'); // Corrected ID to match HTML structure
     const selectedPlanValueInput = document.getElementById('selectedPlanValue');
     const selectedPlanPriceInput = document.getElementById('selectedPlanPrice');
     const selectedPlanTypeInput = document.getElementById('selectedPlanType');
     const selectedPlanDetailsInput = document.getElementById('selectedPlanDetails');
 
-    // NEW: Back button element
+    // NEW: Back button element (with arrow icon)
     const backToPhonePriceButton = document.createElement('button');
-    backToPhonePriceButton.textContent = '← Change Phone Price';
-    backToPhonePriceButton.classList.add('back-button'); // Use a specific class for styling (added in CSS previously)
-    backToPhonePriceButton.type = 'button'; // <<-- CRITICAL FIX: Set type to button to prevent submission
-    backToPhonePriceButton.style.marginTop = '10px';
+    backToPhonePriceButton.innerHTML = '&#8592; Change Price'; // Left arrow + text
+    backToPhonePriceButton.classList.add('back-button');
+    backToPhonePriceButton.type = 'button'; // Critical: Set type to button to prevent submission
     backToPhonePriceButton.style.display = 'none'; // Initially hidden
-    // Insert it after the "Show Plan Prices" button for better UX
-    showPlanPricesButton.parentNode.insertBefore(backToPhonePriceButton, showPlanPricesButton.nextSibling);
+    // Insert it before the "Generate Warranty Certificate" button for good positioning
+    generateCertificateButton.parentNode.insertBefore(backToPhonePriceButton, generateCertificateButton);
 
 
     // Define extended warranty base prices
@@ -124,7 +123,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 selectedPlanTypeInput.value = plan.internalType;
                 selectedPlanDetailsInput.value = plan.text;
 
-                planOptionsContainer.classList.remove('error');
+                planOptionsContainer.classList.remove('error'); // Clear plan error on selection
             });
 
             planOptionsContainer.appendChild(button);
@@ -165,6 +164,16 @@ document.addEventListener('DOMContentLoaded', function () {
             isValid = false;
         }
 
+        const phoneRegex = /^\d{10}$/; // Simple 10-digit phone number validation
+        const customerPhone = document.getElementById('customerPhone');
+        if (!phoneRegex.test(customerPhone.value)) {
+            customerPhone.classList.add('error');
+            isValid = false;
+        } else {
+            customerPhone.classList.remove('error');
+        }
+
+
         const phonePrice = parseFloat(phonePriceInput.value);
         if (isNaN(phonePrice) || phonePrice <= 0) {
             phonePriceInput.classList.add('error');
@@ -182,21 +191,39 @@ document.addEventListener('DOMContentLoaded', function () {
         if (validateCustomerAndPhoneDetails()) {
             const phonePrice = parseFloat(phonePriceInput.value);
             populatePlanOptions(phonePrice);
-            planSelectionSection.classList.remove('hidden');
+
+            // Add the 'show' class to trigger slide-down animation
+            planSelectionSection.classList.remove('hidden', 'hide-instant'); // Ensure hidden and instant-hide are removed first
+            planSelectionSection.classList.add('show');
+
             showPlanPricesButton.classList.add('hidden');
-            backToPhonePriceButton.style.display = 'block'; // Show the back button
-            planOptionsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            // Back button is floated right, so display it as inline-flex to work with float
+            backToPhonePriceButton.style.display = 'inline-flex';
+
+            // Scroll into view after a slight delay to allow animation to start
+            setTimeout(() => {
+                planSelectionSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100); // Small delay
         } else {
             alert('Please fill in all customer and phone details correctly before proceeding to plan selection.');
         }
     });
 
-    // NEW: Event listener for the "Back to Phone Price" button
+    // Event listener for the "Change Phone Price" button
     backToPhonePriceButton.addEventListener('click', function() {
-        // This button now has type="button", so it won't submit the form
-        planSelectionSection.classList.add('hidden'); // Hide plan selection
-        showPlanPricesButton.classList.remove('hidden'); // Show "Show Plan Prices" button
-        backToPhonePriceButton.style.display = 'none'; // Hide back button
+        // Apply 'hide-instant' class to bypass transition
+        planSelectionSection.classList.add('hide-instant');
+        planSelectionSection.classList.remove('show');
+
+        // After a very short timeout, revert to 'hidden' (display: none)
+        setTimeout(() => {
+            planSelectionSection.classList.add('hidden');
+            planSelectionSection.classList.remove('hide-instant'); // Clean up the instant-hide class
+        }, 10); // A tiny delay to allow CSS to register 'transition: none'
+
+        showPlanPricesButton.classList.remove('hidden');
+        backToPhonePriceButton.style.display = 'none';
+
         // Optional: clear selected plan to force re-selection if user goes back
         const currentSelected = planOptionsContainer.querySelector('.plan-button.selected');
         if (currentSelected) {
@@ -206,11 +233,10 @@ document.addEventListener('DOMContentLoaded', function () {
         selectedPlanPriceInput.value = '';
         selectedPlanTypeInput.value = '';
         selectedPlanDetailsInput.value = '';
+        planOptionsContainer.classList.remove('error'); // Clear plan error on back click
+
         // Scroll back to the phone price input
         phonePriceInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-        // IMPORTANT: Also clear any error highlighting from the plan container
-        planOptionsContainer.classList.remove('error');
     });
 
 
@@ -220,9 +246,10 @@ document.addEventListener('DOMContentLoaded', function () {
         // Validate plan selection (check if hidden inputs have values)
         if (!selectedPlanValueInput.value) {
             alert('Please select a Plan.');
-            // Add a visual indicator to the plan options container
             planOptionsContainer.classList.add('error');
-            return; // Stop form submission here
+            // Scroll to the plan section to highlight the error
+            planSelectionSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            return;
         } else {
             planOptionsContainer.classList.remove('error');
         }
@@ -234,7 +261,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const formData = new FormData(form);
 
-        fetch('https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec', {
+        fetch('https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULX/exec', { // Double check this URL
             method: 'POST',
             body: formData
         })
@@ -262,9 +289,16 @@ document.addEventListener('DOMContentLoaded', function () {
                         storeIdInput.value = storeId;
                     }
                     // Hide plan selection section and show "Show Plan Prices" button again
-                    planSelectionSection.classList.add('hidden');
+                    // Use 'hide-instant' class for instant hiding
+                    planSelectionSection.classList.add('hide-instant');
+                    planSelectionSection.classList.remove('show');
+                    setTimeout(() => {
+                        planSelectionSection.classList.add('hidden');
+                        planSelectionSection.classList.remove('hide-instant');
+                    }, 10);
+
                     showPlanPricesButton.classList.remove('hidden');
-                    backToPhonePriceButton.style.display = 'none'; // Hide back button after successful submission
+                    backToPhonePriceButton.style.display = 'none';
 
                     // Clear selected plan styling and hidden inputs
                     const currentSelected = planOptionsContainer.querySelector('.plan-button.selected');
