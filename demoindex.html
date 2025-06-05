@@ -6,7 +6,7 @@
     <title>Refurwish Shield Warranty Registration</title>
     <link rel="icon" type="image/png" sizes="32x32" href="favicon.png" />
     <link rel="stylesheet" href="demostyle.css" />
-    </head>
+</head>
 <body>
 
 <div class="container" id="loginSection">
@@ -68,16 +68,18 @@
             <label for="purchaseDate">Phone Purchase Date:</label>
             <input type="date" id="purchaseDate" name="purchaseDate" required />
         </div>
-        <div class="form-group">
-            <label for="phonePrice">Phone Price (₹):</label>
+        <div class="form-group" id="phonePriceGroup"> <label for="phonePrice">Phone Price (₹):</label>
             <input type="number" id="phonePrice" name="phonePrice" placeholder="Enter phone's purchase price (e.g., 25000)" required min="1" />
         </div>
 
         <button type="button" class="submit-button" id="showPlanPricesButton">Show Plan Prices</button>
-        <button type="button" class="back-button hidden" id="backToPhonePriceButton">← Change Phone Price</button>
-
 
         <div id="planSelectionSection" class="hidden">
+            <div class="displayed-phone-price-info">
+                <p>Phone Price Entered: <strong id="confirmedPhonePrice"></strong></p>
+                <button type="button" class="back-button" id="backToPhonePriceButton">← Change Phone Price</button>
+            </div>
+
             <p style="margin-top: 15px; font-weight: bold; color: #4a4a4a;">Select your plan:</p>
             <div id="planOptionsContainer" class="plan-options-container">
                 </div>
