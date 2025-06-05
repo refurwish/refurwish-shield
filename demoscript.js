@@ -1,36 +1,131 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById('warrantyForm');
-    const loading = document.getElementById('loading');
-    const successContainer = document.getElementById('successContainer');
-    const errorMessage = document.getElementById('errorMessage');
-    const qrcodeDiv = document.getElementById('qrcode');
-    const downloadLink = document.getElementById('downloadLink');
-    const pdfLinkSection = document.getElementById('pdfLinkSection');
-    const storeIdInput = document.getElementById('storeId');
+    // --- DOM Element References ---
+    const loginSection = document.getElementById('loginSection');
+    const warrantySection = document.getElementById('warrantySection');
+    const loginForm = document.getElementById('loginForm');
+    const warrantyForm = document.getElementById('warrantyForm');
+    const logoutButton = document.getElementById('logoutButton');
+    const displayedStoreId = document.getElementById('displayedStoreId');
+    const storeIdInput = document.getElementById('storeId'); // Hidden store ID input in warranty form
 
+    const customerEmailInput = document.getElementById('customerEmail');
+    const customerPhoneInput = document.getElementById('customerPhone');
+    const imeiNumberInput = document.getElementById('imeiNumber');
     const phonePriceInput = document.getElementById('phonePrice');
+    const purchaseDateInput = document.getElementById('purchaseDate');
+
     const showPlanPricesButton = document.getElementById('showPlanPricesButton');
     const planSelectionSection = document.getElementById('planSelectionSection');
+    const backToPhonePriceButton = document.getElementById('backToPhonePriceButton');
     const generateCertificateButton = document.getElementById('generateCertificateButton');
-
     const planOptionsContainer = document.getElementById('planOptionsContainer');
     const selectedPlanValueInput = document.getElementById('selectedPlanValue');
     const selectedPlanPriceInput = document.getElementById('selectedPlanPrice');
     const selectedPlanTypeInput = document.getElementById('selectedPlanType');
     const selectedPlanDetailsInput = document.getElementById('selectedPlanDetails');
 
-    // NEW: Back button element
-    const backToPhonePriceButton = document.createElement('button');
-    backToPhonePriceButton.textContent = '← Change Phone Price';
-    backToPhonePriceButton.classList.add('back-button'); // Use a specific class for styling (added in CSS previously)
-    backToPhonePriceButton.type = 'button'; // <<-- CRITICAL FIX: Set type to button to prevent submission
-    backToPhonePriceButton.style.marginTop = '10px';
-    backToPhonePriceButton.style.display = 'none'; // Initially hidden
-    // Insert it after the "Show Plan Prices" button for better UX
-    showPlanPricesButton.parentNode.insertBefore(backToPhonePriceButton, showPlanPricesButton.nextSibling);
+    const loginLoadingSpinner = document.getElementById('loginLoading');
+    const loginErrorMsg = document.getElementById('loginError');
+    const formLoadingSpinner = document.getElementById('formLoading');
+    const successContainer = document.getElementById('successContainer');
+    const successMessage = document.getElementById('successMessage');
+    const errorMessage = document.getElementById('errorMessage');
+    const pdfLinkSection = document.getElementById('pdfLinkSection');
+    const qrcodeDiv = document.getElementById('qrcode');
+    const downloadLink = document.getElementById('downloadLink');
+
+    // --- Utility Functions ---
+
+    // Show/Hide Elements
+    function show(element) { element.classList.remove('hidden'); }
+    function hide(element) { element.classList.add('hidden'); }
+
+    // Clear and Show Status Message
+    function showStatusMessage(element, message, isError = false) {
+        hide(successContainer);
+        hide(errorMessage);
+        if (isError) {
+            errorMessage.innerHTML = `<i class="fas fa-times-circle"></i> ${message}`;
+            show(errorMessage);
+        } else {
+            successMessage.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+            show(successContainer);
+        }
+    }
+
+    // --- Input Validation & Styling ---
+    function markInvalid(inputElement, isValid) {
+        if (isValid) {
+            inputElement.classList.remove('error');
+        } else {
+            inputElement.classList.add('error');
+        }
+    }
+
+    function isValidEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function isValidPhone(phone) {
+        // Basic 10-digit numeric validation
+        return /^\d{10}$/.test(phone);
+    }
+
+    function isValidIMEI(imei) {
+        // Basic 15-digit numeric validation
+        return /^\d{15}$/.test(imei);
+    }
+
+    function validateField(inputElement, validationFn, eventType = 'blur') {
+        if (eventType === 'input') { // Validate on input for immediate feedback
+            inputElement.addEventListener('input', () => {
+                markInvalid(inputElement, validationFn(inputElement.value.trim()));
+            });
+        }
+        inputElement.addEventListener('blur', () => { // Validate on blur for final check
+            markInvalid(inputElement, validationFn(inputElement.value.trim()));
+        });
+    }
+
+    // Apply real-time validation to key fields
+    validateField(customerEmailInput, isValidEmail, 'input');
+    validateField(customerPhoneInput, isValidPhone, 'input');
+    validateField(imeiNumberInput, isValidIMEI, 'input');
+    phonePriceInput.addEventListener('input', () => {
+        const price = parseFloat(phonePriceInput.value);
+        markInvalid(phonePriceInput, !isNaN(price) && price > 0);
+    });
+    // For other required fields, a simple check on blur is often sufficient
+    warrantyForm.querySelectorAll('input[required]:not([type="email"]):not([type="tel"]):not([type="number"])').forEach(input => {
+        input.addEventListener('blur', () => {
+            markInvalid(input, input.value.trim() !== '');
+        });
+    });
 
 
-    // Define extended warranty base prices
+    function validateCustomerAndPhoneDetails() {
+        let isValid = true;
+        const fieldsToCheck = [
+            { element: document.getElementById('customerName'), validator: val => val.trim() !== '' },
+            { element: customerEmailInput, validator: isValidEmail },
+            { element: customerPhoneInput, validator: isValidPhone },
+            { element: document.getElementById('productName'), validator: val => val.trim() !== '' },
+            { element: imeiNumberInput, validator: isValidIMEI },
+            { element: purchaseDateInput, validator: val => val.trim() !== '' },
+            { element: phonePriceInput, validator: val => !isNaN(parseFloat(val)) && parseFloat(val) > 0 }
+        ];
+
+        fieldsToCheck.forEach(({ element, validator }) => {
+            const fieldIsValid = validator(element.value);
+            markInvalid(element, fieldIsValid);
+            if (!fieldIsValid) {
+                isValid = false;
+            }
+        });
+        return isValid;
+    }
+
+    // --- Plan Price Logic ---
     const extendedWarrantyPrices = [
         { maxPrice: 15000, planText: 'Under ₹15,000', price: 699 },
         { maxPrice: 25000, planText: '₹15,001 - ₹25,000', price: 799 },
@@ -44,20 +139,18 @@ document.addEventListener('DOMContentLoaded', function () {
         { maxPrice: 250000, planText: '₹2,00,001 - ₹2,50,000', price: 3499 },
     ];
 
-    // Function to calculate extended warranty price based on phone price
     function getExtendedWarrantyPrice(phonePrice) {
         for (const plan of extendedWarrantyPrices) {
             if (phonePrice <= plan.maxPrice) {
                 return plan.price;
             }
         }
-        // If phone price exceeds max defined range, return price of the highest slab
         return extendedWarrantyPrices[extendedWarrantyPrices.length - 1].price;
     }
 
-    // Function to populate plan options as buttons
     function populatePlanOptions(phonePrice) {
-        planOptionsContainer.innerHTML = ''; // Clear existing buttons
+        planOptionsContainer.innerHTML = '';
+        planOptionsContainer.classList.remove('error'); // Clear potential error state
 
         const extendedPrice = getExtendedWarrantyPrice(phonePrice);
         const screenDamagePrice = Math.round(phonePrice * 0.075);
@@ -66,35 +159,35 @@ document.addEventListener('DOMContentLoaded', function () {
         const allPlans = [
             {
                 value: 'extended_warranty',
-                text: `Extended Warranty (₹${extendedPrice})`,
+                text: `Extended Warranty <br/> (₹${extendedPrice})`,
                 price: extendedPrice,
                 internalType: 'extended',
                 periodText: '12 Months Extended'
             },
             {
                 value: 'screen_protection',
-                text: `Screen Protection Plan (₹${screenDamagePrice})`,
+                text: `Screen Protection Plan <br/> (₹${screenDamagePrice})`,
                 price: screenDamagePrice,
                 internalType: 'screen_protection',
                 periodText: '12 Months'
             },
             {
                 value: 'total_damage_protection',
-                text: `Total Damage Protection (₹${totalDamagePrice})`,
+                text: `Total Damage Protection <br/> (₹${totalDamagePrice})`,
                 price: totalDamagePrice,
                 internalType: 'total_damage',
                 periodText: '12 Months'
             },
             {
                 value: 'combo_screen_extended',
-                text: `Combo (Screen Damage + Extended Warranty) (₹${Math.round(screenDamagePrice + (extendedPrice * 0.5))})`,
+                text: `Combo (Screen Damage + Extended) <br/> (₹${Math.round(screenDamagePrice + (extendedPrice * 0.5))})`,
                 price: Math.round(screenDamagePrice + (extendedPrice * 0.5)),
                 internalType: 'combo_screen_extended',
                 periodText: '24 Months Total'
             },
             {
                 value: 'combo_total_extended',
-                text: `Combo (Total Damage Protection + Extended Warranty) (₹${Math.round(totalDamagePrice + (extendedPrice * 0.5))})`,
+                text: `Combo (Total Damage + Extended) <br/> (₹${Math.round(totalDamagePrice + (extendedPrice * 0.5))})`,
                 price: Math.round(totalDamagePrice + (extendedPrice * 0.5)),
                 internalType: 'combo_total_extended',
                 periodText: '24 Months Total'
@@ -103,14 +196,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
         allPlans.forEach(plan => {
             const button = document.createElement('button');
-            button.type = 'button'; // Important: set type to button to prevent form submission
+            button.type = 'button';
             button.classList.add('plan-button');
-            button.textContent = plan.text;
+            button.innerHTML = plan.text; // Use innerHTML for <br/> tag
 
             button.setAttribute('data-value', plan.value);
             button.setAttribute('data-price', plan.price);
             button.setAttribute('data-plantype', plan.internalType);
-            button.setAttribute('data-details', plan.text);
+            button.setAttribute('data-details', plan.text.replace('<br/>', ' - ')); // Store clean text for form data
 
             button.addEventListener('click', function() {
                 const currentSelected = planOptionsContainer.querySelector('.plan-button.selected');
@@ -122,82 +215,123 @@ document.addEventListener('DOMContentLoaded', function () {
                 selectedPlanValueInput.value = plan.value;
                 selectedPlanPriceInput.value = plan.price;
                 selectedPlanTypeInput.value = plan.internalType;
-                selectedPlanDetailsInput.value = plan.text;
+                selectedPlanDetailsInput.value = plan.getAttribute('data-details'); // Use clean text
 
-                planOptionsContainer.classList.remove('error');
+                planOptionsContainer.classList.remove('error'); // Clear plan error on selection
             });
 
             planOptionsContainer.appendChild(button);
         });
 
+        // Reset selected plan inputs
         selectedPlanValueInput.value = '';
         selectedPlanPriceInput.value = '';
         selectedPlanTypeInput.value = '';
         selectedPlanDetailsInput.value = '';
     }
 
-    function validateCustomerAndPhoneDetails() {
-        let isValid = true;
-        const requiredFields = [
-            'customerName',
-            'customerEmail',
-            'customerPhone',
-            'productName',
-            'imeiNumber',
-            'purchaseDate',
-            'phonePrice'
-        ];
+    // --- Event Listeners ---
 
-        requiredFields.forEach(fieldId => {
-            const field = document.getElementById(fieldId);
-            if (!field.value.trim()) {
-                field.classList.add('error');
-                isValid = false;
-            } else {
-                field.classList.remove('error');
-            }
-        });
-
-        const email = document.getElementById('customerEmail');
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailPattern.test(email.value)) {
-            email.classList.add('error');
-            isValid = false;
-        }
-
-        const phonePrice = parseFloat(phonePriceInput.value);
-        if (isNaN(phonePrice) || phonePrice <= 0) {
-            phonePriceInput.classList.add('error');
-            isValid = false;
-        } else {
-            phonePriceInput.classList.remove('error');
-        }
-
-        return isValid;
-    }
-
-    showPlanPricesButton.addEventListener('click', function (e) {
+    // Login Form Submission
+    loginForm.addEventListener('submit', function (e) {
         e.preventDefault();
+        show(loginLoadingSpinner);
+        hide(loginErrorMsg);
+
+        const formData = new FormData(loginForm);
+        // Replace with your actual login endpoint
+        fetch('https://script.google.com/macros/s/YOUR_LOGIN_ENDPOINT/exec', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                sessionStorage.setItem('storeId', data.storeId);
+                sessionStorage.setItem('loggedIn', 'true');
+                displayedStoreId.textContent = data.storeId;
+                storeIdInput.value = data.storeId; // Set hidden input value
+
+                hide(loginSection);
+                show(warrantySection);
+                // Reset form state for a fresh start
+                warrantyForm.reset();
+                hide(planSelectionSection);
+                hide(backToPhonePriceButton);
+                show(showPlanPricesButton);
+                hide(successContainer);
+                hide(errorMessage);
+                planOptionsContainer.classList.remove('error'); // Ensure plan error is cleared
+                selectedPlanValueInput.value = ''; // Clear selected plan data
+            } else {
+                show(loginErrorMsg);
+            }
+        })
+        .catch(error => {
+            console.error('Login error:', error);
+            show(loginErrorMsg);
+            loginErrorMsg.innerHTML = `<i class="fas fa-exclamation-circle"></i> Login failed. Please try again.`;
+        })
+        .finally(() => {
+            hide(loginLoadingSpinner);
+        });
+    });
+
+    // Logout Button
+    logoutButton.addEventListener('click', function () {
+        sessionStorage.removeItem('storeId');
+        sessionStorage.removeItem('loggedIn');
+        hide(warrantySection);
+        show(loginSection);
+        loginForm.reset(); // Clear login fields
+        loginErrorMsg.classList.add('hidden'); // Hide login error
+        loginLoadingSpinner.classList.add('hidden'); // Hide login loader
+    });
+
+    // "Show Plan Prices" Button Click
+    showPlanPricesButton.addEventListener('click', function (e) {
+        e.preventDefault(); // Prevent form submission
+
+        // Clear any previous success/error messages
+        hide(successContainer);
+        hide(errorMessage);
 
         if (validateCustomerAndPhoneDetails()) {
             const phonePrice = parseFloat(phonePriceInput.value);
             populatePlanOptions(phonePrice);
-            planSelectionSection.classList.remove('hidden');
-            showPlanPricesButton.classList.add('hidden');
-            backToPhonePriceButton.style.display = 'block'; // Show the back button
-            planOptionsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            // Animate plan section in
+            planSelectionSection.classList.remove('hidden', 'hide-instant');
+            planSelectionSection.classList.add('show');
+
+            hide(showPlanPricesButton);
+            show(backToPhonePriceButton);
+
+            // Scroll into view after animation has a chance to start
+            setTimeout(() => {
+                planSelectionSection.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
+            }, 100);
         } else {
-            alert('Please fill in all customer and phone details correctly before proceeding to plan selection.');
+            showStatusMessage(errorMessage, 'Please correct the highlighted fields in Customer and Product Details.', true);
         }
     });
 
-    // NEW: Event listener for the "Back to Phone Price" button
+    // "Change Phone Price" (Back) Button Click
     backToPhonePriceButton.addEventListener('click', function() {
-        // This button now has type="button", so it won't submit the form
-        planSelectionSection.classList.add('hidden'); // Hide plan selection
-        showPlanPricesButton.classList.remove('hidden'); // Show "Show Plan Prices" button
-        backToPhonePriceButton.style.display = 'none'; // Hide back button
-        // Optional: clear selected plan to force re-selection if user goes back
+        // Hide plan section instantly
+        planSelectionSection.classList.add('hide-instant');
+        planSelectionSection.classList.remove('show');
+
+        // Allow a tiny moment for CSS to register transition: none
+        setTimeout(() => {
+            planSelectionSection.classList.add('hidden');
+            planSelectionSection.classList.remove('hide-instant'); // Clean up instant-hide class
+        }, 10);
+
+        show(showPlanPricesButton);
+        hide(backToPhonePriceButton);
+
+        // Clear selected plan styling and hidden inputs
         const currentSelected = planOptionsContainer.querySelector('.plan-button.selected');
         if (currentSelected) {
             currentSelected.classList.remove('selected');
@@ -206,67 +340,74 @@ document.addEventListener('DOMContentLoaded', function () {
         selectedPlanPriceInput.value = '';
         selectedPlanTypeInput.value = '';
         selectedPlanDetailsInput.value = '';
-        // Scroll back to the phone price input
-        phonePriceInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        planOptionsContainer.classList.remove('error'); // Clear plan error on back click
 
-        // IMPORTANT: Also clear any error highlighting from the plan container
-        planOptionsContainer.classList.remove('error');
+        // Clear any previous success/error messages
+        hide(successContainer);
+        hide(errorMessage);
+
+        // Scroll back to the phone price input field
+        phonePriceInput.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
     });
 
 
-    form.addEventListener('submit', function (e) {
+    // Warranty Form Submission
+    warrantyForm.addEventListener('submit', function (e) {
         e.preventDefault();
 
-        // Validate plan selection (check if hidden inputs have values)
+        // Final validation before submission
+        if (!validateCustomerAndPhoneDetails()) {
+            showStatusMessage(errorMessage, 'Please correct the highlighted fields in Customer and Product Details before submitting.', true);
+            return;
+        }
+
         if (!selectedPlanValueInput.value) {
-            alert('Please select a Plan.');
-            // Add a visual indicator to the plan options container
-            planOptionsContainer.classList.add('error');
-            return; // Stop form submission here
+            showStatusMessage(errorMessage, 'Please select a Warranty Plan.', true);
+            planOptionsContainer.classList.add('error'); // Add error styling to container
+            planSelectionSection.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' }); // Scroll to highlight
+            return;
         } else {
             planOptionsContainer.classList.remove('error');
         }
 
-        loading.classList.remove('hidden');
-        successContainer.classList.add('hidden');
-        errorMessage.classList.add('hidden');
-        pdfLinkSection.classList.add('hidden');
+        show(formLoadingSpinner);
+        generateCertificateButton.disabled = true; // Disable button during submission
+        hide(successContainer);
+        hide(errorMessage);
+        hide(pdfLinkSection); // Hide QR code section
 
-        const formData = new FormData(form);
+        const formData = new FormData(warrantyForm);
 
-        fetch('https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec', {
+        // Replace with your actual Google Apps Script URL
+        fetch('https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULX/exec', {
             method: 'POST',
             body: formData
         })
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    document.getElementById('successMessage').textContent = 'Warranty certificate generated successfully!';
+                    showStatusMessage(successContainer, 'Warranty certificate generated successfully!', false);
                     downloadLink.href = data.url;
-                    qrcodeDiv.innerHTML = '';
+                    qrcodeDiv.innerHTML = ''; // Clear previous QR code
                     new QRCode(qrcodeDiv, {
                         text: data.url,
-                        width: 150,
-                        height: 150,
-                        colorDark: "#000000",
+                        width: 180, // Slightly larger QR code
+                        height: 180,
+                        colorDark: "#333333", // Darker QR code dots
                         colorLight: "#ffffff",
                         correctLevel: QRCode.CorrectLevel.H
                     });
 
-                    pdfLinkSection.classList.remove('hidden');
-                    successContainer.classList.remove('hidden');
-                    form.reset();
+                    show(pdfLinkSection);
+                    warrantyForm.reset(); // Clear form fields
 
+                    // Maintain store ID after reset
                     const storeId = sessionStorage.getItem('storeId');
                     if (storeId) {
                         storeIdInput.value = storeId;
                     }
-                    // Hide plan selection section and show "Show Plan Prices" button again
-                    planSelectionSection.classList.add('hidden');
-                    showPlanPricesButton.classList.remove('hidden');
-                    backToPhonePriceButton.style.display = 'none'; // Hide back button after successful submission
 
-                    // Clear selected plan styling and hidden inputs
+                    // Reset plan selection UI
                     const currentSelected = planOptionsContainer.querySelector('.plan-button.selected');
                     if (currentSelected) {
                         currentSelected.classList.remove('selected');
@@ -276,19 +417,62 @@ document.addEventListener('DOMContentLoaded', function () {
                     selectedPlanTypeInput.value = '';
                     selectedPlanDetailsInput.value = '';
 
+                    // Hide plan section instantly and show "Show Plan Prices" button
+                    planSelectionSection.classList.add('hide-instant');
+                    planSelectionSection.classList.remove('show');
+                    setTimeout(() => {
+                        planSelectionSection.classList.add('hidden');
+                        planSelectionSection.classList.remove('hide-instant');
+                    }, 10);
+                    show(showPlanPricesButton);
+                    hide(backToPhonePriceButton);
 
-                    // Scroll into view
-                    pdfLinkSection.scrollIntoView({ behavior: 'smooth' });
+                    // Scroll to the success message
+                    successContainer.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
                 } else {
                     throw new Error(data.message || 'Unknown error');
                 }
             })
             .catch(error => {
-                errorMessage.classList.remove('hidden');
-                errorMessage.textContent = 'An error occurred: ' + error.message;
+                showStatusMessage(errorMessage, `An error occurred: ${error.message}. Please try again.`, true);
             })
             .finally(() => {
-                loading.classList.add('hidden');
+                hide(formLoadingSpinner);
+                generateCertificateButton.disabled = false; // Re-enable button
             });
     });
+
+    // --- Initial Load Logic ---
+    function initializeApp() {
+        const loggedIn = sessionStorage.getItem('loggedIn');
+        const storeId = sessionStorage.getItem('storeId');
+
+        if (loggedIn === 'true' && storeId) {
+            hide(loginSection);
+            show(warrantySection);
+            displayedStoreId.textContent = storeId;
+            storeIdInput.value = storeId;
+            // Ensure warranty form starts in a clean state
+            warrantyForm.reset();
+            hide(planSelectionSection);
+            hide(backToPhonePriceButton);
+            show(showPlanPricesButton);
+            hide(successContainer);
+            hide(errorMessage);
+            planOptionsContainer.classList.remove('error');
+            selectedPlanValueInput.value = '';
+        } else {
+            show(loginSection);
+            hide(warrantySection);
+        }
+
+        // Set today's date as default for purchase date input
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+        const dd = String(today.getDate()).padStart(2, '0');
+        purchaseDateInput.value = `${yyyy}-${mm}-${dd}`;
+    }
+
+    initializeApp();
 });
