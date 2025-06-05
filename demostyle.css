@@ -1,4 +1,3 @@
-/* --- Reverted to your original general styles, keeping only necessary refinements --- */
 html {
     scroll-behavior: smooth;
 }
@@ -47,25 +46,30 @@ label {
     font-weight: bold;
 }
 
-/* Reverted input styling to use your more specific form-group selector,
-   ensuring width: 100% minus padding is respected */
-.form-group input[type="text"],
-.form-group input[type="email"],
-.form-group input[type="tel"],
-.form-group input[type="date"],
-.form-group input[type="number"],
-.form-group select,
-input[type="password"] { /* Also include password here if not already */
-    width: calc(100% - 20px); /* Full width minus padding, consistent with your HTML's style */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"],
+input[type="number"],
+select {
+    width: calc(100% - 12px);
     padding: 10px;
-    margin-top: 5px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #ddd;
     border-radius: 4px;
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
-    font-size: 1rem; /* Ensure consistent font size */
+    box-sizing: border-box;
+    font-size: 16px;
 }
 
+/* Password input styling */
+input[type="password"] {
+    width: calc(100% - 12px);
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
+    height: auto;
+}
 
 select {
     appearance: none;
@@ -93,211 +97,30 @@ select {
     background-color: #0056b3;
 }
 
-/* --- REVISED: Back button styles - More subtle, block-level, good spacing --- */
+/* Updated: Back button styles for a better UI */
 .back-button {
-    background-color: transparent; /* No fill */
-    color: #6c757d; /* Grey text */
-    padding: 10px 15px; /* Comfortable padding */
-    border: 1px solid #6c757d; /* Grey border */
-    border-radius: 4px; /* Standard button corners */
+    background-color: transparent; /* Changed to transparent */
+    color: #6c757d; /* Text color is the grey */
+    padding: 12px 20px;
+    border: 1px solid #6c757d; /* Border is the grey */
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 15px; /* Slightly smaller than submit, clearly readable */
-    width: 100%; /* Occupy full width, like other buttons */
-    display: block; /* Make it a block element */
-    margin-top: 15px; /* Clear space above it */
-    transition: all 0.2s ease-in-out;
-    text-align: center; /* Center content (text + icon) */
+    font-size: 16px;
+    width: 100%;
+    display: block;
+    transition: all 0.2s ease-in-out; /* Transition all for better hover effect */
+    margin-top: 10px; /* Added margin for spacing */
 }
 
 .back-button:hover {
-    background-color: #6c757d; /* Fill with grey on hover */
-    color: white; /* White text on hover */
+    background-color: #6c757d; /* Fills with grey on hover */
+    color: white; /* Text becomes white on hover */
 }
 
 
-/* --- MOVED FROM HTML <style> - General plan container and button styles --- */
-.plan-options-container {
-    display: flex;
-    flex-wrap: wrap; /* Allows plans to wrap to the next line */
-    gap: 10px; /* Space between plan buttons */
-    margin-top: 15px; /* Keep consistent spacing */
-    margin-bottom: 20px; /* Keep consistent spacing */
-    padding: 10px;
-    border: 1px solid #ddd; /* Light border around the container */
-    border-radius: 5px;
-}
-.plan-button {
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    padding: 12px 18px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: 500;
-    transition: all 0.2s ease-in-out;
-    flex: 1 1 calc(50% - 10px); /* Two columns on larger screens, full width on small */
-    min-width: 150px; /* Minimum width for each button */
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
-    text-align: center;
-}
-
-.plan-button:hover {
-    background-color: #e0e0e0;
-    border-color: #999;
-}
-.plan-button.selected {
-    background-color: #28a745; /* Green for selected */
-    color: white;
-    border-color: #218838;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
-
-
-/* --- NEW: Classes for slide-down animation on #planSelectionSection --- */
-#planSelectionSection { /* Targeting the specific ID for animation */
-    max-height: 0; /* Initially collapsed */
-    overflow: hidden; /* Hide overflow content */
-    opacity: 0; /* Start fully transparent */
-    transition: max-height 0.7s ease-in-out, opacity 0.7s ease-in-out; /* Smooth transition */
-    padding-top: 0; /* Remove initial padding */
-    padding-bottom: 0; /* Remove initial padding */
-    /* Add padding for the section itself when it's visible, this helps spacing */
-    box-sizing: border-box; /* Crucial for max-height animation with padding */
-}
-
-#planSelectionSection.show {
-    max-height: 500px; /* Enough height to show all content, adjust if content grows significantly */
-    opacity: 1; /* Fully visible */
-    /* Restore the original padding of the section when visible */
-    padding-top: 15px; /* Example padding, adjust as needed for spacing */
-    padding-bottom: 15px; /* Example padding, adjust as needed for spacing */
-}
-
-/* Ensure the transition properties are reset instantly when hiding for the "back" click */
-#planSelectionSection.hide-instant {
-    max-height: 0 !important;
-    opacity: 0 !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-    transition: none !important; /* No transition when hiding instantly */
-}
-
-
-/* --- MOVED FROM HTML <style> - Loader and Status Messages --- */
-.loader {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    border: 2px solid #f3f3f3;
-    border-top: 2px solid #333;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    vertical-align: middle;
-    margin-right: 5px;
-}
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
 .hidden {
     display: none;
 }
-.status-message {
-    margin-top: 15px;
-    font-weight: bold;
-}
-.status-message.error {
-    color: red;
-}
-.store-id-display {
-    margin-bottom: 10px;
-}
-.store-id-label {
-    color: black;
-    font-weight: normal;
-}
-.store-id-value {
-    color: red;
-    font-weight: bold;
-}
-.logout-button {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background-color: #f44336;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    cursor: pointer;
-    border-radius: 4px;
-    z-index: 10;
-    white-space: nowrap;
-    font-size: 0.9rem;
-    transition: background-color 0.2s ease-in-out;
-}
-.logout-button:hover {
-    background-color: #d32f2f;
-}
-/* Added for error highlighting */
-.form-group input.error,
-.form-group select.error {
-    border-color: red;
-}
-
-
-/* Login Section */
-#loginSection {
-    width: 90%;
-    max-width: 400px;
-}
-
-#loginSection form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-#loginSection label {
-    font-weight: bold;
-    color: #444;
-}
-
-#loginSection input[type="text"],
-#loginSection input[type="password"] {
-    font-size: 16px;
-    padding: 10px;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-    width: calc(100% - 20px);
-    box-sizing: border-box;
-}
-
-#loginSection button {
-    background-color: #007bff;
-    color: white;
-    padding: 12px 0;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
-}
-
-#loginSection button:hover {
-    background-color: #0056b3;
-}
-
-
-/* Specific messages that were inline in HTML */
-#loginLoading {
-    margin-top: 10px;
-    color: #333;
-}
-#loginError {
-    color: red;
-    margin-top: 10px;
-}
-
 
 #loading,
 #successContainer,
@@ -359,6 +182,106 @@ select {
     background-color: #1e7e34;
 }
 
+/* Validation Error Highlight */
+input.error,
+select.error {
+    border: 2px solid red;
+    background-color: #ffe6e6;
+}
+
+/* Dynamic Plan Buttons Container */
+#plansList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+#plansList button {
+    background-color: #e7e7e7;
+    border: 1px solid #ccc;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+    text-align: left;
+}
+
+#plansList button:hover {
+    background-color: #d4e3fc;
+    border-color: #007bff;
+}
+
+#plansList button.selected {
+    background-color: #007bff;
+    color: white;
+    border-color: #0056b3;
+}
+
+/* Login Section */
+#loginSection {
+    width: 90%;
+    max-width: 400px;
+}
+
+#loginSection form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#loginSection label {
+    font-weight: bold;
+    color: #444;
+}
+
+#loginSection input[type="text"],
+#loginSection input[type="password"] {
+    font-size: 16px;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    width: calc(100% - 12px);
+    box-sizing: border-box;
+}
+
+#loginSection button {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 0;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+#loginSection button:hover {
+    background-color: #0056b3;
+}
+
+/* Logout button */
+#logoutButton {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    z-index: 10;
+    white-space: nowrap;
+    font-size: 0.9rem;
+    transition: background-color 0.2s ease-in-out;
+}
+
+#logoutButton:hover {
+    background-color: #b02a37;
+}
 
 /* Responsive adjustments */
 @media (max-width: 600px) {
@@ -375,19 +298,16 @@ select {
         margin-bottom: 10px;
     }
 
-    /* All inputs should be 100% width on small screens */
-    .form-group input[type="text"],
-    .form-group input[type="email"],
-    .form-group input[type="tel"],
-    .form-group input[type="date"],
-    .form-group input[type="number"],
-    .form-group select,
-    input[type="password"],
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="date"],
+    input[type="number"],
+    select,
     .submit-button,
     .back-button { /* Apply responsive styles to back button too */
         font-size: 14px;
         padding: 10px;
-        width: 100%; /* Ensure full width on mobile */
     }
 
     #downloadLink {
@@ -395,14 +315,13 @@ select {
         padding: 8px 12px;
     }
 
-    .plan-button { /* Still targeting this class which is now in demostyle.css */
-        flex: 1 1 100%; /* Full width on small screens */
+    #plansList button {
         font-size: 14px;
         padding: 10px;
     }
 
     /* Adjust logout button for smaller screens */
-    .logout-button {
+    #logoutButton {
         top: 10px;
         right: 10px;
         padding: 6px 10px;
