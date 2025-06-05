@@ -8,18 +8,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const pdfLinkSection = document.getElementById('pdfLinkSection');
     const storeIdInput = document.getElementById('storeId');
 
-    // All form groups related to phone/customer details
-    const customerDetailsFormGroups = [
-        document.getElementById('customerName').closest('.form-group'),
-        document.getElementById('customerEmail').closest('.form-group'),
-        document.getElementById('customerPhone').closest('.form-group'),
-        document.getElementById('productName').closest('.form-group'),
-        document.getElementById('imeiNumber').closest('.form-group'),
-        document.getElementById('purchaseDate').closest('.form-group'),
-        document.getElementById('phonePrice').closest('.form-group')
-    ];
+    // Get the specific form group for phone price
+    const phonePriceGroup = document.getElementById('phonePriceGroup');
 
     const phonePriceInput = document.getElementById('phonePrice');
+    const confirmedPhonePriceDisplay = document.getElementById('confirmedPhonePrice'); // New: Element to display phone price
     const showPlanPricesButton = document.getElementById('showPlanPricesButton');
     const planSelectionSection = document.getElementById('planSelectionSection');
     const generateCertificateButton = document.getElementById('generateCertificateButton');
@@ -46,7 +39,6 @@ document.addEventListener('DOMContentLoaded', function () {
         { maxPrice: 250000, planText: '₹2,00,001 - ₹2,50,000', price: 3499 },
     ];
 
-    // Function to calculate extended warranty price based on phone price
     function getExtendedWarrantyPrice(phonePrice) {
         for (const plan of extendedWarrantyPrices) {
             if (phonePrice <= plan.maxPrice) {
@@ -56,9 +48,8 @@ document.addEventListener('DOMContentLoaded', function () {
         return extendedWarrantyPrices[extendedWarrantyPrices.length - 1].price;
     }
 
-    // Function to populate plan options as buttons
     function populatePlanOptions(phonePrice) {
-        planOptionsContainer.innerHTML = ''; // Clear existing buttons
+        planOptionsContainer.innerHTML = '';
 
         const extendedPrice = getExtendedWarrantyPrice(phonePrice);
         const screenDamagePrice = Math.round(phonePrice * 0.075);
@@ -160,34 +151,31 @@ document.addEventListener('DOMContentLoaded', function () {
         if (validateCustomerAndPhoneDetails()) {
             const phonePrice = parseFloat(phonePriceInput.value);
             populatePlanOptions(phonePrice);
+            confirmedPhonePriceDisplay.textContent = `₹${phonePrice.toLocaleString('en-IN')}`; // Display formatted price
 
-            // 1. Hide phone/customer details section
-            customerDetailsFormGroups.forEach(group => {
-                group.classList.remove('visible');
-                group.classList.add('hidden'); // Immediately hide for faster transition
-            });
+            // 1. Hide only the phone price input group
+            phonePriceGroup.classList.remove('visible');
+            phonePriceGroup.classList.add('hidden');
 
             // 2. Hide "Show Plan Prices" button
             showPlanPricesButton.classList.remove('visible');
             showPlanPricesButton.classList.add('hidden');
 
-            // 3. Hide QR code/success section if visible
+            // 3. Hide QR code/success section if visible (re-submission scenario)
             successContainer.classList.remove('visible');
             successContainer.classList.add('hidden');
             pdfLinkSection.classList.remove('visible');
             pdfLinkSection.classList.add('hidden');
 
-            // 4. Show "Plan Selection" section and "Back" button with animation
+            // 4. Show "Plan Selection" section with animation (which now includes confirmed price and back button)
             planSelectionSection.classList.remove('hidden');
-            backToPhonePriceButton.classList.remove('hidden');
             setTimeout(() => {
                 planSelectionSection.classList.add('visible');
-                backToPhonePriceButton.classList.add('visible');
-            }, 10); // Slight delay to ensure 'hidden' is applied first
+            }, 10);
 
             planOptionsContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
         } else {
-            alert('Please fill in all customer and product details correctly before proceeding to plan selection.');
+            alert('Please fill in all required details correctly before proceeding to plan selection.');
             const firstErrorField = document.querySelector('.form-group input.error, .form-group select.error');
             if (firstErrorField) {
                 firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -196,20 +184,15 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     backToPhonePriceButton.addEventListener('click', function() {
-        // 1. Hide "Plan Selection" section and "Back" button
+        // 1. Hide "Plan Selection" section
         planSelectionSection.classList.remove('visible');
-        backToPhonePriceButton.classList.remove('visible');
         setTimeout(() => {
             planSelectionSection.classList.add('hidden');
-            backToPhonePriceButton.classList.add('hidden');
         }, 400); // Match CSS transition duration
 
-        // 2. Show phone/customer details section with animation
-        customerDetailsFormGroups.forEach((group, index) => {
-            group.classList.remove('hidden');
-            // Stagger animation slightly for a nicer effect
-            setTimeout(() => group.classList.add('visible'), 50 * index + 400); // 400ms delay after hiding plans
-        });
+        // 2. Show only the phone price input group with animation
+        phonePriceGroup.classList.remove('hidden');
+        setTimeout(() => phonePriceGroup.classList.add('visible'), 400); // Appear after plans hide
 
         // 3. Show "Show Plan Prices" button
         showPlanPricesButton.classList.remove('hidden');
@@ -226,7 +209,7 @@ document.addEventListener('DOMContentLoaded', function () {
         selectedPlanDetailsInput.value = '';
         planOptionsContainer.classList.remove('error');
 
-        // Scroll back to the phone price input
+        // Scroll back to the phone price input for editing
         phonePriceInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
 
@@ -248,7 +231,7 @@ document.addEventListener('DOMContentLoaded', function () {
         errorMessage.classList.remove('visible');
         errorMessage.classList.add('hidden');
         pdfLinkSection.classList.remove('visible');
-        pdfLinkSection.classList.add('hidden'); // Crucial: Hide PDF section on new submission
+        pdfLinkSection.classList.add('hidden');
 
         loading.classList.remove('hidden');
         setTimeout(() => loading.classList.add('visible'), 10);
@@ -290,22 +273,20 @@ document.addEventListener('DOMContentLoaded', function () {
                         storeIdInput.value = storeId;
                     }
                     
-                    // Hide plan selection section and "back" button
+                    // Reset UI to initial state:
+                    // Hide plan selection section
                     planSelectionSection.classList.remove('visible');
-                    backToPhonePriceButton.classList.remove('visible');
-                    setTimeout(() => {
-                        planSelectionSection.classList.add('hidden');
-                        backToPhonePriceButton.classList.add('hidden');
-                    }, 400);
+                    planSelectionSection.classList.add('hidden'); // Immediately hide for faster reset
 
-                    // Show customer details and "show plan prices" button for next entry
-                    customerDetailsFormGroups.forEach((group, index) => {
-                        group.classList.remove('hidden');
-                        setTimeout(() => group.classList.add('visible'), 50 * index + 400); // Stagger animation
-                    });
+                    // Show only phone price input group
+                    phonePriceGroup.classList.remove('hidden');
+                    phonePriceGroup.classList.add('visible');
+                    
+                    // Show "Show Plan Prices" button
                     showPlanPricesButton.classList.remove('hidden');
-                    setTimeout(() => showPlanPricesButton.classList.add('visible'), 400);
+                    showPlanPricesButton.classList.add('visible');
 
+                    // Clear selected plan styling and hidden inputs
                     const currentSelected = planOptionsContainer.querySelector('.plan-button.selected');
                     if (currentSelected) {
                         currentSelected.classList.remove('selected');
