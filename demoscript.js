@@ -21,11 +21,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // NEW: Back button element (with arrow icon)
     const backToPhonePriceButton = document.createElement('button');
-    backToPhonePriceButton.innerHTML = '&#8592; Change Price'; // Left arrow + text
+    // Using a Unicode arrow for simplicity.
+    backToPhonePriceButton.innerHTML = '&#8592; Change Phone Price'; // Left arrow + text
     backToPhonePriceButton.classList.add('back-button');
     backToPhonePriceButton.type = 'button'; // Critical: Set type to button to prevent submission
     backToPhonePriceButton.style.display = 'none'; // Initially hidden
-    // Insert it before the "Generate Warranty Certificate" button for good positioning
+
+    // --- IMPORTANT: Insert the back button directly before the generateCertificateButton ---
+    // This places it logically within the planSelectionSection's flow,
+    // ensuring it maintains consistent spacing as a block-level button.
     generateCertificateButton.parentNode.insertBefore(backToPhonePriceButton, generateCertificateButton);
 
 
@@ -197,8 +201,7 @@ document.addEventListener('DOMContentLoaded', function () {
             planSelectionSection.classList.add('show');
 
             showPlanPricesButton.classList.add('hidden');
-            // Back button is floated right, so display it as inline-flex to work with float
-            backToPhonePriceButton.style.display = 'inline-flex';
+            backToPhonePriceButton.style.display = 'block'; // Make it a block element to maintain layout
 
             // Scroll into view after a slight delay to allow animation to start
             setTimeout(() => {
@@ -259,11 +262,9 @@ document.addEventListener('DOMContentLoaded', function () {
         errorMessage.classList.add('hidden');
         pdfLinkSection.classList.add('hidden');
 
-        const formData = new FormData(form);
-
         fetch('https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULX/exec', { // Double check this URL
             method: 'POST',
-            body: formData
+            body: new FormData(form) // Create FormData directly from the form
         })
             .then(response => response.json())
             .then(data => {
