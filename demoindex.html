@@ -1,133 +1,228 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Refurwish Shield Warranty Registration</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png" />
-    <link rel="stylesheet" href="demostyle.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Refurwish Shield Warranty Registration</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png" />
+  <link rel="stylesheet" href="demostyle.css" />
+  <style>
+    /* Add styles for the new plan selection buttons */
+    .plan-options-container {
+      display: flex;
+      flex-wrap: wrap; /* Allows plans to wrap to the next line */
+      gap: 10px; /* Space between plan buttons */
+      margin-top: 15px;
+      margin-bottom: 20px;
+      padding: 10px;
+      border: 1px solid #ddd; /* Light border around the container */
+      border-radius: 5px;
+    }
+    .plan-button {
+      background-color: #f0f0f0;
+      border: 1px solid #ccc;
+      padding: 12px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.2s ease-in-out;
+      flex: 1 1 calc(50% - 10px); /* Two columns on larger screens, full width on small */
+      min-width: 150px; /* Minimum width for each button */
+      box-sizing: border-box; /* Include padding and border in the element's total width and height */
+      text-align: center;
+    }
+
+    .plan-button:hover {
+      background-color: #e0e0e0;
+      border-color: #999;
+    }
+    .plan-button.selected {
+      background-color: #28a745; /* Green for selected */
+      color: white;
+      border-color: #218838;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    /* Styles for loader and messages */
+    .loader {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid #333;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      vertical-align: middle;
+      margin-right: 5px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .hidden {
+      display: none;
+    }
+    .status-message {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    .status-message.error {
+      color: red;
+    }
+    .store-id-display {
+      margin-bottom: 10px;
+    }
+    .store-id-label {
+      color: black;
+      font-weight: normal;
+    }
+    .store-id-value {
+      color: red;
+      font-weight: bold;
+    }
+    .logout-button {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: #f44336;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      cursor: pointer;
+      border-radius: 4px;
+      z-index: 10;
+    }
+    .logout-button:hover {
+      background-color: #d32f2f;
+    }
+    /* Added for error highlighting */
+    .form-group input.error,
+    .form-group select.error { /* Keep select.error for other dropdowns if any exist or for fallback */
+      border-color: red;
+    }
+    /* Adjust input box sizing for all inputs */
+    .form-group input[type="text"],
+    .form-group input[type="email"],
+    .form-group input[type="tel"],
+    .form-group input[type="date"],
+    .form-group input[type="number"], /* Target phone price input */
+    .form-group select {
+      width: calc(100% - 20px); /* Full width minus padding */
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box; /* Include padding and border in the element's total width and height */
+      font-size: 1rem; /* Ensure consistent font size */
+    }
+    /* Responsive adjustment for plan buttons */
+    @media (max-width: 600px) {
+      .plan-button {
+        flex: 1 1 100%; /* Full width on small screens */
+      }
+    }
+  </style>
 </head>
 <body>
 
-<main class="main-content">
-    <section class="auth-container" id="loginSection">
-        <img src="logo.png" alt="Refurwish Logo" class="logo" />
-        <h2 class="auth-title">Store Login</h2>
-        <form id="loginForm" class="auth-form">
-            <div class="form-group">
-                <label for="loginStoreId">Store ID:</label>
-                <input type="text" id="loginStoreId" name="storeId" placeholder="Enter your Store ID" required />
-            </div>
-            <div class="form-group">
-                <label for="loginPassword">Password:</label>
-                <input type="password" id="loginPassword" name="password" placeholder="Enter your password" required />
-            </div>
-            <button type="submit" class="button primary-button">
-                Login
-                <span id="loginLoading" class="loader hidden"></span>
-            </button>
-            <div id="loginError" class="status-message error-message hidden">
-                <i class="fas fa-exclamation-circle"></i> Invalid Store ID or Password
-            </div>
-        </form>
-    </section>
+<div class="container" id="loginSection">
+  <img src="logo.png" alt="Refurwish Logo" class="logo" />
+  <h2>Store Login</h2>
+  <form id="loginForm">
+    <div class="form-group">
+      <label for="loginStoreId">Store ID:</label>
+      <input type="text" id="loginStoreId" name="storeId" required />
+    </div>
+    <div class="form-group">
+      <label for="loginPassword">Password:</label>
+      <input type="password" id="loginPassword" name="password" required />
+    </div>
+    <button type="submit" class="submit-button">Login</button>
+    <div id="loginLoading" class="hidden" style="margin-top: 10px; color: #333;">
+      <span class="loader"></span> Logging in, please wait...
+    </div>
+    <div id="loginError" class="hidden" style="color: red; margin-top: 10px;">
+      Invalid Store ID or Password
+    </div>
+  </form>
+</div>
 
-    <section class="form-container hidden" id="warrantySection">
-        <button class="button logout-button" id="logoutButton">
-            <i class="fas fa-sign-out-alt"></i> Logout
-        </button>
-        <img src="logo.png" alt="Refurwish Logo" class="logo" />
-        <h1 class="form-title">Refurwish Shield Warranty Registration</h1>
+<div class="container hidden" id="warrantySection">
+  <button class="logout-button" id="logoutButton">Logout</button>
+  <img src="logo.png" alt="Refurwish Logo" class="logo" />
 
-        <div class="store-id-display">
-            <span class="store-id-label">Store ID: </span>
-            <span class="store-id-value" id="displayedStoreId"></span>
+  <h1>Refurwish Shield Warranty Registration</h1>
+
+  <div class="store-id-display">
+    <span class="store-id-label">Store ID: </span>
+    <span class="store-id-value" id="displayedStoreId"></span>
+  </div>
+
+  <form id="warrantyForm" novalidate autocomplete="off">
+    <div class="form-group hidden">
+      <label for="storeId">Store ID:</label>
+      <input type="text" id="storeId" name="storeId" value="" readonly />
+    </div>
+    <div class="form-group">
+      <label for="customerName">Customer Name:</label>
+      <input type="text" id="customerName" name="customerName" placeholder="Enter customer's full name" required />
+    </div>
+    <div class="form-group">
+      <label for="customerEmail">Customer Email:</label>
+      <input type="email" id="customerEmail" name="customerEmail" placeholder="Enter customer's email address" required />
+    </div>
+    <div class="form-group">
+      <label for="customerPhone">Customer Phone:</label>
+      <input type="tel" id="customerPhone" name="customerPhone" placeholder="Enter customer's phone number" required />
+    </div>
+    <div class="form-group">
+      <label for="productName">Product Name:</label>
+      <input type="text" id="productName" name="productName" placeholder="Enter the product name" required />
+    </div>
+    <div class="form-group">
+      <label for="imeiNumber">IMEI Number:</label>
+      <input type="text" id="imeiNumber" name="imeiNumber" placeholder="Enter the product's IMEI number" required />
+    </div>
+    <div class="form-group">
+      <label for="purchaseDate">Phone Purchase Date:</label>
+      <input type="date" id="purchaseDate" name="purchaseDate" required />
+    </div>
+    <div class="form-group">
+      <label for="phonePrice">Phone Price (₹):</label>
+      <input type="number" id="phonePrice" name="phonePrice" placeholder="Enter phone's purchase price" required min="1" />
+    </div>
+
+    <button type="button" class="submit-button" id="showPlanPricesButton">Show Plan Prices</button>
+
+    <div id="planSelectionSection" class="hidden">
+      <p style="margin-top: 15px; font-weight: bold;">Select your plan:</p>
+      <div id="planOptionsContainer" class="plan-options-container">
         </div>
+      <input type="hidden" id="selectedPlanValue" name="planOption" />
+      <input type="hidden" id="selectedPlanPrice" name="planPrice" />
+      <input type="hidden" id="selectedPlanType" name="planType" />
+      <input type="hidden" id="selectedPlanDetails" name="selectedPlanDetails" />
 
-        <form id="warrantyForm" novalidate autocomplete="off">
-            <div class="form-group hidden">
-                <label for="storeId">Store ID:</label>
-                <input type="text" id="storeId" name="storeId" value="" readonly />
-            </div>
+      <button type="submit" class="submit-button" id="generateCertificateButton">Generate Warranty Certificate</button>
+    </div>
 
-            <fieldset class="form-section">
-                <legend class="section-title">Customer Details</legend>
-                <div class="form-group">
-                    <label for="customerName">Customer Name:</label>
-                    <input type="text" id="customerName" name="customerName" placeholder="e.g., John Doe" required />
-                </div>
-                <div class="form-group">
-                    <label for="customerEmail">Customer Email:</label>
-                    <input type="email" id="customerEmail" name="customerEmail" placeholder="e.g., john.doe@example.com" required />
-                </div>
-                <div class="form-group">
-                    <label for="customerPhone">Customer Phone:</label>
-                    <input type="tel" id="customerPhone" name="customerPhone" placeholder="e.g., 9876543210" required />
-                </div>
-            </fieldset>
+    <div id="loading" class="status-message hidden">Processing...</div>
 
-            <fieldset class="form-section">
-                <legend class="section-title">Product Details</legend>
-                <div class="form-group">
-                    <label for="productName">Product Name:</label>
-                    <input type="text" id="productName" name="productName" placeholder="e.g., iPhone 13 Pro Max" required />
-                </div>
-                <div class="form-group">
-                    <label for="imeiNumber">IMEI Number:</label>
-                    <input type="text" id="imeiNumber" name="imeiNumber" placeholder="Enter 15-digit IMEI number" required minlength="15" maxlength="15" />
-                </div>
-                <div class="form-group">
-                    <label for="purchaseDate">Phone Purchase Date:</label>
-                    <input type="date" id="purchaseDate" name="purchaseDate" required />
-                </div>
-                <div class="form-group">
-                    <label for="phonePrice">Phone Price (₹):</label>
-                    <input type="number" id="phonePrice" name="phonePrice" placeholder="e.g., 45000" required min="1" />
-                </div>
-            </fieldset>
+    <div id="successContainer" class="status-message hidden">
+      <p id="successMessage">Warranty certificate generated successfully!</p>
+      <div id="pdfLinkSection" class="qrcode-container hidden">
+        <p><strong>Scan QR to view certificate:</strong></p>
+        <div id="qrcode"></div>
+        <p><a id="downloadLink" href="#" target="_blank">View PDF Certificate</a></p>
+      </div>
+    </div>
 
-            <button type="button" class="button primary-button" id="showPlanPricesButton">
-                Show Plan Prices
-            </button>
-
-            <div id="planSelectionSection" class="plan-selection-section hidden">
-                <p class="plan-selection-prompt">Select your desired warranty plan:</p>
-                <div id="planOptionsContainer" class="plan-options-grid">
-                    </div>
-
-                <input type="hidden" id="selectedPlanValue" name="planOption" />
-                <input type="hidden" id="selectedPlanPrice" name="planPrice" />
-                <input type="hidden" id="selectedPlanType" name="planType" />
-                <input type="hidden" id="selectedPlanDetails" name="selectedPlanDetails" />
-
-                <button type="button" class="button secondary-button back-button" id="backToPhonePriceButton">
-                    <i class="fas fa-arrow-left"></i> Change Phone Price
-                </button>
-                <button type="submit" class="button primary-button" id="generateCertificateButton">
-                    Generate Warranty Certificate
-                    <span id="formLoading" class="loader hidden"></span>
-                </button>
-            </div>
-
-            <div id="successContainer" class="status-message success-message hidden">
-                <p id="successMessage"><i class="fas fa-check-circle"></i> Warranty certificate generated successfully!</p>
-                <div id="pdfLinkSection" class="qr-download-section hidden">
-                    <p class="qr-prompt"><strong>Scan QR to view certificate:</strong></p>
-                    <div id="qrcode" class="qrcode-display"></div>
-                    <a id="downloadLink" href="#" target="_blank" class="button secondary-button download-link">
-                        <i class="fas fa-file-pdf"></i> View PDF Certificate
-                    </a>
-                </div>
-            </div>
-
-            <div id="errorMessage" class="status-message error-message hidden">
-                <i class="fas fa-times-circle"></i> An error occurred. Please try again.
-            </div>
-        </form>
-    </section>
-</main>
+    <div id="errorMessage" class="status-message error hidden">
+      An error occurred. Please try again.
+    </div>
+  </form>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="demoauth.js"></script>
