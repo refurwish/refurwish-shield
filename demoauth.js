@@ -1,193 +1,157 @@
-
-
-// You MUST replace this with your actual Apps Script Web App URL
-// Deploy your code.gs as a Web App (Execute as: Me, Who has access: Anyone)
-// Copy the URL provided after deployment and paste it here.
-const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec'; 
-
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const loginForm = document.getElementById('loginForm');
-    const storeIdInput = document.getElementById('storeIdInput');
-    const passwordInput = document.getElementById('passwordInput');
-    const loginMessage = document.getElementById('loginMessage');
     const loginSection = document.getElementById('loginSection');
     const warrantySection = document.getElementById('warrantySection');
-    const currentStoreIdSpan = document.getElementById('currentStoreId');
-    const drawerStoreIdSpan = document.getElementById('drawerStoreId');
-    const logoutButton = document.getElementById('logoutButton');
+    const loginError = document.getElementById('loginError');
+    const loginLoading = document.getElementById('loginLoading');
+    const loginButton = loginForm.querySelector('.submit-button');
+    const displayedStoreId = document.getElementById('displayedStoreId');
+    const storeIdInput = document.getElementById('storeId');
+    const logoutButton = document.getElementById('drawerLogoutButton'); // Changed to new logout button in drawer
+    const warrantyForm = document.getElementById('warrantyForm');
 
-    // Hamburger menu toggle (repeated from demoscript for direct access if JS loads differently)
-    const hamburgerMenu = document.getElementById('hamburgerMenu');
-    const appDrawer = document.getElementById('appDrawer');
-    const overlay = document.getElementById('overlay');
+    // NEW ELEMENTS FOR HAMBURGER MENU
+    const hamburgerIcon = document.getElementById('hamburgerIcon');
+    const mainDrawer = document.getElementById('mainDrawer');
+    const closeDrawerButton = document.getElementById('closeDrawerButton');
+    const drawerStoreIdDisplay = document.getElementById('drawerStoreId'); // To display store ID in drawer
 
-    // Function to show/hide sections with transitions
+
+    // Function to handle showing/hiding sections with animations
     function showSection(sectionToShow, sectionToHide) {
-        // Hide old section first
-        sectionToHide.classList.remove('active-content-section');
-        sectionToHide.classList.remove('visible'); // Ensure it hides properly
-        sectionToHide.addEventListener('transitionend', function handler() {
-            sectionToHide.classList.add('hidden');
-            sectionToHide.removeEventListener('transitionend', handler);
-
-            // Then show new section
-            sectionToShow.classList.remove('hidden');
-            sectionToShow.classList.add('active-content-section');
-            setTimeout(() => sectionToShow.classList.add('visible'), 10); // Small delay for transition
-        }, { once: true });
-    }
-
-    // Function to handle login success
-    function handleLoginSuccess(storeId) {
-        // Store session in sessionStorage
-        sessionStorage.setItem('loggedInStoreId', storeId);
-
-        // Update displayed store IDs
-        currentStoreIdSpan.textContent = storeId;
-        drawerStoreIdSpan.textContent = storeId;
-
-        // Transition to warranty section
-        // Check if demoscript.js's postLoginSetup is available
-        // This is the core fix for the blank page: ensure demoscript.js has loaded
-        if (typeof window.postLoginSetup === 'function') {
-            console.log('demoscript.js is ready, calling postLoginSetup immediately.');
-            showSection(warrantySection, loginSection);
-            window.postLoginSetup(storeId);
+        if (sectionToHide) {
+            sectionToHide.classList.remove('visible');
+            // Give CSS time to run fade-out animation before hiding completely
+            setTimeout(() => {
+                sectionToHide.classList.add('hidden');
+                sectionToShow.classList.remove('hidden');
+                setTimeout(() => sectionToShow.classList.add('visible'), 10); // Animate in
+            }, 400); // Match CSS transition duration
         } else {
-            console.log('demoscript.js not ready, waiting for scriptsLoaded event.');
-            // Listen for the custom event from demoscript.js
-            document.addEventListener('scriptsLoaded', function handler() {
-                console.log('scriptsLoaded event received, calling postLoginSetup.');
-                showSection(warrantySection, loginSection);
-                window.postLoginSetup(storeId);
-                document.removeEventListener('scriptsLoaded', handler); // Remove listener after first call
-            }, { once: true }); // Ensure this listener only fires once
+            // Initial load case for login section if no session
+            sectionToShow.classList.remove('hidden');
+            setTimeout(() => sectionToShow.classList.add('visible'), 10);
         }
     }
 
-    // Check login status on page load
-    const storedStoreId = sessionStorage.getItem('loggedInStoreId');
-    if (storedStoreId) {
-        // User is already logged in, show warranty section directly
-        // Delay this slightly to ensure demoscript.js has a chance to load
-        // This is a safety measure, combined with the event listener.
-        const checkDemoscriptReady = setInterval(() => {
-            if (typeof window.postLoginSetup === 'function') {
-                clearInterval(checkDemoscriptReady);
-                handleLoginSuccess(storedStoreId);
-            }
-        }, 50); // Check every 50ms
-        setTimeout(() => {
-            if (typeof window.postLoginSetup !== 'function') {
-                console.warn('demoscript.js did not load in time for initial login check.');
-                // Fallback: Show login section and let user re-login
-                loginSection.classList.add('active-content-section');
-                loginSection.classList.remove('hidden');
-                loginSection.classList.add('visible');
-            }
-        }, 2000); // Give it up to 2 seconds
+    // Restore session if storeId is saved
+    const savedStoreId = sessionStorage.getItem('storeId');
+    if (savedStoreId) {
+        loginSection.classList.add('hidden'); // Immediately hide login section on initial load
+        warrantySection.classList.remove('hidden');
+        warrantySection.classList.add('visible'); // Show warranty section with animation
+        storeIdInput.value = savedStoreId;
+        displayedStoreId.textContent = savedStoreId;
+        drawerStoreIdDisplay.textContent = savedStoreId; // Set store ID in drawer
+        hamburgerIcon.style.display = 'block'; // Show hamburger icon after successful session restore
     } else {
-        // Not logged in, ensure login section is visible and warranty is hidden
-        loginSection.classList.add('active-content-section');
-        loginSection.classList.remove('hidden');
-        loginSection.classList.add('visible');
-        warrantySection.classList.remove('active-content-section'); // Ensure it's not active
-        warrantySection.classList.add('hidden'); // Ensure it's hidden
+        // If no saved session, ensure login section is visible on load
+        showSection(loginSection);
+        hamburgerIcon.style.display = 'none'; // Ensure hidden on login page
     }
 
+    // Handle login
+    loginForm.addEventListener('submit', function (e) {
+        e.preventDefault();
 
-    // Login form submission
-    if (loginForm) {
-        loginForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const storeId = storeIdInput.value.trim();
-            const password = passwordInput.value.trim();
+        loginError.classList.remove('visible'); // Hide any previous error
+        loginError.classList.add('hidden');
+        
+        loginLoading.classList.remove('hidden'); // Show loading
+        setTimeout(() => loginLoading.classList.add('visible'), 10);
+        loginButton.classList.add('hidden'); // Hide button
 
-            loginMessage.classList.remove('visible', 'error');
-            loginMessage.classList.add('hidden');
-            loginMessage.textContent = ''; // Clear previous messages
+        const formData = new FormData(loginForm);
+        formData.append('action', 'verifyLogin');
 
-            if (!storeId || !password) {
-                loginMessage.textContent = 'Please enter both Store ID and Password.';
-                loginMessage.classList.add('visible', 'error');
-                return;
-            }
+        // IMPORTANT: Update this URL if your deployment changes
+        fetch('https://script.google.com/macros/s/AKfycbwxhL6X17U5Fr9i7ze3SnqqURZalpVsWRfCZLrSh11tD3yDGqn2bB6SzLAcdo-rGbJs1w/exec', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                loginLoading.classList.remove('visible'); // Hide loading
+                loginLoading.classList.add('hidden');
+                loginButton.classList.remove('hidden'); // Show button again in case of error
 
-            loginMessage.innerHTML = '<span class="loader"></span> Logging in...';
-            loginMessage.classList.remove('error');
-            loginMessage.classList.add('visible');
+                if (data.status === 'success') {
+                    const storeId = formData.get('storeId');
+                    sessionStorage.setItem('storeId', storeId);
 
-            try {
-                const response = await fetch(APP_SCRIPT_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ action: 'verifyLogin', storeId: storeId, password: password }),
-                });
+                    storeIdInput.value = storeId;
+                    displayedStoreId.textContent = storeId;
+                    drawerStoreIdDisplay.textContent = storeId; // Set store ID in drawer
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const result = await response.json();
-                console.log('Login response:', result);
-
-                if (result.status === 'success') {
-                    loginMessage.textContent = 'Login successful!';
-                    loginMessage.classList.remove('error');
-                    // Add a small delay for the user to see the success message
-                    setTimeout(() => handleLoginSuccess(storeId), 500);
+                    showSection(warrantySection, loginSection); // Animate transition
+                    hamburgerIcon.style.display = 'block'; // Show hamburger icon after successful login
                 } else {
-                    loginMessage.textContent = result.message || 'Login failed.';
-                    loginMessage.classList.remove('visible'); // Hide loader message
-                    loginMessage.classList.add('visible', 'error');
+                    loginError.textContent = 'Invalid Store ID or Password';
+                    loginError.classList.remove('hidden');
+                    setTimeout(() => loginError.classList.add('visible'), 10); // Animate error in
                 }
-            } catch (error) {
-                console.error('Login error:', error);
-                loginMessage.textContent = 'An error occurred: ' + error.message;
-                loginMessage.classList.remove('visible'); // Hide loader message
-                loginMessage.classList.add('visible', 'error');
-            }
-        });
-    }
-
-    // Logout functionality
-    if (logoutButton) {
-        logoutButton.addEventListener('click', function() {
-            sessionStorage.removeItem('loggedInStoreId'); // Clear session
-            // Hide drawer if open
-            appDrawer.classList.remove('open');
-            overlay.classList.remove('active');
-
-            // Reset active drawer item to Registration
-            document.querySelectorAll('.drawer-item').forEach(item => {
-                item.classList.remove('active');
+            })
+            .catch(err => {
+                loginLoading.classList.remove('visible');
+                loginLoading.classList.add('hidden');
+                loginButton.classList.remove('hidden');
+                loginError.textContent = 'An error occurred: ' + err.message;
+                loginError.classList.remove('hidden');
+                setTimeout(() => loginError.classList.add('visible'), 10);
             });
-            document.querySelector('.drawer-item[data-section-id="registrationFormSection"]').classList.add('active');
+    });
 
-            // Call reset function in demoscript.js if it exists
-            if (window.resetDemoscriptState) {
-                window.resetDemoscriptState();
-            }
-            showSection(loginSection, warrantySection); // Show login
-            storeIdInput.value = ''; // Clear login form
-            passwordInput.value = '';
-            loginMessage.classList.remove('visible', 'error');
-            loginMessage.classList.add('hidden');
-        });
-    }
+    // Handle logout (moved to drawer)
+    logoutButton.addEventListener('click', () => {
+        // Clear session storage
+        sessionStorage.removeItem('storeId');
 
-    // Hamburger menu toggle
-    if (hamburgerMenu && appDrawer && overlay) {
-        hamburgerMenu.addEventListener('click', () => {
-            appDrawer.classList.toggle('open');
-            overlay.classList.toggle('active');
-        });
+        // Reset forms (manual reset for mobile autofill issues)
+        loginForm.reset();
+        warrantyForm.reset();
 
-        overlay.addEventListener('click', () => {
-            appDrawer.classList.remove('open');
-            overlay.classList.remove('active');
-        });
-    }
+        // Manually clear the form fields to prevent autofill issues on mobile
+        document.getElementById('loginStoreId').value = '';
+        document.getElementById('loginPassword').value = '';
+        storeIdInput.value = '';
+        displayedStoreId.textContent = '';
+        drawerStoreIdDisplay.textContent = ''; // Clear store ID in drawer
+
+        // Close drawer if open
+        mainDrawer.classList.remove('open');
+        // Hide hamburger icon
+        hamburgerIcon.style.display = 'none';
+
+        // Switch views with animation
+        showSection(loginSection, warrantySection);
+        // Ensure login form is in its initial state (no loading/error messages)
+        loginError.classList.add('hidden');
+        loginError.classList.remove('visible');
+        loginLoading.classList.add('hidden');
+        loginLoading.classList.remove('visible');
+        loginButton.classList.remove('hidden'); // Ensure login button is visible
+    });
+
+    // --- HAMBURGER DRAWER FUNCTIONALITY ---
+    hamburgerIcon.addEventListener('click', () => {
+        mainDrawer.classList.add('open');
+        // Optional: Add a dimming overlay to the main content
+        // document.body.classList.add('drawer-open');
+    });
+
+    closeDrawerButton.addEventListener('click', () => {
+        mainDrawer.classList.remove('open');
+        // Optional: Remove dimming overlay
+        // document.body.classList.remove('drawer-open');
+    });
+
+    // Close drawer if clicking outside (optional, but good UX)
+    // document.body.addEventListener('click', (event) => {
+    //     if (mainDrawer.classList.contains('open') &&
+    //         !mainDrawer.contains(event.target) &&
+    //         !hamburgerIcon.contains(event.target)) {
+    //         mainDrawer.classList.remove('open');
+    //         // document.body.classList.remove('drawer-open');
+    //     }
+    // });
 });
