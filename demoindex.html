@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RefurWish Shield Warranty</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <?!= HtmlService.createHtmlOutputFromFile('demostyle').getContent(); ?>
+    <link rel="stylesheet" href="demostyle.css">
 </head>
 <body>
 
@@ -70,7 +70,7 @@
                 <span class="store-id-value" id="currentStoreId"></span>
             </div>
 
-            <div id="registrationFormSection" class="sub-section">
+            <div id="registrationFormSection" class="sub-section active-sub-section">
                 <h2><span class="material-icons icon-left">app_registration</span> New Registration</h2>
                 <form id="warrantyForm">
                     <div class="form-group">
@@ -257,7 +257,7 @@
     </div>
 
     <script src="https://unpkg.com/qrious@4.0.2/dist/qrious.min.js"></script>
-    <?!= HtmlService.createHtmlOutputFromFile('demoscript').getContent(); ?>
-    <?!= HtmlService.createHtmlOutputFromFile('demoauth').getContent(); ?>
+    <script src="demoscript.js"></script>
+    <script src="demoauth.js"></script>
 </body>
 </html>
