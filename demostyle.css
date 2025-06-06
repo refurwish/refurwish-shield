@@ -20,51 +20,20 @@ body {
     color: #333; /* Default text color */
 }
 
-/* Container Styling (remains similar, but controls visibility) */
+/* Container Styling */
 .container {
     background-color: #ffffff; /* Pure white for a clean look */
     padding: 40px; /* More generous padding */
     border-radius: 12px; /* Softer rounded corners */
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1); /* Deeper, more subtle shadow */
-    width: 90%; /* Take full width of parent .main-wrapper */
-    max-width: 550px; /* Constrain max width */
+    width: 90%;
+    max-width: 550px; /* Slightly wider for better layout */
     position: relative;
     opacity: 0; /* Start hidden for entrance animation */
     transform: translateY(20px); /* Start slightly below for slide-up */
     animation: fadeInSlideUp 0.8s ease-out forwards; /* Entrance animation */
     transition: all 0.3s ease-in-out; /* For hidden/shown state changes */
-    /* Remove margin-top from container, hamburger is now fixed */
-    margin: 20px auto; /* Center with some top/bottom margin */
 }
-
-/* Hide containers by default, show based on active-content-section */
-.container:not(.active-content-section) {
-    display: none;
-    opacity: 0;
-    transform: translateY(20px);
-}
-
-.container.active-content-section {
-    display: block; /* Show the active section */
-    opacity: 1;
-    transform: translateY(0);
-}
-
-
-/* New styles for sub-sections within a container */
-.sub-section {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
-    display: none; /* Hidden by default */
-}
-
-.sub-section.active-sub-section {
-    display: block; /* Show the active sub-section */
-    opacity: 1;
-    transform: translateY(0);
-}
-
 
 /* Animation for container entrance */
 @keyframes fadeInSlideUp {
@@ -242,7 +211,7 @@ select {
     transform: translateY(0);
 }
 
-#loading, .tracking-loading {
+#loading {
     color: #007bff;
     background-color: #e6f7ff; /* Light blue background */
     border: 1px solid #b3e0ff;
@@ -254,7 +223,7 @@ select {
     border: 1px solid #a4e6a4;
 }
 
-#errorMessage, .tracking-error {
+#errorMessage {
     color: #dc3545;
     background-color: #ffe6e6; /* Light red background */
     border: 1px solid #e6a4a4;
@@ -482,283 +451,326 @@ select.error {
     letter-spacing: 0.5px;
 }
 
-/* --- New Styles for Drawer and Hamburger --- */
+/* Logout Button (Removed from original position in HTML, kept styling for drawer version) */
+/* Old #logoutButton styles are now mostly applied to .drawer-logout-button */
 
-.hamburger-menu {
-    position: fixed; /* Fixed position relative to viewport */
+
+/* ------------------------------------------------ */
+/* NEW HAMBURGER MENU & DRAWER STYLES (Responsive) */
+/* ------------------------------------------------ */
+
+/* Hamburger Icon */
+.hamburger-icon {
+    position: absolute;
     top: 20px;
     left: 20px;
-    font-size: 30px;
-    color: #007bff;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 15px;
+    border-radius: 8px;
     cursor: pointer;
-    z-index: 1000; /* Above all content */
-    background-color: #fff;
-    border-radius: 50%;
-    width: 45px;
-    height: 45px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    transition: all 0.3s ease-in-out;
+    font-size: 1.3rem; /* Larger icon */
+    z-index: 1001; /* Above other content */
+    transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
 }
 
-.hamburger-menu:hover {
-    color: #0056b3;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
-    transform: scale(1.05);
+.hamburger-icon:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 123, 255, 0.3);
+}
+.hamburger-icon:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.1);
 }
 
+/* Drawer / Side Navigation */
 .drawer {
     position: fixed;
     top: 0;
-    left: -280px; /* Initially off-screen */
-    width: 260px; /* Width of the drawer */
+    left: 0; /* Starts off-screen to the left */
+    width: 80%; /* Responsive width for mobile */
+    max-width: 350px; /* Max width for larger screens */
     height: 100%;
-    background-color: #2c3e50; /* Dark background for drawer */
-    color: white;
-    box-shadow: 3px 0 15px rgba(0,0,0,0.3);
-    z-index: 999; /* Below hamburger, above content */
-    transition: left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smooth slide effect */
+    background-color: #f8f9fa; /* Light background for drawer */
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.2); /* Stronger shadow */
+    transform: translateX(-100%); /* Hide initially */
+    transition: transform 0.4s ease-out; /* Smooth slide animation */
+    z-index: 1000; /* Below hamburger icon, above main content */
+    padding: 20px;
     display: flex;
     flex-direction: column;
-    padding: 20px 0;
+    justify-content: space-between; /* Push logout to bottom */
+    overflow-y: auto; /* Enable scrolling for content if needed */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
 }
 
 .drawer.open {
-    left: 0; /* Slide in */
+    transform: translateX(0); /* Slide in */
+}
+
+.drawer h3 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 10px;
+}
+
+.close-drawer-button {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 2.5rem; /* Large 'X' */
+    color: #888;
+    cursor: pointer;
+    line-height: 1;
+    padding: 5px;
+    transition: color 0.2s ease;
+}
+
+.close-drawer-button:hover {
+    color: #333;
 }
 
 .drawer-header {
     text-align: center;
-    padding: 15px;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #e9ecef;
+    border-radius: 5px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.drawer-store-id-label {
+    color: #555;
+    font-weight: 500;
+    margin-right: 5px;
+}
+
+.drawer-store-id-value {
+    color: #dc3545;
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+}
+
+/* Date Filter Section */
+.date-filter-section {
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping on small screens */
+    gap: 10px; /* Space between elements */
+    margin-bottom: 20px;
+    padding: 10px 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.date-filter-section label {
+    flex-basis: 100%; /* Labels take full width on mobile */
+    font-size: 0.9rem;
+    margin-bottom: 0; /* Override default label margin */
+    text-align: left;
+}
+
+.date-filter-section input[type="date"] {
+    flex: 1; /* Allow inputs to grow */
+    min-width: 120px; /* Minimum width for date inputs */
+    padding: 8px 10px;
+    font-size: 0.9rem;
+    border-radius: 5px;
+}
+
+.filter-button {
+    background-color: #6c757d; /* Grey button */
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s ease;
+    flex: 1; /* Allow buttons to grow */
+    min-width: 100px; /* Minimum width for buttons */
+}
+
+.filter-button:hover {
+    background-color: #5a6268;
+}
+
+.filter-button.clear-filter {
+    background-color: #ffc107; /* Orange for clear filter */
+    color: #333;
+}
+
+.filter-button.clear-filter:hover {
+    background-color: #e0a800;
+}
+
+
+/* Drawer Navigation Buttons */
+.drawer-navigation {
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically */
+    gap: 8px; /* Space between buttons */
     margin-bottom: 20px;
 }
 
-.drawer-logo {
-    max-width: 120px;
-    margin-bottom: 15px;
-}
-
-.drawer-store-id {
-    background-color: rgba(255,255,255,0.1);
-    padding: 8px 15px;
-    border-radius: 5px;
-    font-size: 0.85rem;
-    display: inline-flex; /* Adjust for better alignment */
-    justify-content: center;
-    align-items: center;
-}
-
-.drawer-store-id .store-id-label {
-    color: #a4e4e4;
-    margin-bottom: 0; /* Override default label margin */
-    font-weight: 400;
-}
-.drawer-store-id .store-id-value {
-    color: #ffe082; /* Lighter, contrasting color for ID */
-    font-size: 0.95rem;
-}
-
-
-.drawer-nav {
-    flex-grow: 1; /* Takes remaining space */
-    padding: 0 15px;
-}
-
-.drawer-item {
-    display: flex;
-    align-items: center;
+.drawer-nav-button {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
     padding: 12px 15px;
-    margin-bottom: 8px;
-    color: #e0e0e0;
-    text-decoration: none;
-    font-size: 1.05rem;
     border-radius: 8px;
-    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: left;
+    transition: all 0.3s ease-in-out;
+    width: 100%; /* Full width */
 }
 
-.drawer-item .material-icons {
-    margin-right: 12px;
-    font-size: 24px;
+.drawer-nav-button:hover {
+    background-color: #f0f8ff;
+    border-color: #007bff;
+    transform: translateX(3px); /* Subtle slide on hover */
 }
 
-.drawer-item:hover {
-    background-color: rgba(255,255,255,0.1);
-    color: #ffffff;
-}
-
-.drawer-item.active {
-    background-color: #007bff; /* Active item highlight */
+.drawer-nav-button.selected {
+    background-color: #007bff;
     color: white;
+    border-color: #0056b3;
+    box-shadow: 0 2px 5px rgba(0, 123, 255, 0.2);
+}
+
+/* Drawer Content Area */
+.drawer-content {
+    flex-grow: 1; /* Allows content to fill available space */
+    margin-bottom: 20px;
+    display: flex; /* To manage child drawer views */
+    flex-direction: column;
+    overflow-y: auto; /* For internal scrolling if data is too long */
+}
+
+.drawer-view {
+    /* Styles for individual data views (e.g., allDetailsView) */
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px; /* Space between views if multiple were shown */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.drawer-view h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #333;
+    font-size: 1.1rem;
+    border-bottom: 1px dashed #eee;
+    padding-bottom: 5px;
+}
+
+.total-summary {
+    text-align: center;
+    font-size: 1.1rem;
     font-weight: 600;
-    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+    color: #007bff;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e9ecef;
 }
 
-.drawer-item.active .material-icons {
-    color: white;
+.total-summary strong {
+    font-size: 1.3rem;
 }
 
+/* Table container for responsiveness */
+.table-container {
+    overflow-x: auto; /* Enable horizontal scrolling for tables on small screens */
+    width: 100%; /* Ensure it takes full width */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+.drawer-content table {
+    width: 100%; /* Take full width of its container */
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    min-width: 400px; /* Ensure table doesn't get too narrow, allow scrolling */
+}
+
+.drawer-content th, .drawer-content td {
+    border: 1px solid #e9ecef;
+    padding: 8px 10px;
+    text-align: left;
+    white-space: nowrap; /* Prevent text wrapping in table cells */
+}
+
+.drawer-content th {
+    background-color: #f0f0f0;
+    font-weight: 600;
+    color: #555;
+}
+
+.drawer-content td {
+    background-color: #ffffff;
+    color: #333;
+}
+
+.drawer-content tbody tr:nth-child(even) td {
+    background-color: #fcfcfc; /* Zebra striping */
+}
+
+.empty-message {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 20px;
+}
+
+.drawer-loading, .drawer-error {
+    margin-top: 15px;
+    padding: 10px;
+    font-size: 0.9rem;
+}
+
+/* Drawer Logout Button */
 .drawer-logout-button {
-    background-color: #dc3545; /* Red for logout */
+    background-color: #dc3545; /* Red for danger action */
     color: white;
     border: none;
     padding: 12px 20px;
     border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
-    font-size: 1rem;
-    margin: 20px 15px 15px; /* Adjust margin for bottom positioning */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
+    width: 100%;
+    margin-top: 20px; /* Space above button */
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.2);
     transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-}
-
-.drawer-logout-button .material-icons {
-    font-size: 20px;
 }
 
 .drawer-logout-button:hover {
     background-color: #b02a37;
     transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+    box-shadow: 0 6px 12px rgba(220, 53, 69, 0.3);
 }
 
 .drawer-logout-button:active {
     transform: translateY(0);
-    box-shadow: none;
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.1);
 }
 
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Dark overlay */
-    z-index: 998; /* Below drawer, above content */
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.4s ease-in-out, visibility 0.4s ease-in-out;
-}
+/* ------------------------------------------------ */
+/* RESPONSIVE ADJUSTMENTS */
+/* ------------------------------------------------ */
 
-.overlay.active {
-    opacity: 1;
-    visibility: visible;
-}
-
-
-/* --- New Styles for Tracking Sections --- */
-/* (Changed from .tracking-section to .sub-section as per new HTML structure) */
-.sub-section h2 {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    font-size: 1.6rem; /* Slightly smaller for internal sections */
-    margin-bottom: 30px;
-}
-
-.sub-section .icon-left {
-    font-size: 28px; /* Size of the icon next to heading */
-    color: #007bff;
-}
-
-.date-selection {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-    margin-bottom: 25px;
-    padding: 15px;
-    border: 1px solid #e9ecef;
-    border-radius: 10px;
-    background-color: #f8f9fa;
-}
-
-.date-selection .form-group {
-    margin-bottom: 0; /* Remove extra margin from form-group */
-}
-
-.date-selection .submit-button.track-button {
-    grid-column: span 2; /* Button spans both columns */
-    margin-top: 10px;
-}
-
-.tracking-result {
-    margin-top: 20px;
-    padding: 15px;
-    border: 1px solid #e0e0e0;
-    border-radius: 10px;
-    background-color: #fcfcfc;
-    min-height: 100px; /* Reserve space */
-    position: relative;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
-}
-
-.tracking-result .tracking-summary {
-    text-align: center;
-    font-size: 1.3rem;
-    margin-bottom: 15px;
-    color: #2c3e50;
-    font-weight: 500;
-}
-
-.tracking-result .tracking-summary strong {
-    font-size: 1.6rem;
-    color: #007bff; /* Highlight total values */
-}
-
-.data-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    overflow: hidden; /* For rounded corners on table */
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-.data-table th, .data-table td {
-    border: 1px solid #e9ecef;
-    padding: 12px;
-    text-align: left;
-    font-size: 0.95rem;
-}
-
-.data-table th {
-    background-color: #007bff;
-    color: white;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.data-table tbody tr:nth-child(even) {
-    background-color: #f8f9fa;
-}
-
-.data-table tbody tr:hover {
-    background-color: #eaf5ff;
-    cursor: pointer;
-}
-
-.no-data-message {
-    text-align: center;
-    color: #6c757d;
-    font-style: italic;
-    padding: 20px;
-}
-
-
-/* Responsive Adjustments */
 @media (max-width: 768px) {
     .container {
         padding: 30px 20px;
         border-radius: 10px;
-        margin: 15px auto; /* Slightly smaller margin on mobile */
     }
 
     h1, h2 {
@@ -806,6 +818,65 @@ select.error {
         padding: 15px;
     }
 
+    /* Hamburger adjustments for smaller screens */
+    .hamburger-icon {
+        top: 15px;
+        left: 15px;
+        padding: 10px 12px;
+        font-size: 1.2rem;
+    }
+
+    .drawer {
+        width: 100%; /* Full width on very small screens */
+        max-width: none; /* No max-width restriction */
+        padding: 15px;
+    }
+
+    .close-drawer-button {
+        font-size: 2rem;
+        top: 5px;
+        right: 10px;
+    }
+
+    .drawer h3 {
+        font-size: 1.3rem;
+        margin-bottom: 15px;
+    }
+
+    .date-filter-section {
+        flex-direction: column; /* Stack date inputs and buttons vertically */
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .date-filter-section input[type="date"] {
+        width: 100%;
+        min-width: unset;
+    }
+
+    .filter-button {
+        width: 100%;
+        min-width: unset;
+    }
+
+    .drawer-nav-button {
+        font-size: 0.95rem;
+        padding: 10px 12px;
+    }
+
+    .drawer-view {
+        padding: 10px;
+    }
+
+    .drawer-content table {
+        font-size: 0.85rem;
+        min-width: 500px; /* Keep a minimum width to ensure readability on small screens */
+    }
+
+    .drawer-content th, .drawer-content td {
+        padding: 6px 8px;
+    }
+
     .displayed-phone-price-info {
         padding: 8px 10px;
         font-size: 0.9rem;
@@ -816,62 +887,6 @@ select.error {
     .displayed-phone-price-info .back-button {
         padding: 6px 10px;
         font-size: 0.8rem;
-    }
-
-    .hamburger-menu {
-        font-size: 28px;
-        width: 40px;
-        height: 40px;
-        top: 15px;
-        left: 15px;
-    }
-
-    .drawer {
-        width: 240px; /* Slightly smaller drawer on mobile */
-    }
-
-    .drawer-item {
-        font-size: 1rem;
-        padding: 10px 12px;
-    }
-
-    .drawer-item .material-icons {
-        font-size: 22px;
-    }
-
-    .drawer-logout-button {
-        font-size: 0.95rem;
-        padding: 10px 18px;
-    }
-
-    .sub-section h2 { /* Changed from .tracking-section h2 */
-        font-size: 1.4rem;
-        margin-bottom: 20px;
-    }
-
-    .sub-section .icon-left { /* Changed from .tracking-section .icon-left */
-        font-size: 24px;
-    }
-
-    .date-selection {
-        grid-template-columns: 1fr; /* Stack date pickers vertically */
-        gap: 10px;
-    }
-
-    .date-selection .submit-button.track-button {
-        grid-column: span 1; /* Back to single column */
-    }
-
-    .data-table th, .data-table td {
-        padding: 10px;
-        font-size: 0.9rem;
-    }
-
-    .tracking-summary {
-        font-size: 1.1rem !important; /* Adjust summary font size */
-    }
-    .tracking-summary strong {
-        font-size: 1.4rem !important;
     }
 }
 
@@ -899,13 +914,42 @@ select.error {
         grid-template-columns: 1fr; /* Stack buttons on very small screens */
         gap: 10px;
     }
-
+    
     .plan-button .plan-text {
         margin-right: 5px;
     }
 
     .plan-button .plan-price {
         font-size: 1rem;
+    }
+
+    /* Hamburger icon and drawer styles for very small screens */
+    .hamburger-icon {
+        top: 10px;
+        left: 10px;
+        padding: 8px 10px;
+        font-size: 1rem;
+    }
+
+    .drawer {
+        padding: 10px;
+    }
+
+    .close-drawer-button {
+        font-size: 1.8rem;
+    }
+
+    .drawer h3 {
+        font-size: 1.1rem;
+    }
+
+    .drawer-content table {
+        font-size: 0.75rem; /* Even smaller font for tables on very small screens */
+        min-width: 450px; /* Ensure some horizontal scrolling is still possible if needed */
+    }
+
+    .drawer-content th, .drawer-content td {
+        padding: 5px 6px;
     }
 
     .displayed-phone-price-info {
