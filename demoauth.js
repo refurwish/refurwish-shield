@@ -5,17 +5,17 @@ document.addEventListener('DOMContentLoaded', function () {
     const loginError = document.getElementById('loginError');
     const loginLoading = document.getElementById('loginLoading');
     const loginButton = loginForm.querySelector('.submit-button');
-    const displayedStoreId = document.getElementById('displayedStoreId');
+    const displayedStoreId = document.getElementById('displayedStoreId'); // Main section store ID display
     const storeIdInput = document.getElementById('storeId');
-    const logoutButton = document.getElementById('drawerLogoutButton'); // Changed to new logout button in drawer
     const warrantyForm = document.getElementById('warrantyForm');
 
-    // NEW ELEMENTS FOR HAMBURGER MENU
-    const hamburgerIcon = document.getElementById('hamburgerIcon');
+    // NEW ELEMENTS FOR HAMBURGER MENU & DRAWER (IDs updated to match demoindex.html)
+    const hamburgerMenu = document.getElementById('hamburgerMenu'); // Corrected ID
     const mainDrawer = document.getElementById('mainDrawer');
-    const closeDrawerButton = document.getElementById('closeDrawerButton');
-    const drawerStoreIdDisplay = document.getElementById('drawerStoreId'); // To display store ID in drawer
-
+    const drawerCloseButton = document.getElementById('drawerCloseButton'); // Corrected ID
+    const logoutButtonDrawer = document.getElementById('logoutButtonDrawer'); // Corrected ID for logout button in drawer
+    const drawerDisplayedStoreId = document.getElementById('drawerDisplayedStoreId'); // New: To display store ID in drawer
+    const drawerOverlay = document.getElementById('drawerOverlay'); // Reference to the overlay
 
     // Function to handle showing/hiding sections with animations
     function showSection(sectionToShow, sectionToHide) {
@@ -42,12 +42,12 @@ document.addEventListener('DOMContentLoaded', function () {
         warrantySection.classList.add('visible'); // Show warranty section with animation
         storeIdInput.value = savedStoreId;
         displayedStoreId.textContent = savedStoreId;
-        drawerStoreIdDisplay.textContent = savedStoreId; // Set store ID in drawer
-        hamburgerIcon.style.display = 'block'; // Show hamburger icon after successful session restore
+        drawerDisplayedStoreId.textContent = savedStoreId; // Set store ID in drawer
+        hamburgerMenu.style.display = 'block'; // Show hamburger icon after successful session restore
     } else {
         // If no saved session, ensure login section is visible on load
         showSection(loginSection);
-        hamburgerIcon.style.display = 'none'; // Ensure hidden on login page
+        hamburgerMenu.style.display = 'none'; // Ensure hidden on login page
     }
 
     // Handle login
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const formData = new FormData(loginForm);
         formData.append('action', 'verifyLogin');
 
-        // IMPORTANT: Update this URL if your deployment changes
+        // IMPORTANT: This URL is for your separate login App Script.
         fetch('https://script.google.com/macros/s/AKfycbwxhL6X17U5Fr9i7ze3SnqqURZalpVsWRfCZLrSh11tD3yDGqn2bB6SzLAcdo-rGbJs1w/exec', {
             method: 'POST',
             body: formData
@@ -81,10 +81,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     storeIdInput.value = storeId;
                     displayedStoreId.textContent = storeId;
-                    drawerStoreIdDisplay.textContent = storeId; // Set store ID in drawer
+                    drawerDisplayedStoreId.textContent = storeId; // Set store ID in drawer
 
                     showSection(warrantySection, loginSection); // Animate transition
-                    hamburgerIcon.style.display = 'block'; // Show hamburger icon after successful login
+                    hamburgerMenu.style.display = 'block'; // Show hamburger icon after successful login
                 } else {
                     loginError.textContent = 'Invalid Store ID or Password';
                     loginError.classList.remove('hidden');
@@ -101,8 +101,8 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     });
 
-    // Handle logout (moved to drawer)
-    logoutButton.addEventListener('click', () => {
+    // Handle logout (moved to drawer and using its ID)
+    logoutButtonDrawer.addEventListener('click', () => {
         // Clear session storage
         sessionStorage.removeItem('storeId');
 
@@ -115,12 +115,17 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('loginPassword').value = '';
         storeIdInput.value = '';
         displayedStoreId.textContent = '';
-        drawerStoreIdDisplay.textContent = ''; // Clear store ID in drawer
+        drawerDisplayedStoreId.textContent = ''; // Clear store ID in drawer
 
-        // Close drawer if open
-        mainDrawer.classList.remove('open');
+        // Close drawer if open (this should ideally be handled by demoscript's closeDrawer function)
+        // For simplicity, we directly hide here for immediate effect
+        mainDrawer.classList.remove('open'); 
+        drawerOverlay.classList.remove('visible');
+        drawerOverlay.classList.add('hidden');
+        document.body.style.overflow = ''; // Allow body scrolling again
+
         // Hide hamburger icon
-        hamburgerIcon.style.display = 'none';
+        hamburgerMenu.style.display = 'none';
 
         // Switch views with animation
         showSection(loginSection, warrantySection);
@@ -132,26 +137,6 @@ document.addEventListener('DOMContentLoaded', function () {
         loginButton.classList.remove('hidden'); // Ensure login button is visible
     });
 
-    // --- HAMBURGER DRAWER FUNCTIONALITY ---
-    hamburgerIcon.addEventListener('click', () => {
-        mainDrawer.classList.add('open');
-        // Optional: Add a dimming overlay to the main content
-        // document.body.classList.add('drawer-open');
-    });
-
-    closeDrawerButton.addEventListener('click', () => {
-        mainDrawer.classList.remove('open');
-        // Optional: Remove dimming overlay
-        // document.body.classList.remove('drawer-open');
-    });
-
-    // Close drawer if clicking outside (optional, but good UX)
-    // document.body.addEventListener('click', (event) => {
-    //     if (mainDrawer.classList.contains('open') &&
-    //         !mainDrawer.contains(event.target) &&
-    //         !hamburgerIcon.contains(event.target)) {
-    //         mainDrawer.classList.remove('open');
-    //         // document.body.classList.remove('drawer-open');
-    //     }
-    // });
+    // Removed the drawer open/close event listeners from here.
+    // This logic is now handled in demoscript.js for better separation of concerns.
 });
