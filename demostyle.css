@@ -153,6 +153,13 @@ select {
     box-shadow: 0 2px 4px rgba(0, 123, 255, 0.1);
 }
 
+.submit-button.small-button {
+    padding: 10px 20px; /* Smaller padding for drawer buttons */
+    font-size: 0.9rem;
+    margin-top: 15px;
+}
+
+
 /* Back Button (general style) */
 .back-button {
     background-color: #e9ecef; /* Light grey background */
@@ -223,7 +230,7 @@ select {
     border: 1px solid #a4e6a4;
 }
 
-#errorMessage {
+#errorMessage, #loginError, #trackingError { /* Combined error styling */
     color: #dc3545;
     background-color: #ffe6e6; /* Light red background */
     border: 1px solid #e6a4a4;
@@ -451,294 +458,22 @@ select.error {
     letter-spacing: 0.5px;
 }
 
-/* Logout Button (Removed from original position in HTML, kept styling for drawer version) */
-/* Old #logoutButton styles are now mostly applied to .drawer-logout-button */
-
-
-/* ------------------------------------------------ */
-/* NEW HAMBURGER MENU & DRAWER STYLES (Responsive) */
-/* ------------------------------------------------ */
-
-/* Hamburger Icon */
-.hamburger-icon {
-    position: absolute;
+/* Logout Button (original position, now moved into drawer) */
+/* This rule is kept for historical context but its position will be overridden by .drawer .logout-button */
+#logoutButton {
+    position: absolute; /* Original position for #logoutButton in warrantySection */
     top: 20px;
-    left: 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 12px 15px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1.3rem; /* Larger icon */
-    z-index: 1001; /* Above other content */
-    transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+    right: 20px;
+    display: none; /* Hide the original logout button */
 }
 
-.hamburger-icon:hover {
-    background-color: #0056b3;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 123, 255, 0.3);
-}
-.hamburger-icon:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.1);
-}
-
-/* Drawer / Side Navigation */
-.drawer {
-    position: fixed;
-    top: 0;
-    left: 0; /* Starts off-screen to the left */
-    width: 80%; /* Responsive width for mobile */
-    max-width: 350px; /* Max width for larger screens */
-    height: 100%;
-    background-color: #f8f9fa; /* Light background for drawer */
-    box-shadow: 0 0 25px rgba(0, 0, 0, 0.2); /* Stronger shadow */
-    transform: translateX(-100%); /* Hide initially */
-    transition: transform 0.4s ease-out; /* Smooth slide animation */
-    z-index: 1000; /* Below hamburger icon, above main content */
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between; /* Push logout to bottom */
-    overflow-y: auto; /* Enable scrolling for content if needed */
-    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-}
-
-.drawer.open {
-    transform: translateX(0); /* Slide in */
-}
-
-.drawer h3 {
-    text-align: center;
-    color: #2c3e50;
-    margin-bottom: 20px;
-    font-size: 1.5rem;
-    border-bottom: 1px solid #e0e0e0;
-    padding-bottom: 10px;
-}
-
-.close-drawer-button {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    background: none;
-    border: none;
-    font-size: 2.5rem; /* Large 'X' */
-    color: #888;
-    cursor: pointer;
-    line-height: 1;
-    padding: 5px;
-    transition: color 0.2s ease;
-}
-
-.close-drawer-button:hover {
-    color: #333;
-}
-
-.drawer-header {
-    text-align: center;
-    margin-bottom: 20px;
-    padding: 10px;
-    background-color: #e9ecef;
-    border-radius: 5px;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
-}
-
-.drawer-store-id-label {
-    color: #555;
-    font-weight: 500;
-    margin-right: 5px;
-}
-
-.drawer-store-id-value {
-    color: #dc3545;
-    font-weight: 700;
-    font-size: 1.1rem;
-    letter-spacing: 0.5px;
-}
-
-/* Date Filter Section */
-.date-filter-section {
-    display: flex;
-    flex-wrap: wrap; /* Allow wrapping on small screens */
-    gap: 10px; /* Space between elements */
-    margin-bottom: 20px;
-    padding: 10px 0;
-    border-bottom: 1px solid #e0e0e0;
-}
-
-.date-filter-section label {
-    flex-basis: 100%; /* Labels take full width on mobile */
-    font-size: 0.9rem;
-    margin-bottom: 0; /* Override default label margin */
-    text-align: left;
-}
-
-.date-filter-section input[type="date"] {
-    flex: 1; /* Allow inputs to grow */
-    min-width: 120px; /* Minimum width for date inputs */
-    padding: 8px 10px;
-    font-size: 0.9rem;
-    border-radius: 5px;
-}
-
-.filter-button {
-    background-color: #6c757d; /* Grey button */
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: background-color 0.2s ease;
-    flex: 1; /* Allow buttons to grow */
-    min-width: 100px; /* Minimum width for buttons */
-}
-
-.filter-button:hover {
-    background-color: #5a6268;
-}
-
-.filter-button.clear-filter {
-    background-color: #ffc107; /* Orange for clear filter */
-    color: #333;
-}
-
-.filter-button.clear-filter:hover {
-    background-color: #e0a800;
-}
-
-
-/* Drawer Navigation Buttons */
-.drawer-navigation {
-    display: flex;
-    flex-direction: column; /* Stack buttons vertically */
-    gap: 8px; /* Space between buttons */
-    margin-bottom: 20px;
-}
-
-.drawer-nav-button {
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    padding: 12px 15px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: 500;
-    text-align: left;
-    transition: all 0.3s ease-in-out;
-    width: 100%; /* Full width */
-}
-
-.drawer-nav-button:hover {
-    background-color: #f0f8ff;
-    border-color: #007bff;
-    transform: translateX(3px); /* Subtle slide on hover */
-}
-
-.drawer-nav-button.selected {
-    background-color: #007bff;
-    color: white;
-    border-color: #0056b3;
-    box-shadow: 0 2px 5px rgba(0, 123, 255, 0.2);
-}
-
-/* Drawer Content Area */
-.drawer-content {
-    flex-grow: 1; /* Allows content to fill available space */
-    margin-bottom: 20px;
-    display: flex; /* To manage child drawer views */
-    flex-direction: column;
-    overflow-y: auto; /* For internal scrolling if data is too long */
-}
-
-.drawer-view {
-    /* Styles for individual data views (e.g., allDetailsView) */
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 15px; /* Space between views if multiple were shown */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
-
-.drawer-view h4 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    color: #333;
-    font-size: 1.1rem;
-    border-bottom: 1px dashed #eee;
-    padding-bottom: 5px;
-}
-
-.total-summary {
-    text-align: center;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #007bff;
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #e9ecef;
-}
-
-.total-summary strong {
-    font-size: 1.3rem;
-}
-
-/* Table container for responsiveness */
-.table-container {
-    overflow-x: auto; /* Enable horizontal scrolling for tables on small screens */
-    width: 100%; /* Ensure it takes full width */
-    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-}
-
-.drawer-content table {
-    width: 100%; /* Take full width of its container */
-    border-collapse: collapse;
-    font-size: 0.9rem;
-    min-width: 400px; /* Ensure table doesn't get too narrow, allow scrolling */
-}
-
-.drawer-content th, .drawer-content td {
-    border: 1px solid #e9ecef;
-    padding: 8px 10px;
-    text-align: left;
-    white-space: nowrap; /* Prevent text wrapping in table cells */
-}
-
-.drawer-content th {
-    background-color: #f0f0f0;
-    font-weight: 600;
-    color: #555;
-}
-
-.drawer-content td {
-    background-color: #ffffff;
-    color: #333;
-}
-
-.drawer-content tbody tr:nth-child(even) td {
-    background-color: #fcfcfc; /* Zebra striping */
-}
-
-.empty-message {
-    text-align: center;
-    color: #666;
-    font-style: italic;
-    padding: 20px;
-}
-
-.drawer-loading, .drawer-error {
-    margin-top: 15px;
-    padding: 10px;
-    font-size: 0.9rem;
-}
-
-/* Drawer Logout Button */
-.drawer-logout-button {
+/* Logout button specifically inside the drawer */
+.drawer .logout-button {
+    position: static; /* Override absolute positioning */
+    margin-top: auto; /* Push to the bottom of the drawer */
+    margin-bottom: 20px; /* Some bottom padding */
+    width: calc(100% - 40px); /* Adjust for padding */
+    align-self: center; /* Center horizontally in flex container */
     background-color: #dc3545; /* Red for danger action */
     color: white;
     border: none;
@@ -746,27 +481,213 @@ select.error {
     border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
-    width: 100%;
-    margin-top: 20px; /* Space above button */
+    font-size: 1rem;
     box-shadow: 0 4px 8px rgba(220, 53, 69, 0.2);
     transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
-.drawer-logout-button:hover {
+.drawer .logout-button:hover {
     background-color: #b02a37;
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(220, 53, 69, 0.3);
 }
 
-.drawer-logout-button:active {
+.drawer .logout-button:active {
     transform: translateY(0);
     box-shadow: 0 2px 4px rgba(220, 53, 69, 0.1);
 }
 
-/* ------------------------------------------------ */
-/* RESPONSIVE ADJUSTMENTS */
-/* ------------------------------------------------ */
 
+/* --- DRAWER (SIDEBAR) STYLES --- */
+.hamburger-menu {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: none;
+    border: none;
+    font-size: 2rem; /* Larger icon */
+    color: #007bff; /* Primary blue color */
+    cursor: pointer;
+    z-index: 100; /* Above other content */
+    transition: color 0.3s ease-in-out;
+}
+
+.hamburger-menu:hover {
+    color: #0056b3;
+}
+
+.drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0; /* Hidden by default */
+    max-width: 300px; /* Max width for drawer */
+    background-color: #ffffff;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+    overflow-x: hidden; /* Hide content that overflows */
+    transition: width 0.3s ease-in-out; /* Smooth slide in/out */
+    z-index: 1000; /* Ensure it's on top of everything */
+    display: flex; /* Use flexbox for content alignment */
+    flex-direction: column;
+    padding-top: 20px; /* Space for close button */
+}
+
+.drawer.open {
+    width: 280px; /* Open width */
+}
+
+.drawer-close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    color: #666;
+    cursor: pointer;
+    transition: color 0.3s ease-in-out;
+}
+
+.drawer-close-button:hover {
+    color: #333;
+}
+
+.drawer-content {
+    flex-grow: 1; /* Allow content to grow and push logout to bottom */
+    padding: 20px;
+    padding-top: 0; /* Reset top padding as header has it */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch; /* Stretch items to fill width */
+}
+
+.drawer-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.drawer-header h3 {
+    margin: 0;
+    color: #2c3e50;
+    font-weight: 600;
+    font-size: 1.5rem;
+}
+
+.drawer-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 30px; /* Space below nav items */
+}
+
+.drawer-menu-item {
+    background: none;
+    border: none;
+    color: #555;
+    text-align: left;
+    padding: 12px 15px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.drawer-menu-item:hover {
+    background-color: #f0f8ff;
+    color: #007bff;
+}
+
+.drawer-menu-item i {
+    font-size: 1.5rem; /* Icon size */
+}
+
+/* Drawer Overlay */
+.drawer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); /* Dark semi-transparent overlay */
+    z-index: 999; /* Below drawer, above main content */
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.drawer-overlay.visible {
+    opacity: 1;
+}
+
+/* --- TRACKING SECTION STYLES --- */
+.tracking-section {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+}
+
+.tracking-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.tracking-section h4 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    font-size: 1.3rem;
+    text-align: center;
+}
+
+.tracking-results {
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px solid #e0e0e0;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+}
+
+.tracking-results.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.tracking-results h5 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #007bff;
+    font-size: 1.1rem;
+    text-align: center;
+}
+
+.tracking-results p {
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    color: #4a4a4a;
+    display: flex;
+    justify-content: space-between; /* Align label and value */
+}
+
+.tracking-results strong {
+    color: #2c3e50;
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+
+/* Responsive Adjustments */
 @media (max-width: 768px) {
     .container {
         padding: 30px 20px;
@@ -818,63 +739,10 @@ select.error {
         padding: 15px;
     }
 
-    /* Hamburger adjustments for smaller screens */
-    .hamburger-icon {
-        top: 15px;
-        left: 15px;
-        padding: 10px 12px;
-        font-size: 1.2rem;
-    }
-
-    .drawer {
-        width: 100%; /* Full width on very small screens */
-        max-width: none; /* No max-width restriction */
-        padding: 15px;
-    }
-
-    .close-drawer-button {
-        font-size: 2rem;
-        top: 5px;
-        right: 10px;
-    }
-
-    .drawer h3 {
-        font-size: 1.3rem;
-        margin-bottom: 15px;
-    }
-
-    .date-filter-section {
-        flex-direction: column; /* Stack date inputs and buttons vertically */
-        align-items: stretch;
-        gap: 8px;
-    }
-
-    .date-filter-section input[type="date"] {
-        width: 100%;
-        min-width: unset;
-    }
-
-    .filter-button {
-        width: 100%;
-        min-width: unset;
-    }
-
-    .drawer-nav-button {
-        font-size: 0.95rem;
-        padding: 10px 12px;
-    }
-
-    .drawer-view {
-        padding: 10px;
-    }
-
-    .drawer-content table {
-        font-size: 0.85rem;
-        min-width: 500px; /* Keep a minimum width to ensure readability on small screens */
-    }
-
-    .drawer-content th, .drawer-content td {
-        padding: 6px 8px;
+    /* Logout button inside drawer also adjusts */
+    .drawer .logout-button {
+        padding: 10px 15px;
+        font-size: 0.9rem;
     }
 
     .displayed-phone-price-info {
@@ -887,6 +755,53 @@ select.error {
     .displayed-phone-price-info .back-button {
         padding: 6px 10px;
         font-size: 0.8rem;
+    }
+
+    .hamburger-menu {
+        font-size: 1.8rem;
+        top: 15px;
+        left: 15px;
+    }
+
+    .drawer {
+        max-width: 250px;
+    }
+
+    .drawer.open {
+        width: 250px;
+    }
+
+    .drawer-close-button {
+        font-size: 1.6rem;
+    }
+
+    .drawer-header h3 {
+        font-size: 1.3rem;
+    }
+
+    .drawer-menu-item {
+        font-size: 0.95rem;
+        padding: 10px 12px;
+    }
+
+    .drawer-menu-item i {
+        font-size: 1.3rem;
+    }
+
+    .tracking-section {
+        padding: 15px;
+    }
+
+    .tracking-section h4 {
+        font-size: 1.1rem;
+    }
+
+    .tracking-results p {
+        font-size: 0.9rem;
+    }
+
+    .tracking-results strong {
+        font-size: 1rem;
     }
 }
 
@@ -910,6 +825,11 @@ select.error {
         margin-bottom: 15px;
     }
 
+    .submit-button.small-button {
+        padding: 8px 15px;
+        font-size: 0.85rem;
+    }
+
     .plan-options-container {
         grid-template-columns: 1fr; /* Stack buttons on very small screens */
         gap: 10px;
@@ -923,35 +843,6 @@ select.error {
         font-size: 1rem;
     }
 
-    /* Hamburger icon and drawer styles for very small screens */
-    .hamburger-icon {
-        top: 10px;
-        left: 10px;
-        padding: 8px 10px;
-        font-size: 1rem;
-    }
-
-    .drawer {
-        padding: 10px;
-    }
-
-    .close-drawer-button {
-        font-size: 1.8rem;
-    }
-
-    .drawer h3 {
-        font-size: 1.1rem;
-    }
-
-    .drawer-content table {
-        font-size: 0.75rem; /* Even smaller font for tables on very small screens */
-        min-width: 450px; /* Ensure some horizontal scrolling is still possible if needed */
-    }
-
-    .drawer-content th, .drawer-content td {
-        padding: 5px 6px;
-    }
-
     .displayed-phone-price-info {
         padding: 6px 8px;
         font-size: 0.85rem;
@@ -962,5 +853,10 @@ select.error {
     .displayed-phone-price-info .back-button {
         padding: 5px 8px;
         font-size: 0.75rem;
+    }
+
+    .drawer.open {
+        width: 100%; /* Full width on very small screens */
+        max-width: 100%;
     }
 }
