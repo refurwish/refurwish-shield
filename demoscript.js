@@ -1,680 +1,554 @@
-// You MUST replace this with your actual Apps Script Web App URL
-// Deploy your code.gs as a Web App (Execute as: Me, Who has access: Anyone)
-// Copy the URL provided after deployment and paste it here.
-const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec'; 
-
-document.addEventListener('DOMContentLoaded', function() {
-    const warrantyForm = document.getElementById('warrantyForm');
-    const phonePriceInput = document.getElementById('phonePrice');
-    const phonePriceGroup = document.getElementById('phonePriceGroup');
-    const displayedPhonePriceInfo = document.getElementById('displayedPhonePriceInfo');
-    const displayPhonePrice = document.getElementById('displayPhonePrice');
-    const changePhonePriceButton = document.getElementById('changePhonePriceButton');
-    const planSelectionSection = document.getElementById('planSelectionSection');
-    const planOptionsContainer = document.getElementById('planOptionsContainer');
-    const planSelectionMessage = document.getElementById('planSelectionMessage');
-    const submitWarrantyButton = document.getElementById('submitWarrantyButton');
-    const loadingMessage = document.getElementById('loading');
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('warrantyForm');
+    const loading = document.getElementById('loading');
     const successContainer = document.getElementById('successContainer');
-    const pdfLinkSection = document.getElementById('pdfLinkSection');
-    const qrcodeElement = document.getElementById('qrcode');
-    const downloadLink = document.getElementById('downloadLink');
     const errorMessage = document.getElementById('errorMessage');
-    const newSubmissionButton = document.getElementById('newSubmissionButton');
-    const hamburgerMenu = document.getElementById('hamburgerMenu');
-    const appDrawer = document.getElementById('appDrawer');
-    const overlay = document.getElementById('overlay');
+    const qrcodeDiv = document.getElementById('qrcode');
+    const downloadLink = document.getElementById('downloadLink');
+    const pdfLinkSection = document.getElementById('pdfLinkSection');
+    const storeIdInput = document.getElementById('storeId');
 
-    // Drawer elements for navigation
-    const drawerItems = document.querySelectorAll('.drawer-item');
-    const subSections = document.querySelectorAll('.sub-section'); // All sub-sections within warrantySection
+    const phonePriceGroup = document.getElementById('phonePriceGroup');
+    const phonePriceInput = document.getElementById('phonePrice');
+    const confirmedPhonePriceDisplay = document.getElementById('confirmedPhonePrice');
+    const showPlanPricesButton = document.getElementById('showPlanPricesButton');
+    const planSelectionSection = document.getElementById('planSelectionSection');
+    const generateCertificateButton = document.getElementById('generateCertificateButton');
+    const planOptionsContainer = document.getElementById('planOptionsContainer');
+    const selectedPlanValueInput = document.getElementById('selectedPlanValue');
+    const selectedPlanPriceInput = document.getElementById('selectedPlanPrice');
+    const selectedPlanTypeInput = document.getElementById('selectedPlanType');
+    const selectedPlanDetailsInput = document.getElementById('selectedPlanDetails');
+    const backToPhonePriceButton = document.getElementById('backToPhonePriceButton');
 
-    // Tracking section elements
-    const submissionsFromDate = document.getElementById('submissionsFromDate');
-    const submissionsToDate = document.getElementById('submissionsToDate');
-    const trackSubmissionsButton = document.getElementById('trackSubmissionsButton');
-    const totalSubmissionsCount = document.getElementById('totalSubmissionsCount');
-    const submissionsTableBody = document.getElementById('submissionsTableBody');
+    // NEW ELEMENTS FOR DRAWER DATA DISPLAY
+    const mainDrawer = document.getElementById('mainDrawer'); // Reference to the drawer
+    const drawerNavButtons = document.querySelectorAll('.drawer-nav-button');
+    const drawerViews = document.querySelectorAll('.drawer-view');
+    const filterFromDate = document.getElementById('filterFromDate');
+    const filterToDate = document.getElementById('filterToDate');
+    const applyDateFilterButton = document.getElementById('applyDateFilterButton');
+    const clearDateFilterButton = document.getElementById('clearDateFilterButton');
+    const drawerLoading = document.getElementById('drawerLoading');
+    const drawerError = document.getElementById('drawerError');
 
-    const commissionFromDate = document.getElementById('commissionFromDate');
-    const commissionToDate = document = document.getElementById('commissionToDate');
-    const trackCommissionButton = document.getElementById('trackCommissionButton');
-    const totalCommissionAmount = document.getElementById('totalCommissionAmount');
-    const commissionTableBody = document.getElementById('commissionTableBody');
+    // References for specific data tables/summaries
+    const allDetailsTableBody = document.querySelector('#allDetailsTable tbody');
+    const allDetailsCount = document.getElementById('allDetailsCount');
+    const allDetailsEmptyMessage = document.getElementById('allDetailsEmptyMessage');
 
-    const paymentFromDate = document.getElementById('paymentFromDate');
-    const paymentToDate = document.getElementById('paymentToDate');
-    const trackPaymentButton = document.getElementById('trackPaymentButton');
-    const totalPaymentAmount = document.getElementById('totalPaymentAmount');
-    const paymentTableBody = document.getElementById('paymentTableBody');
+    const commissionTableBody = document.querySelector('#commissionTable tbody');
+    const commissionCount = document.getElementById('commissionCount');
+    const totalCommissionValue = document.getElementById('totalCommissionValue');
+    const commissionEmptyMessage = document.getElementById('commissionEmptyMessage');
 
-    const totalAmountFromDate = document.getElementById('totalAmountFromDate');
-    const totalAmountToDate = document.getElementById('totalAmountToDate');
-    const trackTotalAmountButton = document.getElementById('trackTotalAmountButton');
-    const grandTotalAmount = document.getElementById('grandTotalAmount');
-    const totalAmountTableBody = document.getElementById('totalAmountTableBody');
+    const paymentsTableBody = document.querySelector('#paymentsTable tbody');
+    const paymentsCount = document.getElementById('paymentsCount');
+    const totalPaymentsValue = document.getElementById('totalPaymentsValue');
+    const paymentsEmptyMessage = document.getElementById('paymentsEmptyMessage');
 
-    const trackingLoadingMessages = document.querySelectorAll('.tracking-loading');
-    const trackingErrorMessages = document.querySelectorAll('.tracking-error');
+    const totalAmountTableBody = document.querySelector('#totalAmountTable tbody');
+    const totalAmountCount = document.getElementById('totalAmountCount');
+    const totalAmountValue = document.getElementById('totalAmountValue');
+    const totalAmountEmptyMessage = document.getElementById('totalAmountEmptyMessage');
 
 
-    let currentStoreId = ''; // Variable to hold the logged-in store ID
-    let selectedPlanData = null;
-    let selectedPhonePrice = null;
-
-    // --- Helper Functions ---
-
-    function showElement(element) {
-        element.classList.remove('hidden');
-        setTimeout(() => element.classList.add('visible'), 10); // Small delay for transition
-    }
-
-    function hideElement(element) {
-        element.classList.remove('visible');
-        // Wait for transition to finish before hiding completely
-        element.addEventListener('transitionend', function handler() {
-            element.classList.add('hidden');
-            element.removeEventListener('transitionend', handler);
-        }, { once: true });
-    }
-
-    function toggleLoading(isLoading, section) {
-        if (section === 'mainForm') {
-            if (isLoading) {
-                submitWarrantyButton.disabled = true;
-                showElement(loadingMessage);
-                hideElement(errorMessage);
-                hideElement(successContainer);
-            } else {
-                submitWarrantyButton.disabled = false;
-                hideElement(loadingMessage);
-            }
-        } else {
-            // For tracking sections
-            const loadingEl = section.querySelector('.tracking-loading');
-            const errorEl = section.querySelector('.tracking-error');
-            if (isLoading) {
-                showElement(loadingEl);
-                hideElement(errorEl);
-            } else {
-                hideElement(loadingEl);
-            }
-        }
-    }
-
-    function showMessage(element, message, isError = false) {
-        element.textContent = message;
-        element.classList.toggle('error', isError);
-        showElement(element);
-    }
-
-    function clearMessages() {
-        hideElement(loadingMessage);
-        hideElement(errorMessage);
-        hideElement(successContainer);
-        hideElement(planSelectionMessage);
-        trackingLoadingMessages.forEach(el => hideElement(el));
-        trackingErrorMessages.forEach(el => hideElement(el));
-    }
-
-    function resetForm() {
-        warrantyForm.reset();
-        selectedPlanData = null;
-        selectedPhonePrice = null;
-        clearMessages();
-        hideElement(planSelectionSection);
-        hideElement(displayedPhonePriceInfo);
-        showElement(phonePriceGroup); // Show phone price input again
-        phonePriceInput.classList.remove('error'); // Clear validation styles
-        planOptionsContainer.classList.remove('error');
-        // Clear dynamically added plan buttons
-        planOptionsContainer.innerHTML = '';
-        // Reset specific inputs
-        document.getElementById('customerEmail').value = '';
-        document.getElementById('purchaseDate').valueAsDate = new Date(); // Set to current date
-    }
-
-    function validateInput(inputElement) {
-        if (inputElement.hasAttribute('required') && !inputElement.value.trim()) {
-            inputElement.classList.add('error');
-            return false;
-        }
-        inputElement.classList.remove('error');
-        return true;
-    }
-
-    function validateEmail(email) {
-        if (!email) return true; // Email is optional
-        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return re.test(String(email).toLowerCase());
-    }
-
-    function validatePhone(phone) {
-        // Basic phone number validation (e.g., allow digits and common separators)
-        const re = /^\+?[0-9\s\-\(\)]{7,15}$/;
-        return re.test(String(phone).trim());
-    }
-
-    // --- Plan Data (Moved from demoscript.js as it's client-side UI data) ---
-    // The commission rate is still handled on the server for security.
-    const planData = [
-        {
-            type: 'extended',
-            title: 'Extended Warranty',
-            description: '1 Year Extended Warranty',
-            ranges: [
-                { priceMin: 0, priceMax: 10000, planPrice: 799 },
-                { priceMin: 10001, priceMax: 20000, planPrice: 999 },
-                { priceMin: 20001, priceMax: 30000, planPrice: 1299 },
-                { priceMin: 30001, priceMax: 40000, planPrice: 1699 },
-                { priceMin: 40001, priceMax: 50000, planPrice: 2099 },
-                { priceMin: 50001, priceMax: 60000, planPrice: 2499 },
-                { priceMin: 60001, priceMax: 70000, planPrice: 2899 },
-                { priceMin: 70001, priceMax: 80000, planPrice: 3299 },
-                { priceMin: 80001, priceMax: 90000, planPrice: 3699 },
-                { priceMin: 90001, priceMax: 100000, planPrice: 4099 },
-                { priceMin: 100001, priceMax: Infinity, planPrice: 4599 }
-            ]
-        },
-        {
-            type: 'screen_protection',
-            title: 'Screen Protection Plan',
-            description: '1 Year Screen Damage Protection',
-            ranges: [
-                { priceMin: 0, priceMax: 10000, planPrice: 599 },
-                { priceMin: 10001, priceMax: 20000, planPrice: 799 },
-                { priceMin: 20001, priceMax: 30000, planPrice: 999 },
-                { priceMin: 30001, priceMax: 40000, planPrice: 1299 },
-                { priceMin: 40001, priceMax: 50000, planPrice: 1599 },
-                { priceMin: 50001, priceMax: 60000, planPrice: 1899 },
-                { priceMin: 60001, priceMax: 70000, planPrice: 2199 },
-                { priceMin: 70001, priceMax: 80000, planPrice: 2499 },
-                { priceMin: 80001, priceMax: 90000, planPrice: 2799 },
-                { priceMin: 90001, priceMax: 100000, planPrice: 3099 },
-                { priceMin: 100001, priceMax: Infinity, planPrice: 3499 }
-            ]
-        },
-        {
-            type: 'total_damage',
-            title: 'Total Damage Protection',
-            description: '1 Year Total Damage Protection',
-            ranges: [
-                { priceMin: 0, priceMax: 10000, planPrice: 999 },
-                { priceMin: 10001, priceMax: 20000, planPrice: 1499 },
-                { priceMin: 20001, priceMax: 30000, planPrice: 1999 },
-                { priceMin: 30001, priceMax: 40000, planPrice: 2599 },
-                { priceMin: 40001, priceMax: 50000, planPrice: 3199 },
-                { priceMin: 50001, priceMax: 60000, planPrice: 3799 },
-                { priceMin: 60001, priceMax: 70000, planPrice: 4399 },
-                { priceMin: 70001, priceMax: 80000, planPrice: 4999 },
-                { priceMin: 80001, priceMax: 90000, planPrice: 5599 },
-                { priceMin: 90001, priceMax: 100000, planPrice: 6199 },
-                { priceMin: 100001, priceMax: Infinity, planPrice: 6899 }
-            ]
-        },
-        {
-            type: 'combo_screen_extended',
-            title: 'Combo: Screen + Extended',
-            description: '1 Yr Screen Damage + 1 Yr Extended Warranty',
-            ranges: [
-                { priceMin: 0, priceMax: 10000, planPrice: 1199 },
-                { priceMin: 10001, priceMax: 20000, planPrice: 1499 },
-                { priceMin: 20001, priceMax: 30000, planPrice: 1999 },
-                { priceMin: 30001, priceMax: 40000, planPrice: 2499 },
-                { priceMin: 40001, priceMax: 50000, planPrice: 2999 },
-                { priceMin: 50001, priceMax: 60000, planPrice: 3499 },
-                { priceMin: 60001, priceMax: 70000, planPrice: 3999 },
-                { priceMin: 70001, priceMax: 80000, planPrice: 4499 },
-                { priceMin: 80001, priceMax: 90000, planPrice: 4999 },
-                { priceMin: 90001, priceMax: 100000, planPrice: 5499 },
-                { priceMin: 100001, priceMax: Infinity, planPrice: 5999 }
-            ]
-        },
-        {
-            type: 'combo_total_extended',
-            title: 'Combo: Total Damage + Extended',
-            description: '1 Yr Total Damage + 1 Yr Extended Warranty',
-            ranges: [
-                { priceMin: 0, priceMax: 10000, planPrice: 1599 },
-                { priceMin: 10001, priceMax: 20000, planPrice: 2199 },
-                { priceMin: 20001, priceMax: 30000, planPrice: 2899 },
-                { priceMin: 30001, priceMax: 40000, planPrice: 3699 },
-                { priceMin: 40001, priceMax: 50000, planPrice: 4499 },
-                { priceMin: 50001, priceMax: 60000, planPrice: 5299 },
-                { priceMin: 60001, priceMax: 70000, planPrice: 6099 },
-                { priceMin: 70001, priceMax: 80000, planPrice: 6899 },
-                { priceMin: 80001, priceMax: 90000, planPrice: 7699 },
-                { priceMin: 90001, priceMax: 100000, planPrice: 8499 },
-                { priceMin: 100001, priceMax: Infinity, planPrice: 9399 }
-            ]
-        }
+    // Define extended warranty base prices (unchanged)
+    const extendedWarrantyPrices = [
+        { maxPrice: 15000, planText: 'Under ₹15,000', price: 699 },
+        { maxPrice: 25000, planText: '₹15,001 - ₹25,000', price: 799 },
+        { maxPrice: 35000, planText: '₹25,001 - ₹35,000', price: 899 },
+        { maxPrice: 45000, planText: '₹35,001 - ₹45,000', price: 999 },
+        { maxPrice: 60000, planText: '₹45,001 - ₹60,000', price: 1299 },
+        { maxPrice: 75000, planText: '₹60,001 - ₹75,000', price: 1599 },
+        { maxPrice: 100000, planText: '₹75,001 - ₹1,00,000', price: 1999 },
+        { maxPrice: 150000, planText: '₹1,00,001 - ₹1,50,000', price: 2499 },
+        { maxPrice: 200000, planText: '₹1,50,001 - ₹2,00,000', price: 2999 },
+        { maxPrice: 250000, planText: '₹2,00,001 - ₹2,50,000', price: 3499 },
     ];
 
-    function getPlanPrice(price, type) {
-        const plan = planData.find(p => p.type === type);
-        if (!plan) return null;
-
-        const range = plan.ranges.find(r => price >= r.priceMin && price <= r.priceMax);
-        return range ? range.planPrice : null;
+    function getExtendedWarrantyPrice(phonePrice) {
+        for (const plan of extendedWarrantyPrices) {
+            if (phonePrice <= plan.maxPrice) {
+                return plan.price;
+            }
+        }
+        return extendedWarrantyPrices[extendedWarrantyPrices.length - 1].price;
     }
 
-    function populatePlans(phonePrice) {
-        planOptionsContainer.innerHTML = ''; // Clear previous plans
-        planSelectionMessage.classList.add('hidden'); // Hide any previous error message
+    function populatePlanOptions(phonePrice) {
+        planOptionsContainer.innerHTML = '';
 
-        if (isNaN(phonePrice) || phonePrice <= 0) {
-            planOptionsContainer.innerHTML = '<p class="no-data-message">Please enter a valid phone price to see plans.</p>';
-            return;
-        }
+        const extendedPrice = getExtendedWarrantyPrice(phonePrice);
+        const screenDamagePrice = Math.round(phonePrice * 0.075);
+        const totalDamagePrice = Math.round(phonePrice * 0.125);
 
-        const availablePlans = planData.map(plan => {
-            const price = getPlanPrice(phonePrice, plan.type);
-            if (price !== null) {
-                return {
-                    type: plan.type,
-                    title: plan.title,
-                    description: plan.description,
-                    planPrice: price
-                };
-            }
-            return null;
-        }).filter(Boolean); // Remove null entries
+        const allPlans = [
+            { value: 'extended_warranty', name: 'Extended Warranty', price: extendedPrice, internalType: 'extended', periodText: '12 Months Extended' },
+            { value: 'screen_protection', name: 'Screen Protection Plan', price: screenDamagePrice, internalType: 'screen_protection', periodText: '12 Months' },
+            { value: 'total_damage_protection', name: 'Total Damage Protection', price: totalDamagePrice, internalType: 'total_damage', periodText: '12 Months' },
+            { value: 'combo_screen_extended', name: 'Combo (Screen Damage + Extended Warranty)', price: Math.round(screenDamagePrice + (extendedPrice * 0.5)), internalType: 'combo_screen_extended', periodText: '24 Months Total' },
+            { value: 'combo_total_extended', name: 'Combo (Total Damage Protection + Extended Warranty)', price: Math.round(totalDamagePrice + (extendedPrice * 0.5)), internalType: 'combo_total_extended', periodText: '24 Months Total' }
+        ];
 
-        if (availablePlans.length === 0) {
-            planOptionsContainer.innerHTML = '<p class="no-data-message">No plans available for the entered phone price range.</p>';
-            return;
-        }
-
-        availablePlans.forEach(plan => {
+        allPlans.forEach(plan => {
             const button = document.createElement('button');
             button.type = 'button';
             button.classList.add('plan-button');
-            button.dataset.planType = plan.type;
-            button.dataset.planPrice = plan.planPrice;
-            button.innerHTML = `
-                <div class="plan-text">
-                    <strong>${plan.title}</strong><br>
-                    <small>${plan.description}</small>
-                </div>
-                <span class="plan-price">₹${plan.planPrice.toLocaleString('en-IN')}</span>
-            `;
-            button.addEventListener('click', () => {
-                // Remove 'selected' from all other buttons
-                document.querySelectorAll('.plan-button').forEach(btn => btn.classList.remove('selected'));
-                // Add 'selected' to the clicked button
+            button.innerHTML = `<span class="plan-text">${plan.name}</span><span class="plan-price">₹${plan.price}</span>`;
+
+            button.setAttribute('data-value', plan.value);
+            button.setAttribute('data-price', plan.price);
+            button.setAttribute('data-plantype', plan.internalType);
+            button.setAttribute('data-details', `${plan.name} (${plan.periodText})`);
+
+            button.addEventListener('click', function() {
+                const currentSelected = planOptionsContainer.querySelector('.plan-button.selected');
+                if (currentSelected) {
+                    currentSelected.classList.remove('selected');
+                }
                 button.classList.add('selected');
-                selectedPlanData = {
-                    planType: plan.type,
-                    planPrice: plan.planPrice,
-                    selectedPlanDetails: `${plan.title} (₹${plan.planPrice.toLocaleString('en-IN')})`
-                };
-                planOptionsContainer.classList.remove('error'); // Clear validation style on selection
-                hideElement(planSelectionMessage);
+
+                selectedPlanValueInput.value = plan.value;
+                selectedPlanPriceInput.value = plan.price;
+                selectedPlanTypeInput.value = plan.internalType;
+                selectedPlanDetailsInput.value = button.getAttribute('data-details');
+
+                planOptionsContainer.classList.remove('error');
             });
+
             planOptionsContainer.appendChild(button);
         });
 
-        // Pre-select first plan if none is selected
-        if (!selectedPlanData && availablePlans.length > 0) {
-            planOptionsContainer.querySelector('.plan-button').click();
-        } else if (selectedPlanData) {
-            // Re-select the previously selected plan if it's still available
-            const prevSelectedButton = document.querySelector(`.plan-button[data-plan-type="${selectedPlanData.planType}"]`);
-            if (prevSelectedButton) {
-                prevSelectedButton.click();
-            } else {
-                // If previously selected plan is no longer available for new price, select the first
-                planOptionsContainer.querySelector('.plan-button').click();
-            }
-        }
+        selectedPlanValueInput.value = '';
+        selectedPlanPriceInput.value = '';
+        selectedPlanTypeInput.value = '';
+        selectedPlanDetailsInput.value = '';
     }
 
-
-    // --- Event Listeners for Plan Selection ---
-
-    phonePriceInput.addEventListener('input', function() {
-        // Clear selected plan when phone price changes
-        selectedPlanData = null;
-        phonePriceInput.classList.remove('error');
-        planOptionsContainer.classList.remove('error');
-        hideElement(planSelectionMessage);
-        hideElement(planSelectionSection);
-        hideElement(displayedPhonePriceInfo);
-        planOptionsContainer.innerHTML = ''; // Clear plans immediately
-    });
-
-    phonePriceInput.addEventListener('blur', function() {
-        const price = parseFloat(phonePriceInput.value);
-        if (isNaN(price) || price <= 0) {
-            phonePriceInput.classList.add('error');
-            return;
-        }
-        phonePriceInput.classList.remove('error');
-        selectedPhonePrice = price;
-        displayPhonePrice.textContent = price.toLocaleString('en-IN');
-        showElement(displayedPhonePriceInfo);
-        hideElement(phonePriceGroup); // Hide input
-        populatePlans(selectedPhonePrice);
-        showElement(planSelectionSection); // Show plan selection
-    });
-
-    changePhonePriceButton.addEventListener('click', () => {
-        hideElement(displayedPhonePriceInfo);
-        hideElement(planSelectionSection);
-        showElement(phonePriceGroup);
-        phonePriceInput.focus(); // Focus back on price input
-        selectedPlanData = null; // Clear selected plan
-        planOptionsContainer.innerHTML = ''; // Clear dynamic buttons
-    });
-
-    // New Submission Button
-    newSubmissionButton.addEventListener('click', resetForm);
-
-    // --- Main Form Submission ---
-    warrantyForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        clearMessages();
-
+    function validateCustomerAndPhoneDetails() {
         let isValid = true;
+        const requiredFields = [
+            'customerName', 'customerEmail', 'customerPhone',
+            'productName', 'imeiNumber', 'purchaseDate', 'phonePrice'
+        ];
 
-        // Validate basic fields
-        if (!validateInput(document.getElementById('customerName'))) isValid = false;
-        if (!validateInput(document.getElementById('customerPhone'))) isValid = false;
-        if (!validateInput(document.getElementById('productName'))) isValid = false;
-        if (!validateInput(document.getElementById('imeiNumber'))) isValid = false;
-        if (!validateInput(document.getElementById('purchaseDate'))) isValid = false;
+        requiredFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (!field.value.trim()) {
+                field.classList.add('error');
+                isValid = false;
+            } else {
+                field.classList.remove('error');
+            }
+        });
 
-        // Validate email if provided
-        const customerEmailInput = document.getElementById('customerEmail');
-        if (customerEmailInput.value.trim() && !validateEmail(customerEmailInput.value)) {
-            customerEmailInput.classList.add('error');
-            showMessage(errorMessage, 'Please enter a valid email address.');
+        const email = document.getElementById('customerEmail');
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(email.value)) {
+            email.classList.add('error');
             isValid = false;
-        } else {
-            customerEmailInput.classList.remove('error');
         }
 
-        // Validate phone number
-        if (!validatePhone(document.getElementById('customerPhone').value)) {
-            document.getElementById('customerPhone').classList.add('error');
-            showMessage(errorMessage, 'Please enter a valid phone number (7-15 digits, optional +, spaces, dashes, parentheses).');
-            isValid = false;
-        } else {
-            document.getElementById('customerPhone').classList.remove('error');
-        }
-
-        // Validate phone price and plan selection
-        if (selectedPhonePrice === null || isNaN(selectedPhonePrice) || selectedPhonePrice <= 0) {
+        const phonePrice = parseFloat(phonePriceInput.value);
+        if (isNaN(phonePrice) || phonePrice <= 0) {
             phonePriceInput.classList.add('error');
-            showMessage(errorMessage, 'Please enter a valid phone price.');
+            isValid = false;
+        } else {
+            phonePriceInput.classList.remove('error');
+        }
+
+        const imeiNumber = document.getElementById('imeiNumber');
+        if (imeiNumber.value.trim().length !== 15 || !/^[0-9]+$/.test(imeiNumber.value.trim())) {
+            imeiNumber.classList.add('error');
             isValid = false;
         }
 
-        if (!selectedPlanData) {
+        const customerPhone = document.getElementById('customerPhone');
+        if (customerPhone.value.trim().length !== 10 || !/^[0-9]+$/.test(customerPhone.value.trim())) {
+            customerPhone.classList.add('error');
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    showPlanPricesButton.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        if (validateCustomerAndPhoneDetails()) {
+            const phonePrice = parseFloat(phonePriceInput.value);
+            populatePlanOptions(phonePrice);
+            confirmedPhonePriceDisplay.textContent = `₹${phonePrice.toLocaleString('en-IN')}`; // Display formatted price
+
+            phonePriceGroup.classList.remove('visible');
+            phonePriceGroup.classList.add('hidden');
+
+            showPlanPricesButton.classList.remove('visible');
+            showPlanPricesButton.classList.add('hidden');
+
+            successContainer.classList.remove('visible');
+            successContainer.classList.add('hidden');
+            pdfLinkSection.classList.remove('visible');
+            pdfLinkSection.classList.add('hidden');
+
+            planSelectionSection.classList.remove('hidden');
+            setTimeout(() => {
+                planSelectionSection.classList.add('visible');
+            }, 10);
+
+            planOptionsContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+            alert('Please fill in all required details correctly before proceeding to plan selection.');
+            const firstErrorField = document.querySelector('.form-group input.error, .form-group select.error');
+            if (firstErrorField) {
+                firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    });
+
+    backToPhonePriceButton.addEventListener('click', function() {
+        planSelectionSection.classList.remove('visible');
+        setTimeout(() => {
+            planSelectionSection.classList.add('hidden');
+        }, 400); // Match CSS transition duration
+
+        phonePriceGroup.classList.remove('hidden');
+        setTimeout(() => phonePriceGroup.classList.add('visible'), 400); // Appear after plans hide
+
+        showPlanPricesButton.classList.remove('hidden');
+        setTimeout(() => showPlanPricesButton.classList.add('visible'), 400); // Appear after plans hide
+
+        const currentSelected = planOptionsContainer.querySelector('.plan-button.selected');
+        if (currentSelected) {
+            currentSelected.classList.remove('selected');
+        }
+        selectedPlanValueInput.value = '';
+        selectedPlanPriceInput.value = '';
+        selectedPlanTypeInput.value = '';
+        selectedPlanDetailsInput.value = '';
+        planOptionsContainer.classList.remove('error');
+
+        phonePriceInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        if (!selectedPlanValueInput.value) {
+            alert('Please select a Plan.');
             planOptionsContainer.classList.add('error');
-            showMessage(planSelectionMessage, 'Please select a plan.');
-            isValid = false;
-        }
-
-        if (!isValid) {
+            planOptionsContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
             return;
-        }
-
-        toggleLoading(true, 'mainForm');
-
-        const formData = {
-            action: 'submitWarranty', // Action for doPost in Apps Script
-            customerName: document.getElementById('customerName').value,
-            customerEmail: customerEmailInput.value,
-            customerPhone: document.getElementById('customerPhone').value,
-            storeId: currentStoreId, // Use the stored store ID
-            productName: document.getElementById('productName').value,
-            imeiNumber: document.getElementById('imeiNumber').value,
-            purchaseDate: document.getElementById('purchaseDate').value,
-            phonePrice: selectedPhonePrice,
-            planType: selectedPlanData.planType,
-            planPrice: selectedPlanData.planPrice,
-            selectedPlanDetails: selectedPlanData.selectedPlanDetails
-        };
-
-        try {
-            const response = await fetch(APP_SCRIPT_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const result = await response.json();
-            console.log('Submission result:', result);
-
-            if (result.status === 'success') {
-                showElement(successContainer);
-                const pdfUrl = result.url;
-                downloadLink.href = pdfUrl;
-
-                // Clear previous QR code (if any)
-                qrcodeElement.innerHTML = '';
-                new QRious({
-                    element: qrcodeElement,
-                    value: pdfUrl,
-                    size: 150,
-                    level: 'H'
-                });
-            } else {
-                showMessage(errorMessage, result.message || 'Submission failed.');
-            }
-        } catch (error) {
-            console.error('Error submitting warranty:', error);
-            showMessage(errorMessage, 'An unexpected error occurred: ' + error.message);
-        } finally {
-            toggleLoading(false, 'mainForm');
-        }
-    });
-
-    // --- Post Login Setup Function (Exposed to global window for demoauth.js) ---
-    window.postLoginSetup = function(storeId) {
-        currentStoreId = storeId; // Set the global store ID
-        document.getElementById('currentStoreId').textContent = storeId;
-        document.getElementById('drawerStoreId').textContent = storeId;
-
-        resetForm(); // Ensure form is clean and date is current
-        // Set purchase date to today by default
-        document.getElementById('purchaseDate').valueAsDate = new Date();
-    };
-
-    // --- Date Picker default to today ---
-    document.getElementById('purchaseDate').valueAsDate = new Date();
-
-    // --- Drawer Navigation ---
-    drawerItems.forEach(item => {
-        item.addEventListener('click', function(e) {
-            e.preventDefault();
-
-            // Close drawer
-            appDrawer.classList.remove('open');
-            overlay.classList.remove('active');
-
-            // Remove active class from all drawer items
-            drawerItems.forEach(i => i.classList.remove('active'));
-            // Add active class to the clicked item
-            this.classList.add('active');
-
-            const targetSectionId = this.dataset.sectionId;
-
-            // Hide all sub-sections
-            subSections.forEach(section => {
-                section.classList.remove('active-sub-section');
-                hideElement(section); // Ensure hidden class is also applied for proper transitions
-            });
-
-            // Show the target sub-section
-            const targetSection = document.getElementById(targetSectionId);
-            if (targetSection) {
-                showElement(targetSection);
-                targetSection.classList.add('active-sub-section');
-
-                // Clear any previous messages or data in tracking sections when switching
-                clearMessages();
-                trackingErrorMessages.forEach(el => hideElement(el));
-                trackingLoadingMessages.forEach(el => hideElement(el));
-            }
-        });
-    });
-
-    // --- Tracking Functions ---
-    async function fetchTrackingData(reportType, fromDateInput, toDateInput, totalSpan, tableBody) {
-        const fromDateStr = fromDateInput.value;
-        const toDateStr = toDateInput.value;
-        const currentTrackingSection = tableBody.closest('.sub-section'); // Get the parent section
-
-        clearMessages(); // Clear main form messages
-        trackingErrorMessages.forEach(el => hideElement(el)); // Clear all tracking errors
-        trackingLoadingMessages.forEach(el => hideElement(el)); // Clear all tracking loading indicators
-
-        // Basic date validation
-        if (!fromDateStr || !toDateStr) {
-            showMessage(currentTrackingSection.querySelector('.tracking-error'), 'Please select both From Date and To Date.', true);
-            return;
-        }
-
-        const fromDate = new Date(fromDateStr);
-        const toDate = new Date(toDateStr);
-
-        if (fromDate > toDate) {
-            showMessage(currentTrackingSection.querySelector('.tracking-error'), 'From Date cannot be after To Date.', true);
-            return;
-        }
-
-        toggleLoading(true, currentTrackingSection);
-
-        try {
-            const response = await fetch(APP_SCRIPT_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    action: 'getTrackingData', // Action for doPost in Apps Script
-                    storeId: currentStoreId,
-                    reportType: reportType,
-                    fromDateStr: fromDateStr,
-                    toDateStr: toDateStr
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const result = await response.json();
-            console.log(`${reportType} Tracking result:`, result);
-
-            if (result.status === 'success') {
-                updateTrackingTable(result.records, totalSpan, tableBody, reportType);
-            } else {
-                showMessage(currentTrackingSection.querySelector('.tracking-error'), result.message || `Failed to fetch ${reportType} data.`, true);
-            }
-        } catch (error) {
-            console.error(`Error fetching ${reportType} data:`, error);
-            showMessage(currentTrackingSection.querySelector('.tracking-error'), `An error occurred: ${error.message}`, true);
-        } finally {
-            toggleLoading(false, currentTrackingSection);
-        }
-    }
-
-    function updateTrackingTable(records, totalSpan, tableBody, reportType) {
-        tableBody.innerHTML = ''; // Clear existing rows
-        let totalValue = 0;
-
-        if (records.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="2" class="no-data-message">No data to display for the selected period.</td></tr>';
         } else {
-            records.forEach(record => {
-                const row = tableBody.insertRow();
-                const dateCell = row.insertCell();
-                const valueCell = row.insertCell();
-                dateCell.textContent = record.date;
+            planOptionsContainer.classList.remove('error');
+        }
 
-                let displayValue = record.value;
-                if (reportType !== 'Submissions') { // Format for currency if not submissions count
-                    displayValue = `₹${parseFloat(record.value).toLocaleString('en-IN', {minimumFractionDigits: 0, maximumFractionDigits: 2})}`;
+        successContainer.classList.remove('visible');
+        successContainer.classList.add('hidden');
+        errorMessage.classList.remove('visible');
+        errorMessage.classList.add('hidden');
+        pdfLinkSection.classList.remove('visible');
+        pdfLinkSection.classList.add('hidden');
+
+        loading.classList.remove('hidden');
+        setTimeout(() => loading.classList.add('visible'), 10);
+
+        const formData = new FormData(form);
+        // Ensure action is explicitly set for the doPost in Google Apps Script
+        formData.append('action', 'submitWarranty');
+
+        // IMPORTANT: Update this URL if your deployment changes
+        fetch('https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                loading.classList.remove('visible');
+                loading.classList.add('hidden');
+
+                if (data.status === 'success') {
+                    document.getElementById('successMessage').textContent = 'Warranty certificate generated successfully!';
+                    downloadLink.href = data.url;
+                    qrcodeDiv.innerHTML = '';
+                    new QRCode(qrcodeDiv, {
+                        text: data.url,
+                        width: 150,
+                        height: 150,
+                        colorDark: "#000000",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+
+                    pdfLinkSection.classList.remove('hidden');
+                    successContainer.classList.remove('hidden');
+                    setTimeout(() => {
+                        pdfLinkSection.classList.add('visible');
+                        successContainer.classList.add('visible');
+                    }, 10);
+
+                    form.reset();
+                    const storeId = sessionStorage.getItem('storeId');
+                    if (storeId) {
+                        storeIdInput.value = storeId;
+                    }
+                    
+                    // Reset UI to initial state:
+                    planSelectionSection.classList.remove('visible');
+                    planSelectionSection.classList.add('hidden');
+
+                    phonePriceGroup.classList.remove('hidden');
+                    phonePriceGroup.classList.add('visible');
+                    
+                    showPlanPricesButton.classList.remove('hidden');
+                    showPlanPricesButton.classList.add('visible');
+
+                    const currentSelected = planOptionsContainer.querySelector('.plan-button.selected');
+                    if (currentSelected) {
+                        currentSelected.classList.remove('selected');
+                    }
+                    selectedPlanValueInput.value = '';
+                    selectedPlanPriceInput.value = '';
+                    selectedPlanTypeInput.value = '';
+                    selectedPlanDetailsInput.value = '';
+
+                    pdfLinkSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    throw new Error(data.message || 'Unknown error');
                 }
-                valueCell.textContent = displayValue;
-                totalValue += parseFloat(record.value);
+            })
+            .catch(error => {
+                errorMessage.textContent = 'An error occurred: ' + error.message;
+                errorMessage.classList.remove('hidden');
+                setTimeout(() => errorMessage.classList.add('visible'), 10);
+                errorMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+    });
+
+
+    // ------------------------------------------------ */
+    // NEW: DRAWER DATA FETCHING AND DISPLAY FUNCTIONS
+    // ------------------------------------------------ */
+
+    // Helper to show/hide loading/error in drawer
+    function showDrawerStatus(type, message = '') {
+        drawerLoading.classList.add('hidden');
+        drawerError.classList.add('hidden');
+        drawerLoading.classList.remove('visible');
+        drawerError.classList.remove('visible');
+
+        if (type === 'loading') {
+            drawerLoading.classList.remove('hidden');
+            setTimeout(() => drawerLoading.classList.add('visible'), 10);
+        } else if (type === 'error') {
+            drawerError.textContent = 'Error: ' + message;
+            drawerError.classList.remove('hidden');
+            setTimeout(() => drawerError.classList.add('visible'), 10);
+        }
+    }
+
+    // Helper to format currency
+    function formatCurrency(amount) {
+        return `₹${parseFloat(amount).toLocaleString('en-IN', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`;
+    }
+
+    // Helper to show/hide empty messages
+    function toggleEmptyMessage(tableBody, emptyMessageElement, dataArray) {
+        if (!dataArray || dataArray.length === 0) {
+            tableBody.innerHTML = ''; // Clear table
+            emptyMessageElement.classList.remove('hidden');
+            emptyMessageElement.classList.add('visible');
+        } else {
+            emptyMessageElement.classList.remove('visible');
+            emptyMessageElement.classList.add('hidden');
+        }
+    }
+
+
+    async function fetchAndDisplayAllData(storeId, fromDate, toDate) {
+        showDrawerStatus('loading');
+        // Hide all tables before loading
+        drawerViews.forEach(view => view.classList.add('hidden'));
+
+        // Show the active view
+        document.getElementById('allDetailsView').classList.remove('hidden');
+        document.getElementById('allDetailsView').classList.add('visible');
+
+
+        try {
+            const data = await google.script.run
+                .withSuccessHandler(response => {
+                    showDrawerStatus('none'); // Hide loading
+                    if (response.status === 'success') {
+                        populateAllDetailsTable(response.data);
+                        populateCommissionTable(response.commissionData);
+                        populatePaymentsTable(response.paymentsData);
+                        populateTotalAmountTable(response.totalAmountData);
+                    } else {
+                        showDrawerStatus('error', response.message);
+                    }
+                })
+                .withFailureHandler(error => {
+                    showDrawerStatus('error', error.message || 'Failed to fetch data.');
+                })
+                .getStoreTrackingData(storeId, fromDate, toDate);
+
+        } catch (e) {
+            showDrawerStatus('error', e.message || 'An unexpected error occurred during data fetch.');
+        }
+    }
+
+    function populateAllDetailsTable(data) {
+        allDetailsTableBody.innerHTML = '';
+        let count = 0;
+        if (data && data.length > 0) {
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row[0]}</td> <td>${row[1]}</td> <td>${row[5]}</td> <td>${row[6]}</td> <td>${row[12]}</td><td>${formatCurrency(row[16])}</td> `;
+                allDetailsTableBody.appendChild(tr);
+                count++;
             });
         }
+        allDetailsCount.textContent = count;
+        toggleEmptyMessage(allDetailsTableBody, allDetailsEmptyMessage, data);
+    }
 
-        if (reportType === 'Submissions') {
-            totalSpan.textContent = totalValue.toLocaleString('en-IN');
-        } else {
-            totalSpan.textContent = totalValue.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+    function populateCommissionTable(data) {
+        commissionTableBody.innerHTML = '';
+        let totalCommission = 0;
+        let count = 0;
+        if (data && data.length > 0) {
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row[0]}</td> <td>${row[1]}</td> <td>${row[12]}</td><td>${formatCurrency(row[14])}</td> `;
+                commissionTableBody.appendChild(tr);
+                totalCommission += parseFloat(row[14]);
+                count++;
+            });
         }
+        totalCommissionValue.textContent = formatCurrency(totalCommission);
+        commissionCount.textContent = count;
+        toggleEmptyMessage(commissionTableBody, commissionEmptyMessage, data);
     }
 
-    // Assign event listeners for tracking buttons
-    trackSubmissionsButton.addEventListener('click', () => {
-        fetchTrackingData('Submissions', submissionsFromDate, submissionsToDate, totalSubmissionsCount, submissionsTableBody);
-    });
-    trackCommissionButton.addEventListener('click', () => {
-        fetchTrackingData('Commission', commissionFromDate, commissionToDate, totalCommissionAmount, commissionTableBody);
-    });
-    trackPaymentButton.addEventListener('click', () => {
-        fetchTrackingData('Payment', paymentFromDate, paymentToDate, totalPaymentAmount, paymentTableBody);
-    });
-    trackTotalAmountButton.addEventListener('click', () => {
-        fetchTrackingData('Total Amount', totalAmountFromDate, totalAmountToDate, grandTotalAmount, totalAmountTableBody);
-    });
-
-    // Set default dates for tracking sections to the last 30 days
-    function setDefaultTrackingDates() {
-        const today = new Date();
-        const thirtyDaysAgo = new Date(today);
-        thirtyDaysAgo.setDate(today.getDate() - 29); // 30 days including today
-
-        const formatDateInput = (date) => date.toISOString().split('T')[0];
-
-        submissionsFromDate.value = formatDateInput(thirtyDaysAgo);
-        submissionsToDate.value = formatDateInput(today);
-        commissionFromDate.value = formatDateInput(thirtyDaysAgo);
-        commissionToDate.value = formatDateInput(today);
-        paymentFromDate.value = formatDateInput(thirtyDaysAgo);
-        paymentToDate.value = formatDateInput(today);
-        totalAmountFromDate.value = formatDateInput(thirtyDaysAgo);
-        totalAmountToDate.value = formatDateInput(today);
+    function populatePaymentsTable(data) {
+        paymentsTableBody.innerHTML = '';
+        let totalPayments = 0;
+        let count = 0;
+        if (data && data.length > 0) {
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row[0]}</td> <td>${row[1]}</td> <td>${row[12]}</td><td>${formatCurrency(row[15])}</td> `;
+                paymentsTableBody.appendChild(tr);
+                totalPayments += parseFloat(row[15]);
+                count++;
+            });
+        }
+        totalPaymentsValue.textContent = formatCurrency(totalPayments);
+        paymentsCount.textContent = count;
+        toggleEmptyMessage(paymentsTableBody, paymentsEmptyMessage, data);
     }
-    setDefaultTrackingDates();
+
+    function populateTotalAmountTable(data) {
+        totalAmountTableBody.innerHTML = '';
+        let totalSales = 0;
+        let count = 0;
+        if (data && data.length > 0) {
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row[0]}</td> <td>${row[1]}</td> <td>${row[12]}</td><td>${formatCurrency(row[16])}</td> `;
+                totalAmountTableBody.appendChild(tr);
+                totalSales += parseFloat(row[16]);
+                count++;
+            });
+        }
+        totalAmountValue.textContent = formatCurrency(totalSales);
+        totalAmountCount.textContent = count;
+        toggleEmptyMessage(totalAmountTableBody, totalAmountEmptyMessage, data);
+    }
 
 
-    // Expose a reset function for logout if needed by demoauth.js
-    window.resetDemoscriptState = function() {
-        currentStoreId = '';
-        resetForm();
-        // Clear tracking tables/summaries
-        totalSubmissionsCount.textContent = '0';
-        submissionsTableBody.innerHTML = '<tr><td colspan="2" class="no-data-message">No data to display.</td></tr>';
-        totalCommissionAmount.textContent = '0';
-        commissionTableBody.innerHTML = '<tr><td colspan="2" class="no-data-message">No data to display.</td></tr>';
-        totalPaymentAmount.textContent = '0';
-        paymentTableBody.innerHTML = '<tr><td colspan="2" class="no-data-message">No data to display.</td></tr>';
-        grandTotalAmount.textContent = '0';
-        totalAmountTableBody.innerHTML = '<tr><td colspan="2" class="no-data-message">No data to display.</td></tr>';
-        setDefaultTrackingDates(); // Reset date ranges
-        // Ensure only registration form is visible after logout
-        subSections.forEach(section => {
-            section.classList.remove('active-sub-section');
-            hideElement(section);
+    // Event listeners for drawer navigation
+    drawerNavButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove 'selected' from all buttons
+            drawerNavButtons.forEach(btn => btn.classList.remove('selected'));
+            // Add 'selected' to the clicked button
+            this.classList.add('selected');
+
+            // Hide all views
+            drawerViews.forEach(view => view.classList.add('hidden'));
+
+            // Show the selected view
+            const viewId = this.dataset.view;
+            document.getElementById(viewId + 'View').classList.remove('hidden');
+            document.getElementById(viewId + 'View').classList.add('visible'); // Ensure visible class for animation if any
         });
-        showElement(document.getElementById('registrationFormSection'));
-        document.getElementById('registrationFormSection').classList.add('active-sub-section');
-    };
+    });
 
-    // Dispatch a custom event to signal that demoscript.js has finished loading and set up its global functions
-    // This allows demoauth.js to safely call postLoginSetup once this script is ready.
-    document.dispatchEvent(new Event('scriptsLoaded'));
+    // Event listener for hamburger icon to trigger data fetch
+    const hamburgerIcon = document.getElementById('hamburgerIcon');
+    if (hamburgerIcon) {
+        hamburgerIcon.addEventListener('click', () => {
+            const currentStoreId = sessionStorage.getItem('storeId');
+            if (currentStoreId) {
+                // Set default dates if not already set or invalid
+                const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+                if (!filterFromDate.value) {
+                    filterFromDate.value = "2024-01-01"; // Default start for historical data
+                }
+                if (!filterToDate.value) {
+                    filterToDate.value = today;
+                }
+                // Automatically fetch data for the default/selected view when drawer opens
+                fetchAndDisplayAllData(
+                    currentStoreId,
+                    filterFromDate.value,
+                    filterToDate.value
+                );
+            }
+        });
+    }
+
+    // Event listeners for date filtering
+    applyDateFilterButton.addEventListener('click', () => {
+        const currentStoreId = sessionStorage.getItem('storeId');
+        if (!currentStoreId) {
+            showDrawerStatus('error', 'Store ID not found. Please log in again.');
+            return;
+        }
+
+        const fromDate = filterFromDate.value;
+        const toDate = filterToDate.value;
+
+        if (!fromDate || !toDate) {
+            showDrawerStatus('error', 'Please select both From and To dates.');
+            return;
+        }
+
+        if (new Date(fromDate) > new Date(toDate)) {
+            showDrawerStatus('error', 'From date cannot be after To date.');
+            return;
+        }
+
+        fetchAndDisplayAllData(currentStoreId, fromDate, toDate);
+    });
+
+    clearDateFilterButton.addEventListener('click', () => {
+        filterFromDate.value = "";
+        filterToDate.value = "";
+        const currentStoreId = sessionStorage.getItem('storeId');
+        if (currentStoreId) {
+            // Re-fetch with no date filter (or default to today's range)
+            fetchAndDisplayAllData(currentStoreId, "", ""); // Pass empty strings to get all data
+        }
+    });
+
+    // Initial data fetch when drawer opens (handled by hamburgerIcon click listener)
+    // No need for direct call here, as it's triggered by hamburger click.
 });
