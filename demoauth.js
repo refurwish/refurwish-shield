@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const loginButton = loginForm.querySelector('.submit-button');
     const displayedStoreId = document.getElementById('displayedStoreId');
     const storeIdInput = document.getElementById('storeId');
-    const logoutButton = document.getElementById('logoutButton');
+    const logoutButton = document.getElementById('logoutButton'); // This is the logout button on the form
     const warrantyForm = document.getElementById('warrantyForm');
 
     // Function to handle showing/hiding sections with animations
@@ -35,6 +35,13 @@ document.addEventListener('DOMContentLoaded', function () {
         warrantySection.classList.add('visible'); // Show warranty section with animation
         storeIdInput.value = savedStoreId;
         displayedStoreId.textContent = savedStoreId;
+
+        // ***** ADD THIS LINE *****
+        if (window.postLoginSetup) {
+            window.postLoginSetup(savedStoreId);
+        }
+        // *************************
+
     } else {
         // If no saved session, ensure login section is visible on load
         showSection(loginSection);
@@ -46,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         loginError.classList.remove('visible'); // Hide any previous error
         loginError.classList.add('hidden');
-        
+
         loginLoading.classList.remove('hidden'); // Show loading
         setTimeout(() => loginLoading.classList.add('visible'), 10);
         loginButton.classList.add('hidden'); // Hide button
@@ -54,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const formData = new FormData(loginForm);
         formData.append('action', 'verifyLogin');
 
-        fetch('https://script.google.com/macros/s/AKfycbwxhL6X17U5Fr9i7ze3SnqqURZalpVsWRfCZLrSh11tD3yDGqn2bB6SzLAcdo-rGbJs1w/exec', {
+        fetch('https://script.google.com/macros/s/AKfycbwxhL6X17U5Fr9i7ze3SnqqURZalpVsWRfCZLrSh11tD3yDGqn2bB6SzLAcdo-rGbJs1w/exec', { // <-- MAKE SURE THIS IS YOUR login script URL
             method: 'POST',
             body: formData
         })
@@ -72,6 +79,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     displayedStoreId.textContent = storeId;
 
                     showSection(warrantySection, loginSection); // Animate transition
+
+                    // ***** ADD THIS LINE *****
+                    if (window.postLoginSetup) {
+                        window.postLoginSetup(storeId);
+                    }
+                    // *************************
+
                 } else {
                     loginError.textContent = 'Invalid Store ID or Password';
                     loginError.classList.remove('hidden');
@@ -89,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Handle logout
-    logoutButton.addEventListener('click', () => {
+    logoutButton.addEventListener('click', () => { // This is the logout button in your original form
         // Clear session storage
         sessionStorage.removeItem('storeId');
 
@@ -111,5 +125,17 @@ document.addEventListener('DOMContentLoaded', function () {
         loginLoading.classList.add('hidden');
         loginLoading.classList.remove('visible');
         loginButton.classList.remove('hidden'); // Ensure login button is visible
+
+        // ***** ADD THIS BLOCK if the drawer's logout button is DIFFERENT than this one in demoauth.js ******
+        // This is necessary if you have two logout buttons and want them both to trigger the same logic.
+        // If the drawer's logout button has a different ID or is handled separately,
+        // you might need to ensure its click also resets the UI state here.
+        // For simplicity, let's assume the drawer's logout button `id="logoutButton"` now.
+        // The demoscript.js will add its own listener to this same ID.
+        // If your original logout button for `demoauth.js` had a different ID than the one in the drawer,
+        // you would need to adjust the HTML or unify the IDs.
+        // In the HTML I provided, the *only* logout button is the one in the drawer with `id="logoutButton"`.
+        // So, this listener in demoauth.js will now fire when the drawer button is clicked.
+        // ****************************************************************************************************
     });
 });
