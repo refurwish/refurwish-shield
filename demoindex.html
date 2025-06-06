@@ -6,7 +6,8 @@
     <title>Refurwish Shield Warranty Registration</title>
     <link rel="icon" type="image/png" sizes="32x32" href="favicon.png" />
     <link rel="stylesheet" href="demostyle.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Material Icons for hamburger -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
 
@@ -31,8 +32,9 @@
 </div>
 
 <div class="container hidden" id="warrantySection">
-    <button class="hamburger-icon" id="hamburgerIcon" style="display: none;">
-        <i class="fas fa-bars"></i>
+    <!-- Hamburger Icon -->
+    <button class="hamburger-menu" id="hamburgerMenu">
+        <i class="material-icons">menu</i>
     </button>
 
     <img src="logo.png" alt="Refurwish Logo" class="logo" />
@@ -84,8 +86,7 @@
             </div>
 
             <p style="margin-top: 15px; font-weight: bold; color: #4a4a4a;">Select your plan:</p>
-            <div id="planOptionsContainer" class="plan-options-container">
-            </div>
+            <div id="planOptionsContainer" class="plan-options-container"></div>
             <input type="hidden" id="selectedPlanValue" name="planOption" />
             <input type="hidden" id="selectedPlanPrice" name="planPrice" />
             <input type="hidden" id="selectedPlanType" name="planType" />
@@ -109,119 +110,55 @@
     </form>
 </div>
 
+<!-- Drawer (Sidebar) -->
 <div class="drawer" id="mainDrawer">
-    <button class="close-drawer-button" id="closeDrawerButton">&times;</button>
-    <h3>Store Activity Tracking</h3>
-    <div class="drawer-header">
-        <span class="drawer-store-id-label">Store ID: </span>
-        <span class="drawer-store-id-value" id="drawerStoreId"></span>
-    </div>
+    <button class="drawer-close-button" id="drawerCloseButton">
+        <i class="material-icons">close</i>
+    </button>
+    <div class="drawer-content">
+        <div class="drawer-header">
+            <h3>Menu</h3>
+        </div>
+        <nav class="drawer-nav">
+            <!-- Add other menu items here if needed -->
+            <button class="drawer-menu-item" id="openTrackingButton">
+                <i class="material-icons">bar_chart</i> Tracking Data
+            </button>
+        </nav>
 
-    <div class="date-filter-section">
-        <label for="filterFromDate">From:</label>
-        <input type="date" id="filterFromDate">
-        <label for="filterToDate">To:</label>
-        <input type="date" id="filterToDate">
-        <button class="filter-button" id="applyDateFilterButton">Apply Filter</button>
-        <button class="filter-button clear-filter" id="clearDateFilterButton">Clear Filter</button>
-    </div>
-
-    <div class="drawer-navigation">
-        <button class="drawer-nav-button selected" data-view="allDetails">All Submissions</button>
-        <button class="drawer-nav-button" data-view="commission">Commissions</button>
-        <button class="drawer-nav-button" data-view="payments">Payments</button>
-        <button class="drawer-nav-button" data-view="totalAmount">Total Amount</button>
-    </div>
-
-    <div class="drawer-content" id="drawerContent">
-        <div id="allDetailsView" class="drawer-view active">
-            <h4>All Submissions (<span id="allDetailsCount">0</span>)</h4>
-            <div class="table-container">
-                <table id="allDetailsTable">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Customer Name</th>
-                            <th>Product</th>
-                            <th>IMEI</th>
-                            <th>Plan</th>
-                            <th>Amount (₹)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        </tbody>
-                </table>
+        <div class="tracking-section hidden" id="trackingSection">
+            <h4>Filter Tracking Data</h4>
+            <div class="form-group">
+                <label for="fromDate">From Date:</label>
+                <input type="date" id="fromDate" />
             </div>
-            <p id="allDetailsEmptyMessage" class="empty-message hidden">No submissions found for the selected period.</p>
-        </div>
-
-        <div id="commissionView" class="drawer-view hidden">
-            <h4>Commissions (<span id="commissionCount">0</span>)</h4>
-            <p class="total-summary">Total Commission: <strong id="totalCommissionValue">₹0</strong></p>
-            <div class="table-container">
-                <table id="commissionTable">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Customer Name</th>
-                            <th>Plan</th>
-                            <th>Commission (₹)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        </tbody>
-                </table>
+            <div class="form-group">
+                <label for="toDate">To Date:</label>
+                <input type="date" id="toDate" />
             </div>
-            <p id="commissionEmptyMessage" class="empty-message hidden">No commission data found for the selected period.</p>
-        </div>
-
-        <div id="paymentsView" class="drawer-view hidden">
-            <h4>Payments (<span id="paymentsCount">0</span>)</h4>
-            <p class="total-summary">Total Payments: <strong id="totalPaymentsValue">₹0</strong></p>
-            <div class="table-container">
-                <table id="paymentsTable">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Customer Name</th>
-                            <th>Plan</th>
-                            <th>Our Share (₹)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        </tbody>
-                </table>
+            <button class="submit-button small-button" id="filterTrackingDataButton">Filter Data</button>
+            <div id="trackingLoading" class="status-message hidden">
+                <span class="loader"></span> Fetching data...
             </div>
-            <p id="paymentsEmptyMessage" class="empty-message hidden">No payment data found for the selected period.</p>
-        </div>
+            <div id="trackingError" class="status-message error hidden"></div>
 
-        <div id="totalAmountView" class="drawer-view hidden">
-            <h4>Total Sales (<span id="totalAmountCount">0</span>)</h4>
-            <p class="total-summary">Total Sales Amount: <strong id="totalAmountValue">₹0</strong></p>
-            <div class="table-container">
-                <table id="totalAmountTable">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Customer Name</th>
-                            <th>Plan</th>
-                            <th>Total Amount (₹)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        </tbody>
-                </table>
+            <div class="tracking-results hidden" id="trackingResults">
+                <h5>Summary for <span id="trackingDateRange"></span></h5>
+                <p>Total Submissions: <strong id="totalSubmissions">0</strong></p>
+                <p>Total Commission: <strong id="totalCommission">₹0</strong></p>
+                <p>Total Payment (Our Share): <strong id="totalPayment">₹0</strong></p>
+                <p>Total Amount: <strong id="totalAmount">₹0</strong></p>
             </div>
-            <p id="totalAmountEmptyMessage" class="empty-message hidden">No sales data found for the selected period.</p>
         </div>
-
-        <div id="drawerLoading" class="status-message hidden drawer-loading">
-            <span class="loader"></span> Loading data...
-        </div>
-        <div id="drawerError" class="status-message error hidden drawer-error"></div>
+        
+        <!-- Logout Button - Moved inside drawer -->
+        <button class="logout-button" id="logoutButtonDrawer">Logout</button>
     </div>
-    <button class="logout-button drawer-logout-button" id="drawerLogoutButton">Logout</button>
 </div>
+
+<!-- Drawer Overlay -->
+<div class="drawer-overlay hidden" id="drawerOverlay"></div>
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="demoauth.js"></script>
