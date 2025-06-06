@@ -20,20 +20,47 @@ body {
     color: #333; /* Default text color */
 }
 
-/* Container Styling */
+/* Main Wrapper for logged-in content to contain hamburger and drawer */
+.main-wrapper {
+    position: relative; /* For positioning hamburger and drawer */
+    width: 90%;
+    max-width: 550px;
+    display: flex;
+    flex-direction: column; /* Stack content if needed */
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh; /* Ensure wrapper takes full height */
+}
+
+
+/* Container Styling (remains similar, but controls visibility) */
 .container {
     background-color: #ffffff; /* Pure white for a clean look */
     padding: 40px; /* More generous padding */
     border-radius: 12px; /* Softer rounded corners */
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1); /* Deeper, more subtle shadow */
-    width: 90%;
-    max-width: 550px; /* Slightly wider for better layout */
+    width: 100%; /* Take full width of parent .main-wrapper */
     position: relative;
     opacity: 0; /* Start hidden for entrance animation */
     transform: translateY(20px); /* Start slightly below for slide-up */
     animation: fadeInSlideUp 0.8s ease-out forwards; /* Entrance animation */
     transition: all 0.3s ease-in-out; /* For hidden/shown state changes */
+    margin-top: 50px; /* Space for hamburger if not hidden */
 }
+
+/* Hide containers by default, show based on active-content-section */
+.container:not(.active-content-section) {
+    display: none;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.container.active-content-section {
+    display: block; /* Show the active section */
+    opacity: 1;
+    transform: translateY(0);
+}
+
 
 /* Animation for container entrance */
 @keyframes fadeInSlideUp {
@@ -211,7 +238,7 @@ select {
     transform: translateY(0);
 }
 
-#loading {
+#loading, .tracking-loading {
     color: #007bff;
     background-color: #e6f7ff; /* Light blue background */
     border: 1px solid #b3e0ff;
@@ -223,7 +250,7 @@ select {
     border: 1px solid #a4e6a4;
 }
 
-#errorMessage {
+#errorMessage, .tracking-error {
     color: #dc3545;
     background-color: #ffe6e6; /* Light red background */
     border: 1px solid #e6a4a4;
@@ -451,35 +478,275 @@ select.error {
     letter-spacing: 0.5px;
 }
 
-/* Logout Button */
-#logoutButton {
-    position: absolute;
+/* --- New Styles for Drawer and Hamburger --- */
+
+.hamburger-menu {
+    position: fixed;
     top: 20px;
-    right: 20px;
-    background-color: #dc3545; /* Red for danger action */
+    left: 20px;
+    font-size: 30px;
+    color: #007bff;
+    cursor: pointer;
+    z-index: 1000; /* Above all content */
+    background-color: #fff;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: all 0.3s ease-in-out;
+}
+
+.hamburger-menu:hover {
+    color: #0056b3;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    transform: scale(1.05);
+}
+
+.drawer {
+    position: fixed;
+    top: 0;
+    left: -280px; /* Initially off-screen */
+    width: 260px; /* Width of the drawer */
+    height: 100%;
+    background-color: #2c3e50; /* Dark background for drawer */
+    color: white;
+    box-shadow: 3px 0 15px rgba(0,0,0,0.3);
+    z-index: 999; /* Below hamburger, above content */
+    transition: left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smooth slide effect */
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+}
+
+.drawer.open {
+    left: 0; /* Slide in */
+}
+
+.drawer-header {
+    text-align: center;
+    padding: 15px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 20px;
+}
+
+.drawer-logo {
+    max-width: 120px;
+    margin-bottom: 15px;
+}
+
+.drawer-store-id {
+    background-color: rgba(255,255,255,0.1);
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-size: 0.85rem;
+    display: inline-flex; /* Adjust for better alignment */
+    justify-content: center;
+    align-items: center;
+}
+
+.drawer-store-id .store-id-label {
+    color: #a4e4e4;
+    margin-bottom: 0; /* Override default label margin */
+    font-weight: 400;
+}
+.drawer-store-id .store-id-value {
+    color: #ffe082; /* Lighter, contrasting color for ID */
+    font-size: 0.95rem;
+}
+
+
+.drawer-nav {
+    flex-grow: 1; /* Takes remaining space */
+    padding: 0 15px;
+}
+
+.drawer-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    color: #e0e0e0;
+    text-decoration: none;
+    font-size: 1.05rem;
+    border-radius: 8px;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.drawer-item .material-icons {
+    margin-right: 12px;
+    font-size: 24px;
+}
+
+.drawer-item:hover {
+    background-color: rgba(255,255,255,0.1);
+    color: #ffffff;
+}
+
+.drawer-item.active {
+    background-color: #007bff; /* Active item highlight */
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+.drawer-item.active .material-icons {
+    color: white;
+}
+
+.drawer-logout-button {
+    background-color: #dc3545; /* Red for logout */
     color: white;
     border: none;
-    padding: 10px 18px;
+    padding: 12px 20px;
     border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
-    z-index: 10;
-    white-space: nowrap;
-    font-size: 0.9rem;
-    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.2);
+    font-size: 1rem;
+    margin: 20px 15px 15px; /* Adjust margin for bottom positioning */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
-#logoutButton:hover {
-    background-color: #b02a37;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(220, 53, 69, 0.3);
+.drawer-logout-button .material-icons {
+    font-size: 20px;
 }
 
-#logoutButton:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.1);
+.drawer-logout-button:hover {
+    background-color: #b02a37;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
 }
+
+.drawer-logout-button:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Dark overlay */
+    z-index: 998; /* Below drawer, above content */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease-in-out, visibility 0.4s ease-in-out;
+}
+
+.overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+/* --- New Styles for Tracking Sections --- */
+.tracking-section h2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 1.6rem; /* Slightly smaller for internal sections */
+    margin-bottom: 30px;
+}
+
+.tracking-section .icon-left {
+    font-size: 28px; /* Size of the icon next to heading */
+    color: #007bff;
+}
+
+.date-selection {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 25px;
+    padding: 15px;
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+}
+
+.date-selection .form-group {
+    margin-bottom: 0; /* Remove extra margin from form-group */
+}
+
+.date-selection .submit-button.track-button {
+    grid-column: span 2; /* Button spans both columns */
+    margin-top: 10px;
+}
+
+.tracking-result {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    background-color: #fcfcfc;
+    min-height: 100px; /* Reserve space */
+    position: relative;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.tracking-result .tracking-summary {
+    text-align: center;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.tracking-result .tracking-summary strong {
+    font-size: 1.6rem;
+    color: #007bff; /* Highlight total values */
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden; /* For rounded corners on table */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.data-table th, .data-table td {
+    border: 1px solid #e9ecef;
+    padding: 12px;
+    text-align: left;
+    font-size: 0.95rem;
+}
+
+.data-table th {
+    background-color: #007bff;
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.data-table tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+.data-table tbody tr:hover {
+    background-color: #eaf5ff;
+    cursor: pointer;
+}
+
+.no-data-message {
+    text-align: center;
+    color: #6c757d;
+    font-style: italic;
+    padding: 20px;
+}
+
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
@@ -533,12 +800,13 @@ select.error {
         padding: 15px;
     }
 
-    #logoutButton {
+    /* Logout button is now in drawer, no direct top-right pos needed */
+    /* #logoutButton {
         top: 15px;
         right: 15px;
         padding: 8px 14px;
         font-size: 0.85rem;
-    }
+    } */
 
     .displayed-phone-price-info {
         padding: 8px 10px;
@@ -550,6 +818,62 @@ select.error {
     .displayed-phone-price-info .back-button {
         padding: 6px 10px;
         font-size: 0.8rem;
+    }
+
+    .hamburger-menu {
+        font-size: 28px;
+        width: 40px;
+        height: 40px;
+        top: 15px;
+        left: 15px;
+    }
+
+    .drawer {
+        width: 240px; /* Slightly smaller drawer on mobile */
+    }
+
+    .drawer-item {
+        font-size: 1rem;
+        padding: 10px 12px;
+    }
+
+    .drawer-item .material-icons {
+        font-size: 22px;
+    }
+
+    .drawer-logout-button {
+        font-size: 0.95rem;
+        padding: 10px 18px;
+    }
+
+    .tracking-section h2 {
+        font-size: 1.4rem;
+        margin-bottom: 20px;
+    }
+
+    .tracking-section .icon-left {
+        font-size: 24px;
+    }
+
+    .date-selection {
+        grid-template-columns: 1fr; /* Stack date pickers vertically */
+        gap: 10px;
+    }
+
+    .date-selection .submit-button.track-button {
+        grid-column: span 1; /* Back to single column */
+    }
+
+    .data-table th, .data-table td {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+
+    .tracking-summary {
+        font-size: 1.1rem !important; /* Adjust summary font size */
+    }
+    .tracking-summary strong {
+        font-size: 1.4rem !important;
     }
 }
 
