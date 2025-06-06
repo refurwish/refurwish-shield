@@ -10,7 +10,7 @@
 </head>
 <body>
 
-<div class="container" id="loginSection">
+<div class="container active-content-section" id="loginSection">
     <img src="logo.png" alt="Refurwish Logo" class="logo" />
     <h2>Store Login</h2>
     <form id="loginForm">
@@ -31,7 +31,7 @@
     </form>
 </div>
 
-<div class="main-wrapper hidden" id="loggedInContent">
+<div class="container hidden" id="warrantySection">
     <div class="hamburger-menu" id="hamburgerMenu">
         <i class="material-icons">menu</i>
     </div>
@@ -45,7 +45,7 @@
             </div>
         </div>
         <nav class="drawer-nav">
-            <a href="#" class="drawer-item active" data-section="warrantySection">
+            <a href="#" class="drawer-item active" data-section="registrationFormSection">
                 <i class="material-icons">add_box</i> New Registration
             </a>
             <a href="#" class="drawer-item" data-section="submissionsSection">
@@ -67,19 +67,15 @@
     </div>
     <div class="overlay" id="drawerOverlay"></div>
 
-    <div class="container active-content-section" id="warrantySection">
+    <div class="sub-section active-sub-section" id="registrationFormSection">
         <img src="logo.png" alt="Refurwish Logo" class="logo" />
-
         <h1>Refurwish Shield Warranty Registration</h1>
-
         <div class="store-id-display">
             <span class="store-id-label">Store ID: </span>
             <span class="store-id-value" id="displayedStoreId"></span>
         </div>
-
         <form id="warrantyForm" novalidate autocomplete="off">
             <input type="hidden" id="storeId" name="storeId" value="" />
-
             <div class="form-group">
                 <label for="customerName">Customer Name:</label>
                 <input type="text" id="customerName" name="customerName" placeholder="E.g., John Doe" required />
@@ -107,28 +103,21 @@
             <div class="form-group" id="phonePriceGroup"> <label for="phonePrice">Phone Price (₹):</label>
                 <input type="number" id="phonePrice" name="phonePrice" placeholder="Enter phone's purchase price (e.g., 25000)" required min="1" />
             </div>
-
             <button type="button" class="submit-button" id="showPlanPricesButton">Show Plan Prices</button>
-
             <div id="planSelectionSection" class="hidden">
                 <div class="displayed-phone-price-info">
                     <p>Phone Price Entered: <strong id="confirmedPhonePrice"></strong></p>
                     <button type="button" class="back-button" id="backToPhonePriceButton">← Change Phone Price</button>
                 </div>
-
                 <p style="margin-top: 15px; font-weight: bold; color: #4a4a4a;">Select your plan:</p>
-                <div id="planOptionsContainer" class="plan-options-container">
-                </div>
+                <div id="planOptionsContainer" class="plan-options-container"></div>
                 <input type="hidden" id="selectedPlanValue" name="planOption" />
                 <input type="hidden" id="selectedPlanPrice" name="planPrice" />
                 <input type="hidden" id="selectedPlanType" name="planType" />
                 <input type="hidden" id="selectedPlanDetails" name="selectedPlanDetails" />
-
                 <button type="submit" class="submit-button" id="generateCertificateButton">Generate Warranty Certificate</button>
             </div>
-
             <div id="loading" class="status-message hidden">Processing...</div>
-
             <div id="successContainer" class="status-message hidden">
                 <p id="successMessage">Warranty certificate generated successfully!</p>
                 <div id="pdfLinkSection" class="qrcode-container hidden">
@@ -137,13 +126,11 @@
                     <p><a id="downloadLink" href="#" target="_blank">View PDF Certificate</a></p>
                 </div>
             </div>
-
-            <div id="errorMessage" class="status-message error hidden">
-            </div>
+            <div id="errorMessage" class="status-message error hidden"></div>
         </form>
     </div>
 
-    <div class="container hidden tracking-section" id="submissionsSection">
+    <div class="sub-section hidden" id="submissionsSection">
         <h2><i class="material-icons icon-left">assignment</i> Submissions Tracking</h2>
         <div class="date-selection">
             <div class="form-group">
@@ -173,7 +160,7 @@
         </div>
     </div>
 
-    <div class="container hidden tracking-section" id="commissionSection">
+    <div class="sub-section hidden" id="commissionSection">
         <h2><i class="material-icons icon-left">local_atm</i> Commission Tracking</h2>
         <div class="date-selection">
             <div class="form-group">
@@ -203,7 +190,7 @@
         </div>
     </div>
 
-    <div class="container hidden tracking-section" id="paymentsSection">
+    <div class="sub-section hidden" id="paymentsSection">
         <h2><i class="material-icons icon-left">payment</i> Payments Tracking</h2>
         <div class="date-selection">
             <div class="form-group">
@@ -233,7 +220,7 @@
         </div>
     </div>
 
-    <div class="container hidden tracking-section" id="totalAmountSection">
+    <div class="sub-section hidden" id="totalAmountSection">
         <h2><i class="material-icons icon-left">currency_rupee</i> Total Amount Tracking</h2>
         <div class="date-selection">
             <div class="form-group">
