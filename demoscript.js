@@ -6,7 +6,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const qrcodeDiv = document.getElementById('qrcode');
     const downloadLink = document.getElementById('downloadLink');
     const pdfLinkSection = document.getElementById('pdfLinkSection');
-    const storeIdInput = document.getElementById('storeId');
+    const storeIdInput = document.getElementById('storeId'); // Hidden input
+    const displayedStoreId = document.getElementById('displayedStoreId'); // Visible display on form
 
     const phonePriceGroup = document.getElementById('phonePriceGroup');
     const phonePriceInput = document.getElementById('phonePrice');
@@ -26,14 +27,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const drawerMenu = document.getElementById('drawerMenu');
     const drawerOverlay = document.getElementById('drawerOverlay');
     const drawerItems = document.querySelectorAll('.drawer-item');
-    const logoutButton = document.getElementById('logoutButton'); // Relocated
+    const drawerDisplayedStoreId = document.getElementById('drawerDisplayedStoreId'); // For display in drawer
 
-    const loginSection = document.getElementById('loginSection');
-    const loggedInContent = document.getElementById('loggedInContent'); // New wrapper for logged-in UI
-
-    // Sections to manage visibility
-    const sections = {
-        warrantySection: document.getElementById('warrantySection'),
+    // Define all content sub-sections within the main warrantySection
+    const subSections = {
+        registrationFormSection: document.getElementById('registrationFormSection'),
         submissionsSection: document.getElementById('submissionsSection'),
         commissionSection: document.getElementById('commissionSection'),
         paymentsSection: document.getElementById('paymentsSection'),
@@ -286,9 +284,10 @@ document.addEventListener('DOMContentLoaded', function () {
         setTimeout(() => loading.classList.add('visible'), 10);
 
         const formData = new FormData(form);
-        // No 'action' parameter needed here for the main doPost, it's the default submission.
-        // The URL is the direct deployment URL of code.gs.
-        fetch('https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec', {
+        // Add action for doPost to distinguish from login
+        formData.append('action', 'submitWarranty'); // New action for doPost to handle submission
+
+        fetch('https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec', { // This URL should be your code.gs web app URL
             method: 'POST',
             body: formData
         })
@@ -320,15 +319,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     form.reset();
                     const storeId = sessionStorage.getItem('storeId');
                     if (storeId) {
-                        storeIdInput.value = storeId;
+                        storeIdInput.value = storeId; // Re-populate hidden storeId
+                        displayedStoreId.textContent = storeId; // Re-populate visible storeId
                     }
-                    
+
                     planSelectionSection.classList.remove('visible');
                     planSelectionSection.classList.add('hidden');
 
                     phonePriceGroup.classList.remove('hidden');
                     phonePriceGroup.classList.add('visible');
-                    
+
                     showPlanPricesButton.classList.remove('hidden');
                     showPlanPricesButton.classList.add('visible');
 
@@ -354,19 +354,19 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     });
 
-    // --- Authentication and Section Management (from demoauth.js, integrated and enhanced) ---
+    // --- Section Management (adapted to work with demoauth.js's base section toggling) ---
 
-    // Function to handle showing/hiding sections with animations
-    // Modified to handle the new main-wrapper and its child containers
-    function showSection(sectionToShowId) {
-        // Hide all main content sections
-        for (const key in sections) {
-            sections[key].classList.remove('active-content-section');
+    // Function to handle showing/hiding SUB-sections with animations
+    function showSubSection(sectionToShowId) {
+        // Hide all sub-sections
+        for (const key in subSections) {
+            subSections[key].classList.remove('active-sub-section');
         }
-        
+
         // Hide all tracking result areas and reset them
         for (const key in trackingResultAreas) {
             trackingResultAreas[key].table.classList.add('hidden');
+            trackingResultAreas[key].table.classList.remove('visible'); // Ensure it animates out
             trackingResultAreas[key].tableBody.innerHTML = ''; // Clear table
             // Reset summary to 0 for numbers, or to '0' for submissions count
             if (key === 'submissions') {
@@ -375,116 +375,29 @@ document.addEventListener('DOMContentLoaded', function () {
                 trackingResultAreas[key].summary.innerHTML = `Total ${key.charAt(0).toUpperCase() + key.slice(1)}: ₹<strong id="total${key.charAt(0).toUpperCase() + key.slice(1)}Value">0</strong>`;
             }
             trackingResultAreas[key].noData.classList.add('hidden');
+            trackingResultAreas[key].noData.classList.remove('visible');
             trackingResultAreas[key].loading.classList.add('hidden');
+            trackingResultAreas[key].loading.classList.remove('visible');
             trackingResultAreas[key].error.classList.add('hidden');
+            trackingResultAreas[key].error.classList.remove('visible');
         }
 
-
-        // Show the requested section
-        const sectionToShow = sections[sectionToShowId];
+        // Show the requested sub-section
+        const sectionToShow = subSections[sectionToShowId];
         if (sectionToShow) {
-            sectionToShow.classList.add('active-content-section');
-            // Scroll to top of the new section
-            sectionToShow.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            sectionToShow.classList.remove('hidden');
+            setTimeout(() => {
+                sectionToShow.classList.add('active-sub-section');
+                sectionToShow.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 10);
         }
     }
 
 
-    // Login success callback from demoauth.js
-    window.handleLoginSuccess = function(storeId) {
-        sessionStorage.setItem('storeId', storeId);
+    // Call this function initially or whenever a drawer item is clicked
+    // The default active sub-section will be 'registrationFormSection'
+    showSubSection('registrationFormSection');
 
-        storeIdInput.value = storeId;
-        document.getElementById('displayedStoreId').textContent = storeId;
-        document.getElementById('drawerDisplayedStoreId').textContent = storeId; // Update drawer's store ID
-
-        // Hide login, show main content wrapper
-        loginSection.classList.remove('visible');
-        loginSection.classList.add('hidden');
-        
-        loggedInContent.classList.remove('hidden');
-        setTimeout(() => loggedInContent.classList.add('visible'), 400); // Animate in
-
-        showSection('warrantySection'); // Default to warranty form on login
-    };
-
-    // Login failure callback from demoauth.js
-    window.handleLoginFailure = function(message) {
-        // demoauth.js already handles displaying loginError
-        // No change needed here, just ensure login form is visible
-        loginSection.classList.remove('hidden');
-        loginSection.classList.add('visible');
-        loggedInContent.classList.add('hidden');
-        loggedInContent.classList.remove('visible');
-    };
-
-    // Restore session if storeId is saved (on page load)
-    const savedStoreId = sessionStorage.getItem('storeId');
-    if (savedStoreId) {
-        loginSection.classList.add('hidden');
-        loginSection.classList.remove('visible'); // Ensure hidden
-        loggedInContent.classList.remove('hidden'); // Show the new main-wrapper
-        loggedInContent.classList.add('visible');
-        storeIdInput.value = savedStoreId;
-        document.getElementById('displayedStoreId').textContent = savedStoreId;
-        document.getElementById('drawerDisplayedStoreId').textContent = savedStoreId; // Update drawer's store ID
-        showSection('warrantySection'); // Default to warranty form on login
-    } else {
-        // If no saved session, ensure login section is visible on load
-        loginSection.classList.remove('hidden');
-        loginSection.classList.add('visible');
-        loggedInContent.classList.add('hidden'); // Ensure main-wrapper is hidden
-    }
-
-
-    // Handle logout (now attached to the drawer's logout button)
-    logoutButton.addEventListener('click', () => {
-        sessionStorage.removeItem('storeId');
-        // Clear login form fields
-        document.getElementById('loginStoreId').value = '';
-        document.getElementById('loginPassword').value = '';
-
-        // Clear warranty form fields and reset UI
-        form.reset();
-        storeIdInput.value = ''; // Ensure hidden storeId is cleared
-        document.getElementById('displayedStoreId').textContent = '';
-        document.getElementById('drawerDisplayedStoreId').textContent = '';
-
-        // Hide main content wrapper, show login
-        loggedInContent.classList.remove('visible');
-        setTimeout(() => {
-            loggedInContent.classList.add('hidden');
-            loginSection.classList.remove('hidden');
-            loginSection.classList.add('visible');
-        }, 400);
-
-        // Reset login form messages (these are also handled by demoauth.js but good to ensure)
-        document.getElementById('loginError').classList.add('hidden');
-        document.getElementById('loginError').classList.remove('visible');
-        document.getElementById('loginLoading').classList.add('hidden');
-        document.getElementById('loginLoading').classList.remove('visible');
-        // The submit button is revealed by demoauth.js on failure/hide loading
-
-        // Close drawer if open
-        drawerMenu.classList.remove('open');
-        drawerOverlay.classList.remove('active');
-
-        // Reset warranty form UI to initial state after logout
-        planSelectionSection.classList.remove('visible');
-        planSelectionSection.classList.add('hidden'); // Immediately hide for faster reset
-        phonePriceGroup.classList.remove('hidden');
-        phonePriceGroup.classList.add('visible');
-        showPlanPricesButton.classList.remove('hidden');
-        showPlanPricesButton.classList.add('visible');
-        const currentSelected = planOptionsContainer.querySelector('.plan-button.selected');
-        if (currentSelected) {
-            currentSelected.classList.remove('selected');
-        }
-        selectedPlanValueInput.value = '';
-        selectedPlanPriceInput.value = '';
-        selectedPlanTypeInput.value = '';
-        selectedPlanDetailsInput.value = '';
-    });
 
     // --- Drawer Menu Logic ---
     hamburgerMenu.addEventListener('click', () => {
@@ -500,7 +413,7 @@ document.addEventListener('DOMContentLoaded', function () {
     drawerItems.forEach(item => {
         item.addEventListener('click', function(e) {
             e.preventDefault();
-            const targetSectionId = this.dataset.section;
+            const targetSubSectionId = this.dataset.section;
 
             // Remove active class from all drawer items
             drawerItems.forEach(di => di.classList.remove('active'));
@@ -511,10 +424,51 @@ document.addEventListener('DOMContentLoaded', function () {
             drawerMenu.classList.remove('open');
             drawerOverlay.classList.remove('active');
 
-            // Show the selected section
-            showSection(targetSectionId);
+            // Show the selected sub-section
+            showSubSection(targetSubSectionId);
         });
     });
+
+    // Handle logout click (now coordinates with demoauth.js's logout)
+    // We add an event listener here because the logout button is part of demoscript.js's controlled UI.
+    // However, the core logout function (clearing session, etc.) is still in demoauth.js.
+    const internalLogoutButton = document.getElementById('logoutButton'); // The one in the drawer
+    internalLogoutButton.addEventListener('click', () => {
+        // Trigger the logout logic that demoauth.js handles
+        // We can simulate a click on a login form element or just call its internal logic
+        // For simplicity, let's just make sure drawer closes and trust demoauth.js to handle the rest of UI transition.
+        drawerMenu.classList.remove('open');
+        drawerOverlay.classList.remove('active');
+        // The original demoauth.js's logoutButton event listener (which is bound to this same ID) will handle the rest.
+        // If there are issues, we might need to expose a `handleLogout` function from demoauth.js.
+    });
+
+
+    // --- Authentication Synchronization (Crucial part for your specific demoauth.js) ---
+    // Your demoauth.js directly manipulates 'loginSection' and 'warrantySection' visibility.
+    // We need to ensure that when demoauth.js shows 'warrantySection', our internal `demoscript.js` also
+    // correctly sets the initial sub-section and updates the drawer's store ID.
+
+    // This function will be called by your demoauth.js after a successful login.
+    // It's a workaround since demoauth.js manages primary section visibility.
+    window.postLoginSetup = function(storeId) {
+        // Ensure the hidden input and visible display elements are updated
+        storeIdInput.value = storeId;
+        displayedStoreId.textContent = storeId;
+        drawerDisplayedStoreId.textContent = storeId; // Update drawer's store ID
+
+        // After demoauth.js makes warrantySection visible, ensure the default sub-section is active
+        showSubSection('registrationFormSection'); // Always default to registration form
+    };
+
+    // When the page loads, if a session is already active, manually call postLoginSetup
+    const savedStoreId = sessionStorage.getItem('storeId');
+    if (savedStoreId) {
+        // Your demoauth.js already runs on DOMContentLoaded and shows warrantySection.
+        // We just need to ensure the internal demoscript.js state is also aligned.
+        postLoginSetup(savedStoreId);
+    }
+
 
     // --- Tracking Functionality ---
 
@@ -546,16 +500,18 @@ document.addEventListener('DOMContentLoaded', function () {
             resultArea.error.classList.add('hidden');
             resultArea.error.classList.remove('visible');
             resultArea.table.classList.add('hidden');
+            resultArea.table.classList.remove('visible'); // Ensure it fades out
             resultArea.tableBody.innerHTML = '';
             resultArea.noData.classList.add('hidden');
-            
+            resultArea.noData.classList.remove('visible');
+
             // Reset summary text content
             if (reportType === 'Submissions') {
                 resultArea.summary.innerHTML = 'Total Submissions: <strong id="totalSubmissionsValue">0</strong>';
             } else {
                 resultArea.summary.innerHTML = `Total ${reportType}: ₹<strong id="total${reportType.replace(/\s/g, '')}Value">0</strong>`;
             }
-            
+
             resultArea.loading.classList.remove('hidden');
             setTimeout(() => resultArea.loading.classList.add('visible'), 10);
 
@@ -593,7 +549,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 }
                             });
                             resultArea.table.classList.remove('hidden');
-                            resultArea.table.classList.add('visible'); // Animate table in
+                            setTimeout(() => resultArea.table.classList.add('visible'), 10); // Animate table in
 
                             if (reportType === 'Submissions') {
                                 resultArea.summary.innerHTML = `Total Submissions: <strong>${totalValue}</strong>`;
@@ -602,7 +558,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             }
                         } else {
                             resultArea.noData.classList.remove('hidden');
-                            resultArea.noData.classList.add('visible');
+                            setTimeout(() => resultArea.noData.classList.add('visible'), 10);
                         }
                     } else {
                         resultArea.error.textContent = data.message || 'Error fetching data.';
