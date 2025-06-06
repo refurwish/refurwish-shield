@@ -6,6 +6,7 @@
     <title>Refurwish Shield Warranty Registration</title>
     <link rel="icon" type="image/png" sizes="32x32" href="favicon.png" />
     <link rel="stylesheet" href="demostyle.css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
 
@@ -26,89 +27,243 @@
             <span class="loader"></span> Logging in, please wait...
         </div>
         <div id="loginError" class="status-message error hidden">
-            </div>
+        </div>
     </form>
 </div>
 
-<div class="container hidden" id="warrantySection">
-    <button class="logout-button" id="logoutButton">Logout</button>
-    <img src="logo.png" alt="Refurwish Logo" class="logo" />
-
-    <h1>Refurwish Shield Warranty Registration</h1>
-
-    <div class="store-id-display">
-        <span class="store-id-label">Store ID: </span>
-        <span class="store-id-value" id="displayedStoreId"></span>
+<div class="main-wrapper hidden" id="loggedInContent">
+    <div class="hamburger-menu" id="hamburgerMenu">
+        <i class="material-icons">menu</i>
     </div>
 
-    <form id="warrantyForm" novalidate autocomplete="off">
-        <input type="hidden" id="storeId" name="storeId" value="" />
+    <div class="drawer" id="drawerMenu">
+        <div class="drawer-header">
+            <img src="logo.png" alt="Refurwish Logo" class="drawer-logo" />
+            <div class="store-id-display drawer-store-id">
+                <span class="store-id-label">Logged In: </span>
+                <span class="store-id-value" id="drawerDisplayedStoreId"></span>
+            </div>
+        </div>
+        <nav class="drawer-nav">
+            <a href="#" class="drawer-item active" data-section="warrantySection">
+                <i class="material-icons">add_box</i> New Registration
+            </a>
+            <a href="#" class="drawer-item" data-section="submissionsSection">
+                <i class="material-icons">assignment</i> Submissions
+            </a>
+            <a href="#" class="drawer-item" data-section="commissionSection">
+                <i class="material-icons">local_atm</i> Commission
+            </a>
+            <a href="#" class="drawer-item" data-section="paymentsSection">
+                <i class="material-icons">payment</i> Payments
+            </a>
+            <a href="#" class="drawer-item" data-section="totalAmountSection">
+                <i class="material-icons">currency_rupee</i> Total Amount
+            </a>
+        </nav>
+        <button class="drawer-logout-button" id="logoutButton">
+            <i class="material-icons">logout</i> Logout
+        </button>
+    </div>
+    <div class="overlay" id="drawerOverlay"></div>
 
-        <div class="form-group">
-            <label for="customerName">Customer Name:</label>
-            <input type="text" id="customerName" name="customerName" placeholder="E.g., John Doe" required />
-        </div>
-        <div class="form-group">
-            <label for="customerEmail">Customer Email:</label>
-            <input type="email" id="customerEmail" name="customerEmail" placeholder="E.g., john.doe@example.com" required />
-        </div>
-        <div class="form-group">
-            <label for="customerPhone">Customer Phone:</label>
-            <input type="tel" id="customerPhone" name="customerPhone" placeholder="E.g., 9876543210" pattern="[0-9]{10}" title="Phone number must be 10 digits" required />
-        </div>
-        <div class="form-group">
-            <label for="productName">Product Name:</label>
-            <input type="text" id="productName" name="productName" placeholder="E.g., Samsung Galaxy S23" required />
-        </div>
-        <div class="form-group">
-            <label for="imeiNumber">IMEI Number:</label>
-            <input type="text" id="imeiNumber" name="imeiNumber" placeholder="Enter the 15-digit IMEI" pattern="[0-9]{15}" title="IMEI must be 15 digits" required />
-        </div>
-        <div class="form-group">
-            <label for="purchaseDate">Phone Purchase Date:</label>
-            <input type="date" id="purchaseDate" name="purchaseDate" required />
-        </div>
-        <div class="form-group" id="phonePriceGroup"> <label for="phonePrice">Phone Price (₹):</label>
-            <input type="number" id="phonePrice" name="phonePrice" placeholder="Enter phone's purchase price (e.g., 25000)" required min="1" />
+    <div class="container active-content-section" id="warrantySection">
+        <img src="logo.png" alt="Refurwish Logo" class="logo" />
+
+        <h1>Refurwish Shield Warranty Registration</h1>
+
+        <div class="store-id-display">
+            <span class="store-id-label">Store ID: </span>
+            <span class="store-id-value" id="displayedStoreId"></span>
         </div>
 
-        <button type="button" class="submit-button" id="showPlanPricesButton">Show Plan Prices</button>
+        <form id="warrantyForm" novalidate autocomplete="off">
+            <input type="hidden" id="storeId" name="storeId" value="" />
 
-        <div id="planSelectionSection" class="hidden">
-            <div class="displayed-phone-price-info">
-                <p>Phone Price Entered: <strong id="confirmedPhonePrice"></strong></p>
-                <button type="button" class="back-button" id="backToPhonePriceButton">← Change Phone Price</button>
+            <div class="form-group">
+                <label for="customerName">Customer Name:</label>
+                <input type="text" id="customerName" name="customerName" placeholder="E.g., John Doe" required />
+            </div>
+            <div class="form-group">
+                <label for="customerEmail">Customer Email:</label>
+                <input type="email" id="customerEmail" name="customerEmail" placeholder="E.g., john.doe@example.com" required />
+            </div>
+            <div class="form-group">
+                <label for="customerPhone">Customer Phone:</label>
+                <input type="tel" id="customerPhone" name="customerPhone" placeholder="E.g., 9876543210" pattern="[0-9]{10}" title="Phone number must be 10 digits" required />
+            </div>
+            <div class="form-group">
+                <label for="productName">Product Name:</label>
+                <input type="text" id="productName" name="productName" placeholder="E.g., Samsung Galaxy S23" required />
+            </div>
+            <div class="form-group">
+                <label for="imeiNumber">IMEI Number:</label>
+                <input type="text" id="imeiNumber" name="imeiNumber" placeholder="Enter the 15-digit IMEI" pattern="[0-9]{15}" title="IMEI must be 15 digits" required />
+            </div>
+            <div class="form-group">
+                <label for="purchaseDate">Phone Purchase Date:</label>
+                <input type="date" id="purchaseDate" name="purchaseDate" required />
+            </div>
+            <div class="form-group" id="phonePriceGroup"> <label for="phonePrice">Phone Price (₹):</label>
+                <input type="number" id="phonePrice" name="phonePrice" placeholder="Enter phone's purchase price (e.g., 25000)" required min="1" />
             </div>
 
-            <p style="margin-top: 15px; font-weight: bold; color: #4a4a4a;">Select your plan:</p>
-            <div id="planOptionsContainer" class="plan-options-container">
+            <button type="button" class="submit-button" id="showPlanPricesButton">Show Plan Prices</button>
+
+            <div id="planSelectionSection" class="hidden">
+                <div class="displayed-phone-price-info">
+                    <p>Phone Price Entered: <strong id="confirmedPhonePrice"></strong></p>
+                    <button type="button" class="back-button" id="backToPhonePriceButton">← Change Phone Price</button>
                 </div>
-            <input type="hidden" id="selectedPlanValue" name="planOption" />
-            <input type="hidden" id="selectedPlanPrice" name="planPrice" />
-            <input type="hidden" id="selectedPlanType" name="planType" />
-            <input type="hidden" id="selectedPlanDetails" name="selectedPlanDetails" />
 
-            <button type="submit" class="submit-button" id="generateCertificateButton">Generate Warranty Certificate</button>
-        </div>
+                <p style="margin-top: 15px; font-weight: bold; color: #4a4a4a;">Select your plan:</p>
+                <div id="planOptionsContainer" class="plan-options-container">
+                </div>
+                <input type="hidden" id="selectedPlanValue" name="planOption" />
+                <input type="hidden" id="selectedPlanPrice" name="planPrice" />
+                <input type="hidden" id="selectedPlanType" name="planType" />
+                <input type="hidden" id="selectedPlanDetails" name="selectedPlanDetails" />
 
-        <div id="loading" class="status-message hidden">Processing...</div>
-
-        <div id="successContainer" class="status-message hidden">
-            <p id="successMessage">Warranty certificate generated successfully!</p>
-            <div id="pdfLinkSection" class="qrcode-container hidden">
-                <p><strong>Scan QR to view certificate:</strong></p>
-                <div id="qrcode"></div>
-                <p><a id="downloadLink" href="#" target="_blank">View PDF Certificate</a></p>
+                <button type="submit" class="submit-button" id="generateCertificateButton">Generate Warranty Certificate</button>
             </div>
-        </div>
 
-        <div id="errorMessage" class="status-message error hidden">
+            <div id="loading" class="status-message hidden">Processing...</div>
+
+            <div id="successContainer" class="status-message hidden">
+                <p id="successMessage">Warranty certificate generated successfully!</p>
+                <div id="pdfLinkSection" class="qrcode-container hidden">
+                    <p><strong>Scan QR to view certificate:</strong></p>
+                    <div id="qrcode"></div>
+                    <p><a id="downloadLink" href="#" target="_blank">View PDF Certificate</a></p>
+                </div>
             </div>
-    </form>
-</div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="demoauth.js"></script>
-<script src="demoscript.js"></script>
+            <div id="errorMessage" class="status-message error hidden">
+            </div>
+        </form>
+    </div>
+
+    <div class="container hidden tracking-section" id="submissionsSection">
+        <h2><i class="material-icons icon-left">assignment</i> Submissions Tracking</h2>
+        <div class="date-selection">
+            <div class="form-group">
+                <label for="submissionsFromDate">From Date:</label>
+                <input type="date" id="submissionsFromDate" />
+            </div>
+            <div class="form-group">
+                <label for="submissionsToDate">To Date:</label>
+                <input type="date" id="submissionsToDate" />
+            </div>
+            <button class="submit-button track-button" data-report-type="Submissions">Track Submissions</button>
+        </div>
+        <div id="submissionsResult" class="tracking-result">
+            <p class="tracking-summary">Total Submissions: <strong id="totalSubmissionsValue">0</strong></p>
+            <div class="tracking-loading status-message hidden"><span class="loader"></span> Loading submissions...</div>
+            <div class="tracking-error status-message error hidden"></div>
+            <table id="submissionsTable" class="data-table hidden">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Count</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <p class="no-data-message hidden">No submissions found for the selected dates.</p>
+        </div>
+    </div>
+
+    <div class="container hidden tracking-section" id="commissionSection">
+        <h2><i class="material-icons icon-left">local_atm</i> Commission Tracking</h2>
+        <div class="date-selection">
+            <div class="form-group">
+                <label for="commissionFromDate">From Date:</label>
+                <input type="date" id="commissionFromDate" />
+            </div>
+            <div class="form-group">
+                <label for="commissionToDate">To Date:</label>
+                <input type="date" id="commissionToDate" />
+            </div>
+            <button class="submit-button track-button" data-report-type="Commission">Track Commission</button>
+        </div>
+        <div id="commissionResult" class="tracking-result">
+            <p class="tracking-summary">Total Commission: ₹<strong id="totalCommissionValue">0</strong></p>
+            <div class="tracking-loading status-message hidden"><span class="loader"></span> Loading commission...</div>
+            <div class="tracking-error status-message error hidden"></div>
+            <table id="commissionTable" class="data-table hidden">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <p class="no-data-message hidden">No commission found for the selected dates.</p>
+        </div>
+    </div>
+
+    <div class="container hidden tracking-section" id="paymentsSection">
+        <h2><i class="material-icons icon-left">payment</i> Payments Tracking</h2>
+        <div class="date-selection">
+            <div class="form-group">
+                <label for="paymentsFromDate">From Date:</label>
+                <input type="date" id="paymentsFromDate" />
+            </div>
+            <div class="form-group">
+                <label for="paymentsToDate">To Date:</label>
+                <input type="date" id="paymentsToDate" />
+            </div>
+            <button class="submit-button track-button" data-report-type="Payment">Track Payments</button>
+        </div>
+        <div id="paymentsResult" class="tracking-result">
+            <p class="tracking-summary">Total Payments: ₹<strong id="totalPaymentsValue">0</strong></p>
+            <div class="tracking-loading status-message hidden"><span class="loader"></span> Loading payments...</div>
+            <div class="tracking-error status-message error hidden"></div>
+            <table id="paymentsTable" class="data-table hidden">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <p class="no-data-message hidden">No payments found for the selected dates.</p>
+        </div>
+    </div>
+
+    <div class="container hidden tracking-section" id="totalAmountSection">
+        <h2><i class="material-icons icon-left">currency_rupee</i> Total Amount Tracking</h2>
+        <div class="date-selection">
+            <div class="form-group">
+                <label for="totalAmountFromDate">From Date:</label>
+                <input type="date" id="totalAmountFromDate" />
+            </div>
+            <div class="form-group">
+                <label for="totalAmountToDate">To Date:</label>
+                <input type="date" id="totalAmountToDate" />
+            </div>
+            <button class="submit-button track-button" data-report-type="Total Amount">Track Total Amount</button>
+        </div>
+        <div id="totalAmountResult" class="tracking-result">
+            <p class="tracking-summary">Overall Total Amount: ₹<strong id="overallTotalAmountValue">0</strong></p>
+            <div class="tracking-loading status-message hidden"><span class="loader"></span> Loading total amount...</div>
+            <div class="tracking-error status-message error hidden"></div>
+            <table id="totalAmountTable" class="data-table hidden">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <p class="no-data-message hidden">No total amount data found for the selected dates.</p>
+        </div>
+    </div>
+
+</div> <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="demoauth.js"></script> <script src="demoscript.js"></script>
 </body>
 </html>
