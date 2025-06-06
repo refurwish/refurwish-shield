@@ -576,6 +576,15 @@ select.error {
     font-size: 1.5rem;
 }
 
+/* Style for the new store ID display in drawer */
+.drawer-header .store-id-value {
+    font-size: 1rem; /* Slightly smaller than main display */
+    font-weight: 600;
+    color: #007bff; /* A nice blue for the store ID */
+    letter-spacing: 0.2px;
+}
+
+
 .drawer-nav {
     display: flex;
     flex-direction: column;
