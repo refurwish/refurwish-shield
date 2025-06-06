@@ -1,239 +1,492 @@
-// --- IMPORTANT: REPLACE WITH YOUR DEPLOYED APPS SCRIPT WEB APP URL ---
-// This is the URL you get after deploying your Google Apps Script as a web app (e.g., https://script.google.com/macros/s/AKfy.../exec)
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec'; // <--- REPLACE THIS LINE
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('warrantyForm');
+    const loading = document.getElementById('loading');
+    const successContainer = document.getElementById('successContainer');
+    const errorMessage = document.getElementById('errorMessage');
+    const qrcodeDiv = document.getElementById('qrcode');
+    const downloadLink = document.getElementById('downloadLink');
+    const pdfLinkSection = document.getElementById('pdfLinkSection');
+    const storeIdInput = document.getElementById('storeId');
 
-// --- Event Listeners for Hamburger Menu ---
-document.addEventListener('DOMContentLoaded', function() {
-    const hamburger = document.getElementById('hamburger');
-    const drawer = document.getElementById('drawer');
-    const mainContent = document.querySelector('main'); // Assuming your main content is within a <main> tag or similar
-
-    if (hamburger && drawer && mainContent) {
-        hamburger.addEventListener('click', function() {
-            drawer.classList.toggle('open');
-            mainContent.classList.toggle('shifted'); // Add/remove class to shift main content
-        });
-
-        // Close drawer when clicking on main content (or anywhere outside drawer/hamburger)
-        mainContent.addEventListener('click', function(event) {
-            if (drawer.classList.contains('open') && !drawer.contains(event.target) && !hamburger.contains(event.target)) {
-                drawer.classList.remove('open');
-                mainContent.classList.remove('shifted');
-            }
-        });
-    } else {
-        console.error("Hamburger, drawer, or main content element not found.");
-    }
-
-    // --- Form Submission (unchanged in logic, but using fetch now) ---
-    const warrantyForm = document.getElementById('warrantyForm');
-    if (warrantyForm) {
-        warrantyForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Submitting...';
-
-            const formData = new FormData(warrantyForm);
-            formData.append('action', 'submitWarranty'); // Add action parameter
-
-            try {
-                const response = await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    body: formData // FormData object automatically sets Content-Type header
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const result = await response.json();
-                console.log('Server response:', result);
-
-                if (result.status === 'success') {
-                    alert('Warranty submitted successfully!');
-                    // Optionally open PDF in new tab
-                    if (result.url) {
-                        window.open(result.url, '_blank');
-                    }
-                    warrantyForm.reset(); // Clear form
-                    // Trigger data refresh for the drawer if it's open
-                    const currentStoreId = sessionStorage.getItem('loggedInStoreId');
-                    if (currentStoreId) {
-                        fetchAndDisplayTrackingData(currentStoreId);
-                    }
-                } else {
-                    alert('Error: ' + result.message);
-                }
-            } catch (error) {
-                console.error('Submission failed:', error);
-                alert('An error occurred during submission: ' + error.message);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Submit Warranty';
-            }
-        });
-    }
-
-    // --- Dynamic Plan Price Update (UNCHANGED) ---
-    const planTypeSelect = document.getElementById('planType');
+    const phonePriceGroup = document.getElementById('phonePriceGroup');
     const phonePriceInput = document.getElementById('phonePrice');
-    const planPriceDisplay = document.getElementById('planPriceDisplay');
-    const planOptionSelect = document.getElementById('planOption'); // Assuming this exists for specific details
+    const confirmedPhonePriceDisplay = document.getElementById('confirmedPhonePrice');
+    const showPlanPricesButton = document.getElementById('showPlanPricesButton');
+    const planSelectionSection = document.getElementById('planSelectionSection');
 
-    function updatePlanPrice() {
-        const planType = planTypeSelect.value;
-        const phonePrice = parseFloat(phonePriceInput.value) || 0;
-        let price = 0;
-        let details = '';
+    const planOptionsContainer = document.getElementById('planOptionsContainer');
+    const selectedPlanValueInput = document.getElementById('selectedPlanValue');
+    const selectedPlanPriceInput = document.getElementById('selectedPlanPrice');
+    const selectedPlanTypeInput = document.getElementById('selectedPlanType');
+    const selectedPlanDetailsInput = document.getElementById('selectedPlanDetails');
+    const backToPhonePriceButton = document.getElementById('backToPhonePriceButton');
 
-        if (phonePrice >= 15000 && phonePrice <= 25000) {
-            switch (planType) {
-                case 'extended': price = 799; details = 'Extended Warranty (₹799)'; break;
-                case 'screen_protection': price = 899; details = 'Screen Protection Plan (₹899)'; break;
-                case 'total_damage': price = 1099; details = 'Total Damage Protection (₹1099)'; break;
-                case 'combo_screen_extended': price = 1299; details = 'Combo (Screen Damage + Extended Warranty) (₹1299)'; break;
-                case 'combo_total_extended': price = 1599; details = 'Combo (Total Damage Protection + Extended Warranty) (₹1599)'; break;
-                default: price = 0; details = 'Select Plan'; break;
-            }
-        } else if (phonePrice > 25000) {
-            switch (planType) {
-                case 'extended': price = 1099; details = 'Extended Warranty (₹1099)'; break;
-                case 'screen_protection': price = 1199; details = 'Screen Protection Plan (₹1199)'; break;
-                case 'total_damage': price = 1499; details = 'Total Damage Protection (₹1499)'; break;
-                case 'combo_screen_extended': price = 1699; details = 'Combo (Screen Damage + Extended Warranty) (₹1699)'; break;
-                case 'combo_total_extended': price = 1999; details = 'Combo (Total Damage Protection + Extended Warranty) (₹1999)'; break;
-                default: price = 0; details = 'Select Plan'; break;
-            }
-        } else {
-            price = 0;
-            details = 'Phone price must be ₹15,000 or more';
-        }
-        planPriceDisplay.textContent = `₹${price}`;
-        document.getElementById('planPrice').value = price; // Hidden input to submit price
-        document.getElementById('selectedPlanDetails').value = details; // Hidden input to submit details
-    }
-
-    if (planTypeSelect) planTypeSelect.addEventListener('change', updatePlanPrice);
-    if (phonePriceInput) phonePriceInput.addEventListener('input', updatePlanPrice);
-    updatePlanPrice(); // Initial call
-
-    // --- Tracking Data Function (MODIFIED to use fetch) ---
+    // --- Drawer and Tracking Elements ---
+    const hamburgerMenu = document.getElementById('hamburgerMenu');
+    const mainDrawer = document.getElementById('mainDrawer');
+    const drawerCloseButton = document.getElementById('drawerCloseButton');
+    const drawerOverlay = document.getElementById('drawerOverlay');
+    const logoutButtonDrawer = document.getElementById('logoutButtonDrawer'); // New logout button in drawer
+    const openTrackingButton = document.getElementById('openTrackingButton');
+    const trackingSection = document.getElementById('trackingSection');
     const fromDateInput = document.getElementById('fromDate');
     const toDateInput = document.getElementById('toDate');
-    const applyFilterBtn = document.getElementById('applyFilterBtn');
-    const trackingDataTable = document.getElementById('trackingDataTable');
-    const totalSubmissionsSpan = document.getElementById('totalSubmissions');
-    const totalCommissionSpan = document.getElementById('totalCommission');
-    const totalPaymentsSpan = document.getElementById('totalPayments');
-    const totalRevenueSpan = document.getElementById('totalRevenue');
+    const filterTrackingDataButton = document.getElementById('filterTrackingDataButton');
+    const trackingLoading = document.getElementById('trackingLoading');
+    const trackingError = document.getElementById('trackingError');
+    const trackingResults = document.getElementById('trackingResults');
+    const trackingDateRangeDisplay = document.getElementById('trackingDateRange');
+    const totalSubmissionsDisplay = document.getElementById('totalSubmissions');
+    const totalCommissionDisplay = document.getElementById('totalCommission');
+    const totalPaymentDisplay = document.getElementById('totalPayment');
+    const totalAmountDisplay = document.getElementById('totalAmount');
 
-    async function fetchAndDisplayTrackingData(storeId) {
+    // Define extended warranty base prices
+    const extendedWarrantyPrices = [
+        { maxPrice: 15000, planText: 'Under ₹15,000', price: 699 },
+        { maxPrice: 25000, planText: '₹15,001 - ₹25,000', price: 799 },
+        { maxPrice: 35000, planText: '₹25,001 - ₹35,000', price: 899 },
+        { maxPrice: 45000, planText: '₹35,001 - ₹45,000', price: 999 },
+        { maxPrice: 60000, planText: '₹45,001 - ₹60,000', price: 1299 },
+        { maxPrice: 75000, planText: '₹60,001 - ₹75,000', price: 1599 },
+        { maxPrice: 100000, planText: '₹75,001 - ₹1,00,000', price: 1999 },
+        { maxPrice: 150000, planText: '₹1,00,001 - ₹1,50,000', price: 2499 },
+        { maxPrice: 200000, planText: '₹1,50,001 - ₹2,00,000', price: 2999 },
+        { maxPrice: 250000, planText: '₹2,00,001 - ₹2,50,000', price: 3499 },
+    ];
+
+    function getExtendedWarrantyPrice(phonePrice) {
+        for (const plan of extendedWarrantyPrices) {
+            if (phonePrice <= plan.maxPrice) {
+                return plan.price;
+            }
+        }
+        return extendedWarrantyPrices[extendedWarrantyPrices.length - 1].price;
+    }
+
+    function populatePlanOptions(phonePrice) {
+        planOptionsContainer.innerHTML = '';
+
+        const extendedPrice = getExtendedWarrantyPrice(phonePrice);
+        const screenDamagePrice = Math.round(phonePrice * 0.075);
+        const totalDamagePrice = Math.round(phonePrice * 0.125);
+
+        const allPlans = [
+            { value: 'extended_warranty', name: 'Extended Warranty', price: extendedPrice, internalType: 'extended', periodText: '12 Months Extended' },
+            { value: 'screen_protection', name: 'Screen Protection Plan', price: screenDamagePrice, internalType: 'screen_protection', periodText: '12 Months' },
+            { value: 'total_damage_protection', name: 'Total Damage Protection', price: totalDamagePrice, internalType: 'total_damage', periodText: '12 Months' },
+            { value: 'combo_screen_extended', name: 'Combo (Screen Damage + Extended Warranty)', price: Math.round(screenDamagePrice + (extendedPrice * 0.5)), internalType: 'combo_screen_extended', periodText: '24 Months Total' },
+            { value: 'combo_total_extended', name: 'Combo (Total Damage Protection + Extended Warranty)', price: Math.round(totalDamagePrice + (extendedPrice * 0.5)), internalType: 'combo_total_extended', periodText: '24 Months Total' }
+        ];
+
+        allPlans.forEach(plan => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.classList.add('plan-button');
+            button.innerHTML = `<span class="plan-text">${plan.name}</span><span class="plan-price">₹${plan.price}</span>`;
+
+            button.setAttribute('data-value', plan.value);
+            button.setAttribute('data-price', plan.price);
+            button.setAttribute('data-plantype', plan.internalType);
+            button.setAttribute('data-details', `${plan.name} (${plan.periodText})`);
+
+            button.addEventListener('click', function() {
+                const currentSelected = planOptionsContainer.querySelector('.plan-button.selected');
+                if (currentSelected) {
+                    currentSelected.classList.remove('selected');
+                }
+                button.classList.add('selected');
+
+                selectedPlanValueInput.value = plan.value;
+                selectedPlanPriceInput.value = plan.price;
+                selectedPlanTypeInput.value = plan.internalType;
+                selectedPlanDetailsInput.value = button.getAttribute('data-details');
+
+                planOptionsContainer.classList.remove('error');
+            });
+
+            planOptionsContainer.appendChild(button);
+        });
+
+        selectedPlanValueInput.value = '';
+        selectedPlanPriceInput.value = '';
+        selectedPlanTypeInput.value = '';
+        selectedPlanDetailsInput.value = '';
+    }
+
+    function validateCustomerAndPhoneDetails() {
+        let isValid = true;
+        const requiredFields = [
+            'customerName', 'customerEmail', 'customerPhone',
+            'productName', 'imeiNumber', 'purchaseDate', 'phonePrice'
+        ];
+
+        requiredFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (!field.value.trim()) {
+                field.classList.add('error');
+                isValid = false;
+            } else {
+                field.classList.remove('error');
+            }
+        });
+
+        const email = document.getElementById('customerEmail');
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(email.value)) {
+            email.classList.add('error');
+            isValid = false;
+        }
+
+        const phonePrice = parseFloat(phonePriceInput.value);
+        if (isNaN(phonePrice) || phonePrice <= 0) {
+            phonePriceInput.classList.add('error');
+            isValid = false;
+        } else {
+            phonePriceInput.classList.remove('error');
+        }
+
+        const imeiNumber = document.getElementById('imeiNumber');
+        if (imeiNumber.value.trim().length !== 15 || !/^[0-9]+$/.test(imeiNumber.value.trim())) {
+            imeiNumber.classList.add('error');
+            isValid = false;
+        }
+
+        const customerPhone = document.getElementById('customerPhone');
+        if (customerPhone.value.trim().length !== 10 || !/^[0-9]+$/.test(customerPhone.value.trim())) {
+            customerPhone.classList.add('error');
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    showPlanPricesButton.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        if (validateCustomerAndPhoneDetails()) {
+            const phonePrice = parseFloat(phonePriceInput.value);
+            populatePlanOptions(phonePrice);
+            confirmedPhonePriceDisplay.textContent = `₹${phonePrice.toLocaleString('en-IN')}`;
+
+            phonePriceGroup.classList.remove('visible');
+            phonePriceGroup.classList.add('hidden');
+
+            showPlanPricesButton.classList.remove('visible');
+            showPlanPricesButton.classList.add('hidden');
+
+            successContainer.classList.remove('visible');
+            successContainer.classList.add('hidden');
+            pdfLinkSection.classList.remove('visible');
+            pdfLinkSection.classList.add('hidden');
+
+            planSelectionSection.classList.remove('hidden');
+            setTimeout(() => {
+                planSelectionSection.classList.add('visible');
+            }, 10);
+
+            planOptionsContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+            // Replaced alert with custom modal logic or a more integrated message if available.
+            // For now, retaining alert as per original for simplicity, but consider a custom UI.
+            alert('Please fill in all required details correctly before proceeding to plan selection.');
+            const firstErrorField = document.querySelector('.form-group input.error, .form-group select.error');
+            if (firstErrorField) {
+                firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    });
+
+    backToPhonePriceButton.addEventListener('click', function() {
+        planSelectionSection.classList.remove('visible');
+        setTimeout(() => {
+            planSelectionSection.classList.add('hidden');
+        }, 400);
+
+        phonePriceGroup.classList.remove('hidden');
+        setTimeout(() => phonePriceGroup.classList.add('visible'), 400);
+
+        showPlanPricesButton.classList.remove('hidden');
+        setTimeout(() => showPlanPricesButton.classList.add('visible'), 400);
+
+        const currentSelected = planOptionsContainer.querySelector('.plan-button.selected');
+        if (currentSelected) {
+            currentSelected.classList.remove('selected');
+        }
+        selectedPlanValueInput.value = '';
+        selectedPlanPriceInput.value = '';
+        selectedPlanTypeInput.value = '';
+        selectedPlanDetailsInput.value = '';
+        planOptionsContainer.classList.remove('error');
+
+        phonePriceInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        if (!selectedPlanValueInput.value) {
+            alert('Please select a Plan.'); // Retaining alert for now, consider custom UI
+            planOptionsContainer.classList.add('error');
+            planOptionsContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+        } else {
+            planOptionsContainer.classList.remove('error');
+        }
+
+        successContainer.classList.remove('visible');
+        successContainer.classList.add('hidden');
+        errorMessage.classList.remove('visible');
+        errorMessage.classList.add('hidden');
+        pdfLinkSection.classList.remove('visible');
+        pdfLinkSection.classList.add('hidden');
+
+        loading.classList.remove('hidden');
+        setTimeout(() => loading.classList.add('visible'), 10);
+
+        const formData = new FormData(form);
+        // The URL for warranty submission is fixed, as per your original code.gs logic.
+        const appScriptWarrantyURL = 'https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec';
+
+        fetch(appScriptWarrantyURL, {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                loading.classList.remove('visible');
+                loading.classList.add('hidden');
+
+                if (data.status === 'success') {
+                    document.getElementById('successMessage').textContent = 'Warranty certificate generated successfully!';
+                    downloadLink.href = data.url;
+                    qrcodeDiv.innerHTML = '';
+                    new QRCode(qrcodeDiv, {
+                        text: data.url,
+                        width: 150,
+                        height: 150,
+                        colorDark: "#000000",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+
+                    pdfLinkSection.classList.remove('hidden');
+                    successContainer.classList.remove('hidden');
+                    setTimeout(() => {
+                        pdfLinkSection.classList.add('visible');
+                        successContainer.classList.add('visible');
+                    }, 10);
+
+                    form.reset();
+                    const storeId = sessionStorage.getItem('storeId');
+                    if (storeId) {
+                        storeIdInput.value = storeId;
+                    }
+                    
+                    planSelectionSection.classList.remove('visible');
+                    planSelectionSection.classList.add('hidden');
+
+                    phonePriceGroup.classList.remove('hidden');
+                    phonePriceGroup.classList.add('visible');
+                    
+                    showPlanPricesButton.classList.remove('hidden');
+                    showPlanPricesButton.classList.add('visible');
+
+                    const currentSelected = planOptionsContainer.querySelector('.plan-button.selected');
+                    if (currentSelected) {
+                        currentSelected.classList.remove('selected');
+                    }
+                    selectedPlanValueInput.value = '';
+                    selectedPlanPriceInput.value = '';
+                    selectedPlanTypeInput.value = '';
+                    selectedPlanDetailsInput.value = '';
+
+                    pdfLinkSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    throw new Error(data.message || 'Unknown error');
+                }
+            })
+            .catch(error => {
+                errorMessage.textContent = 'An error occurred: ' + error.message;
+                errorMessage.classList.remove('hidden');
+                setTimeout(() => errorMessage.classList.add('visible'), 10);
+                errorMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+    });
+
+    // --- Drawer and Tracking Functionality ---
+
+    // Function to open the drawer
+    function openDrawer() {
+        mainDrawer.classList.add('open');
+        drawerOverlay.classList.remove('hidden');
+        setTimeout(() => drawerOverlay.classList.add('visible'), 10);
+        document.body.style.overflow = 'hidden'; // Prevent scrolling main content
+    }
+
+    // Function to close the drawer
+    function closeDrawer() {
+        mainDrawer.classList.remove('open');
+        drawerOverlay.classList.remove('visible');
+        setTimeout(() => drawerOverlay.classList.add('hidden'), 300); // Match CSS transition
+        document.body.style.overflow = ''; // Allow scrolling main content
+        // Hide tracking section when drawer closes
+        trackingSection.classList.remove('visible');
+        trackingSection.classList.add('hidden');
+        trackingResults.classList.remove('visible');
+        trackingResults.classList.add('hidden');
+        trackingError.classList.remove('visible');
+        trackingError.classList.add('hidden');
+        trackingLoading.classList.remove('visible');
+        trackingLoading.classList.add('hidden');
+    }
+
+    // Event listeners for drawer
+    hamburgerMenu.addEventListener('click', openDrawer);
+    drawerCloseButton.addEventListener('click', closeDrawer);
+    drawerOverlay.addEventListener('click', closeDrawer);
+
+    // Logout button inside the drawer
+    logoutButtonDrawer.addEventListener('click', () => {
+        // Clear session storage
+        sessionStorage.removeItem('storeId');
+
+        // Reset forms (manual reset for mobile autofill issues)
+        document.getElementById('loginForm').reset();
+        form.reset(); // This is the warrantyForm
+
+        // Manually clear the form fields to prevent autofill issues on mobile
+        document.getElementById('loginStoreId').value = '';
+        document.getElementById('loginPassword').value = '';
+        storeIdInput.value = '';
+        document.getElementById('displayedStoreId').textContent = '';
+
+        // Switch views with animation (from auth.js's logic)
+        // Since auth.js handles this, we'll simulate its showSection logic if needed
+        // or just directly apply classes assuming it will be re-initialized on next load.
+        // For simplicity, we'll directly hide/show sections as per original auth.js.
+        document.getElementById('warrantySection').classList.remove('visible');
+        document.getElementById('warrantySection').classList.add('hidden');
+        document.getElementById('loginSection').classList.remove('hidden');
+        setTimeout(() => document.getElementById('loginSection').classList.add('visible'), 10); // Animate in
+
+        // Ensure login form is in its initial state (no loading/error messages)
+        document.getElementById('loginError').classList.add('hidden');
+        document.getElementById('loginError').classList.remove('visible');
+        document.getElementById('loginLoading').classList.add('hidden');
+        document.getElementById('loginLoading').classList.remove('visible');
+        document.getElementById('loginForm').querySelector('.submit-button').classList.remove('hidden');
+
+        // Close the drawer after logout
+        closeDrawer();
+
+        // Also reset tracking section inputs
+        fromDateInput.value = '';
+        toDateInput.value = '';
+    });
+
+    // Tracking Data functionality
+    openTrackingButton.addEventListener('click', () => {
+        // Toggle visibility of tracking section
+        trackingSection.classList.toggle('hidden');
+        setTimeout(() => {
+            trackingSection.classList.toggle('visible');
+        }, 10); // Small delay for animation
+
+        // Set default dates if not already set
+        if (!fromDateInput.value || !toDateInput.value) {
+            const today = new Date();
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(today.getDate() - 30);
+
+            // Format dates to YYYY-MM-DD for input type="date"
+            fromDateInput.value = thirtyDaysAgo.toISOString().split('T')[0];
+            toDateInput.value = today.toISOString().split('T')[0];
+        }
+
+        // Scroll to tracking section in drawer
+        trackingSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    filterTrackingDataButton.addEventListener('click', fetchTrackingData);
+
+    async function fetchTrackingData() {
+        const fromDate = fromDateInput.value;
+        const toDate = toDateInput.value;
+        const storeId = sessionStorage.getItem('storeId'); // Get current logged-in store ID
+
         if (!storeId) {
-            console.warn("No store ID found for tracking data.");
+            trackingError.textContent = 'Store ID not found. Please log in again.';
+            trackingError.classList.remove('hidden');
+            setTimeout(() => trackingError.classList.add('visible'), 10);
             return;
         }
 
-        const fromDate = fromDateInput ? fromDateInput.value : '';
-        const toDate = toDateInput ? toDateInput.value : '';
+        if (!fromDate || !toDate) {
+            trackingError.textContent = 'Please select both From and To dates.';
+            trackingError.classList.remove('hidden');
+            setTimeout(() => trackingError.classList.add('visible'), 10);
+            return;
+        }
 
-        // Clear existing table and totals
-        trackingDataTable.innerHTML = '<tr><th>Timestamp</th><th>Customer Name</th><th>Product</th><th>IMEI</th><th>Plan Type</th><th>Total Amount</th></tr>';
-        totalSubmissionsSpan.textContent = '0';
-        totalCommissionSpan.textContent = '₹0';
-        totalPaymentsSpan.textContent = '₹0';
-        totalRevenueSpan.textContent = '₹0';
+        trackingError.classList.remove('visible');
+        trackingError.classList.add('hidden');
+        trackingResults.classList.remove('visible');
+        trackingResults.classList.add('hidden');
+        trackingLoading.classList.remove('hidden');
+        setTimeout(() => trackingLoading.classList.add('visible'), 10);
 
-        const loadingIndicator = document.getElementById('loadingIndicator');
-        if (loadingIndicator) loadingIndicator.style.display = 'block'; // Show loading
+        // Your App Script URL for this project (the one handling warranty submissions and now tracking)
+        // This is the URL that corresponds to the code.gs you provided for warranty, not the login one.
+        const appScriptURL = 'https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec'; 
 
-        const requestData = new URLSearchParams();
-        requestData.append('action', 'getTrackingData'); // Important: action for doPost
-        requestData.append('storeId', storeId);
-        requestData.append('fromDate', fromDate);
-        requestData.append('toDate', toDate);
+        const queryParams = new URLSearchParams({
+            action: 'getTrackingData', // New action to request tracking data
+            storeId: storeId,
+            fromDate: fromDate,
+            toDate: toDate
+        });
 
         try {
-            const response = await fetch(APPS_SCRIPT_URL, {
-                method: 'POST',
-                body: requestData // URLSearchParams automatically sets Content-Type
+            // Use GET method as per the doGet function in code.gs
+            const response = await fetch(`${appScriptURL}?${queryParams.toString()}`, {
+                method: 'GET' 
             });
+            const data = await response.json();
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            trackingLoading.classList.remove('visible');
+            trackingLoading.classList.add('hidden');
 
-            const result = await response.json();
-            console.log('Tracking data response:', result);
+            if (data.status === 'success') {
+                totalSubmissionsDisplay.textContent = data.submissions;
+                totalCommissionDisplay.textContent = `₹${data.commission.toLocaleString('en-IN')}`;
+                totalPaymentDisplay.textContent = `₹${data.payment.toLocaleString('en-IN')}`;
+                totalAmountDisplay.textContent = `₹${data.totalAmount.toLocaleString('en-IN')}`;
+                trackingDateRangeDisplay.textContent = `${formatDateForDisplay(fromDate)} to ${formatDateForDisplay(toDate)}`;
 
-            if (result.status === 'success' && result.data) {
-                let totalSubmissions = 0;
-                let totalCommission = 0;
-                let totalPayments = 0;
-                let totalRevenue = 0;
-
-                result.data.forEach(row => {
-                    const tr = document.createElement('tr');
-                    // Assuming column order based on code.gs appendRow
-                    // 0:timestamp, 1:customerName, 2:customerEmail, 3:customerPhone, 4:storeId,
-                    // 5:productName, 6:imeiNumber, 7:sheetStartDateValue, 8:sheetEndDateValue,
-                    // 9:purchaseDate, 10:phonePrice, 11:planPeriodDescription, 12:selectedPlanDetails,
-                    // 13:pdfUrl, 14:commission, 15:ourAmount, 16:totalAmount
-
-                    tr.innerHTML = `
-                        <td>${row[0] || ''}</td>
-                        <td>${row[1] || ''}</td>
-                        <td>${row[5] || ''}</td>
-                        <td>${row[6] || ''}</td>
-                        <td>${row[11] || ''}</td>
-                        <td>₹${(row[16] || 0).toLocaleString('en-IN')}</td>
-                    `;
-                    trackingDataTable.appendChild(tr);
-
-                    totalSubmissions++;
-                    totalCommission += (row[14] || 0);
-                    totalPayments += (row[15] || 0);
-                    totalRevenue += (row[16] || 0);
-                });
-
-                totalSubmissionsSpan.textContent = totalSubmissions.toString();
-                totalCommissionSpan.textContent = `₹${totalCommission.toLocaleString('en-IN')}`;
-                totalPaymentsSpan.textContent = `₹${totalPayments.toLocaleString('en-IN')}`;
-                totalRevenueSpan.textContent = `₹${totalRevenue.toLocaleString('en-IN')}`;
-
+                trackingResults.classList.remove('hidden');
+                setTimeout(() => trackingResults.classList.add('visible'), 10);
             } else {
-                alert('Error fetching tracking data: ' + result.message);
-                console.error('Error fetching tracking data:', result.message);
+                trackingError.textContent = data.message || 'Failed to fetch tracking data.';
+                trackingError.classList.remove('hidden');
+                setTimeout(() => trackingError.classList.add('visible'), 10);
             }
         } catch (error) {
-            console.error('Failed to fetch tracking data:', error);
-            alert('An error occurred while fetching tracking data: ' + error.message);
-        } finally {
-            if (loadingIndicator) loadingIndicator.style.display = 'none'; // Hide loading
+            trackingLoading.classList.remove('visible');
+            trackingLoading.classList.add('hidden');
+            trackingError.textContent = 'An error occurred while fetching tracking data: ' + error.message;
+            trackingError.classList.remove('hidden');
+            setTimeout(() => trackingError.classList.add('visible'), 10);
         }
     }
 
-    if (applyFilterBtn) {
-        applyFilterBtn.addEventListener('click', function() {
-            const currentStoreId = sessionStorage.getItem('loggedInStoreId');
-            if (currentStoreId) {
-                fetchAndDisplayTrackingData(currentStoreId);
-            } else {
-                alert("Please log in to view tracking data.");
-            }
+    // Helper function to format dates for display (e.g., for "Summary for ...")
+    function formatDateForDisplay(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-IN', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
         });
-    }
-
-    // --- Initial Load of Tracking Data (after login) ---
-    const currentStoreId = sessionStorage.getItem('loggedInStoreId');
-    if (currentStoreId) {
-        // Assuming your login flow sets 'loggedInStoreId' in sessionStorage
-        fetchAndDisplayTrackingData(currentStoreId);
-    } else {
-        // Optionally redirect to login page or show login prompt
-        console.log("Not logged in. Tracking data not loaded.");
-        // Example: Redirect if not logged in
-        // window.location.href = 'login.html';
     }
 });
