@@ -1,256 +1,263 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Refurwish Shield Warranty Registration</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png" />
-    <link rel="stylesheet" href="demostyle.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RefurWish Shield Warranty</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <?!= HtmlService.createHtmlOutputFromFile('demostyle').getContent(); ?>
 </head>
 <body>
 
-<div class="container active-content-section" id="loginSection">
-    <img src="logo.png" alt="Refurwish Logo" class="logo" />
-    <h2>Store Login</h2>
-    <form id="loginForm">
-        <div class="form-group">
-            <label for="loginStoreId">Store ID:</label>
-            <input type="text" id="loginStoreId" name="storeId" placeholder="Enter your Store ID" required autofocus />
-        </div>
-        <div class="form-group">
-            <label for="loginPassword">Password:</label>
-            <input type="password" id="loginPassword" name="password" placeholder="Enter your password" required />
-        </div>
-        <button type="submit" class="submit-button">Login</button>
-        <div id="loginLoading" class="status-message hidden">
-            <span class="loader"></span> Logging in, please wait...
-        </div>
-        <div id="loginError" class="status-message error hidden">
-        </div>
-    </form>
-</div>
-
-<div class="container hidden" id="warrantySection">
     <div class="hamburger-menu" id="hamburgerMenu">
-        <i class="material-icons">menu</i>
+        <span class="material-icons">menu</span>
     </div>
 
-    <div class="drawer" id="drawerMenu">
+    <div class="drawer" id="appDrawer">
         <div class="drawer-header">
-            <img src="logo.png" alt="Refurwish Logo" class="drawer-logo" />
-            <div class="store-id-display drawer-store-id">
-                <span class="store-id-label">Logged In: </span>
-                <span class="store-id-value" id="drawerDisplayedStoreId"></span>
+            <img src="https://i.ibb.co/C0c2263/LOGO.png" alt="RefurWish Logo" class="drawer-logo">
+            <div class="drawer-store-id">
+                <span class="store-id-label">Store ID:</span>
+                <span class="store-id-value" id="drawerStoreId"></span>
             </div>
         </div>
         <nav class="drawer-nav">
-            <a href="#" class="drawer-item active" data-section="registrationFormSection">
-                <i class="material-icons">add_box</i> New Registration
+            <a href="#" class="drawer-item active" data-section-id="registrationFormSection" data-main-section="warrantySection">
+                <span class="material-icons">app_registration</span> Registration
             </a>
-            <a href="#" class="drawer-item" data-section="submissionsSection">
-                <i class="material-icons">assignment</i> Submissions
+            <a href="#" class="drawer-item" data-section-id="submissionsSection" data-main-section="warrantySection">
+                <span class="material-icons">receipt_long</span> Submissions
             </a>
-            <a href="#" class="drawer-item" data-section="commissionSection">
-                <i class="material-icons">local_atm</i> Commission
+            <a href="#" class="drawer-item" data-section-id="commissionSection" data-main-section="warrantySection">
+                <span class="material-icons">payments</span> Commission
             </a>
-            <a href="#" class="drawer-item" data-section="paymentsSection">
-                <i class="material-icons">payment</i> Payments
+            <a href="#" class="drawer-item" data-section-id="paymentSection" data-main-section="warrantySection">
+                <span class="material-icons">account_balance_wallet</span> Payments
             </a>
-            <a href="#" class="drawer-item" data-section="totalAmountSection">
-                <i class="material-icons">currency_rupee</i> Total Amount
+            <a href="#" class="drawer-item" data-section-id="totalAmountSection" data-main-section="warrantySection">
+                <span class="material-icons">attach_money</span> Total Amount
             </a>
         </nav>
-        <button class="drawer-logout-button" id="logoutButton">
-            <i class="material-icons">logout</i> Logout
+        <button id="logoutButton" class="drawer-logout-button">
+            <span class="material-icons">logout</span> Logout
         </button>
     </div>
-    <div class="overlay" id="drawerOverlay"></div>
 
-    <div class="sub-section active-sub-section" id="registrationFormSection">
-        <img src="logo.png" alt="Refurwish Logo" class="logo" />
-        <h1>Refurwish Shield Warranty Registration</h1>
-        <div class="store-id-display">
-            <span class="store-id-label">Store ID: </span>
-            <span class="store-id-value" id="displayedStoreId"></span>
-        </div>
-        <form id="warrantyForm" novalidate autocomplete="off">
-            <input type="hidden" id="storeId" name="storeId" value="" />
-            <div class="form-group">
-                <label for="customerName">Customer Name:</label>
-                <input type="text" id="customerName" name="customerName" placeholder="E.g., John Doe" required />
-            </div>
-            <div class="form-group">
-                <label for="customerEmail">Customer Email:</label>
-                <input type="email" id="customerEmail" name="customerEmail" placeholder="E.g., john.doe@example.com" required />
-            </div>
-            <div class="form-group">
-                <label for="customerPhone">Customer Phone:</label>
-                <input type="tel" id="customerPhone" name="customerPhone" placeholder="E.g., 9876543210" pattern="[0-9]{10}" title="Phone number must be 10 digits" required />
-            </div>
-            <div class="form-group">
-                <label for="productName">Product Name:</label>
-                <input type="text" id="productName" name="productName" placeholder="E.g., Samsung Galaxy S23" required />
-            </div>
-            <div class="form-group">
-                <label for="imeiNumber">IMEI Number:</label>
-                <input type="text" id="imeiNumber" name="imeiNumber" placeholder="Enter the 15-digit IMEI" pattern="[0-9]{15}" title="IMEI must be 15 digits" required />
-            </div>
-            <div class="form-group">
-                <label for="purchaseDate">Phone Purchase Date:</label>
-                <input type="date" id="purchaseDate" name="purchaseDate" required />
-            </div>
-            <div class="form-group" id="phonePriceGroup"> <label for="phonePrice">Phone Price (₹):</label>
-                <input type="number" id="phonePrice" name="phonePrice" placeholder="Enter phone's purchase price (e.g., 25000)" required min="1" />
-            </div>
-            <button type="button" class="submit-button" id="showPlanPricesButton">Show Plan Prices</button>
-            <div id="planSelectionSection" class="hidden">
-                <div class="displayed-phone-price-info">
-                    <p>Phone Price Entered: <strong id="confirmedPhonePrice"></strong></p>
-                    <button type="button" class="back-button" id="backToPhonePriceButton">← Change Phone Price</button>
+    <div class="overlay" id="overlay"></div>
+
+    <div class="main-wrapper">
+        <div id="loginSection" class="container active-content-section">
+            <img src="https://i.ibb.co/C0c2263/LOGO.png" alt="RefurWish Logo" class="logo">
+            <h2>Partner Login</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="storeIdInput">Store ID:</label>
+                    <input type="text" id="storeIdInput" placeholder="Enter your Store ID" required>
                 </div>
-                <p style="margin-top: 15px; font-weight: bold; color: #4a4a4a;">Select your plan:</p>
-                <div id="planOptionsContainer" class="plan-options-container"></div>
-                <input type="hidden" id="selectedPlanValue" name="planOption" />
-                <input type="hidden" id="selectedPlanPrice" name="planPrice" />
-                <input type="hidden" id="selectedPlanType" name="planType" />
-                <input type="hidden" id="selectedPlanDetails" name="selectedPlanDetails" />
-                <button type="submit" class="submit-button" id="generateCertificateButton">Generate Warranty Certificate</button>
+                <div class="form-group">
+                    <label for="passwordInput">Password:</label>
+                    <input type="password" id="passwordInput" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="submit-button">Login</button>
+                <div id="loginMessage" class="status-message hidden"></div>
+            </form>
+        </div>
+
+        <div id="warrantySection" class="container">
+            <img src="https://i.ibb.co/C0c2263/LOGO.png" alt="RefurWish Logo" class="logo">
+            <div class="store-id-display">
+                <span class="store-id-label">Logged in as:</span>
+                <span class="store-id-value" id="currentStoreId"></span>
             </div>
-            <div id="loading" class="status-message hidden">Processing...</div>
-            <div id="successContainer" class="status-message hidden">
-                <p id="successMessage">Warranty certificate generated successfully!</p>
-                <div id="pdfLinkSection" class="qrcode-container hidden">
-                    <p><strong>Scan QR to view certificate:</strong></p>
-                    <div id="qrcode"></div>
-                    <p><a id="downloadLink" href="#" target="_blank">View PDF Certificate</a></p>
+
+            <div id="registrationFormSection" class="sub-section">
+                <h2><span class="material-icons icon-left">app_registration</span> New Registration</h2>
+                <form id="warrantyForm">
+                    <div class="form-group">
+                        <label for="customerName">Customer Name:</label>
+                        <input type="text" id="customerName" placeholder="Enter customer's full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerEmail">Customer Email:</label>
+                        <input type="email" id="customerEmail" placeholder="Enter customer's email (Optional)">
+                    </div>
+                    <div class="form-group">
+                        <label for="customerPhone">Customer Phone Number:</label>
+                        <input type="tel" id="customerPhone" placeholder="Enter customer's phone number" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productName">Product Name:</label>
+                        <input type="text" id="productName" placeholder="e.g., iPhone 15 Pro, Samsung S24" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="imeiNumber">IMEI Number:</label>
+                        <input type="text" id="imeiNumber" placeholder="Enter IMEI number" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="purchaseDate">Purchase Date:</label>
+                        <input type="date" id="purchaseDate" required>
+                    </div>
+
+                    <div id="phonePriceGroup" class="form-group hidden">
+                        <label for="phonePrice">Phone Price (₹):</label>
+                        <input type="number" id="phonePrice" placeholder="Enter original phone price" min="1" step="0.01">
+                    </div>
+
+                    <div id="planSelectionSection" class="hidden">
+                        <h3>Select a Plan:</h3>
+                        <div class="plan-options-container" id="planOptionsContainer">
+                            </div>
+                        <div id="planSelectionMessage" class="status-message hidden">Please select a plan.</div>
+                    </div>
+
+                    <div id="displayedPhonePriceInfo" class="displayed-phone-price-info hidden">
+                        <p>Current Phone Price: <strong>₹<span id="displayPhonePrice">0</span></strong></p>
+                        <button type="button" class="back-button" id="changePhonePriceButton">Change Phone Price</button>
+                    </div>
+
+                    <button type="submit" class="submit-button" id="submitWarrantyButton">Submit Warranty</button>
+                    <div id="loading" class="status-message hidden"><span class="loader"></span> Submitting...</div>
+                    <div id="successContainer" class="status-message hidden">
+                        <p>Submission successful!</p>
+                        <div id="pdfLinkSection">
+                            <p>Scan QR or click link to download certificate:</p>
+                            <div id="qrcode"></div>
+                            <a id="downloadLink" href="#" target="_blank">Download Certificate</a>
+                        </div>
+                        <button type="button" class="back-button" id="newSubmissionButton">New Submission</button>
+                    </div>
+                    <div id="errorMessage" class="status-message hidden"></div>
+                </form>
+            </div>
+
+            <div id="submissionsSection" class="sub-section">
+                <h2><span class="material-icons icon-left">receipt_long</span> My Submissions</h2>
+                <div class="date-selection">
+                    <div class="form-group">
+                        <label for="submissionsFromDate">From Date:</label>
+                        <input type="date" id="submissionsFromDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="submissionsToDate">To Date:</label>
+                        <input type="date" id="submissionsToDate">
+                    </div>
+                    <button type="button" class="submit-button track-button" id="trackSubmissionsButton">Track Submissions</button>
+                </div>
+                <div class="tracking-loading status-message hidden"><span class="loader"></span> Loading Submissions...</div>
+                <div class="tracking-error status-message hidden"></div>
+                <div class="tracking-result">
+                    <p class="tracking-summary">Total Submissions: <strong><span id="totalSubmissionsCount">0</span></strong></p>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Count</th>
+                            </tr>
+                        </thead>
+                        <tbody id="submissionsTableBody">
+                            <tr><td colspan="2" class="no-data-message">No data to display.</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            <div id="errorMessage" class="status-message error hidden"></div>
-        </form>
-    </div>
 
-    <div class="sub-section hidden" id="submissionsSection">
-        <h2><i class="material-icons icon-left">assignment</i> Submissions Tracking</h2>
-        <div class="date-selection">
-            <div class="form-group">
-                <label for="submissionsFromDate">From Date:</label>
-                <input type="date" id="submissionsFromDate" />
+            <div id="commissionSection" class="sub-section">
+                <h2><span class="material-icons icon-left">payments</span> My Commission</h2>
+                <div class="date-selection">
+                    <div class="form-group">
+                        <label for="commissionFromDate">From Date:</label>
+                        <input type="date" id="commissionFromDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="commissionToDate">To Date:</label>
+                        <input type="date" id="commissionToDate">
+                    </div>
+                    <button type="button" class="submit-button track-button" id="trackCommissionButton">Track Commission</button>
+                </div>
+                <div class="tracking-loading status-message hidden"><span class="loader"></span> Loading Commission...</div>
+                <div class="tracking-error status-message hidden"></div>
+                <div class="tracking-result">
+                    <p class="tracking-summary">Total Commission: <strong>₹<span id="totalCommissionAmount">0</span></strong></p>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="commissionTableBody">
+                            <tr><td colspan="2" class="no-data-message">No data to display.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="submissionsToDate">To Date:</label>
-                <input type="date" id="submissionsToDate" />
-            </div>
-            <button class="submit-button track-button" data-report-type="Submissions">Track Submissions</button>
-        </div>
-        <div id="submissionsResult" class="tracking-result">
-            <p class="tracking-summary">Total Submissions: <strong id="totalSubmissionsValue">0</strong></p>
-            <div class="tracking-loading status-message hidden"><span class="loader"></span> Loading submissions...</div>
-            <div class="tracking-error status-message error hidden"></div>
-            <table id="submissionsTable" class="data-table hidden">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Count</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-            <p class="no-data-message hidden">No submissions found for the selected dates.</p>
-        </div>
-    </div>
 
-    <div class="sub-section hidden" id="commissionSection">
-        <h2><i class="material-icons icon-left">local_atm</i> Commission Tracking</h2>
-        <div class="date-selection">
-            <div class="form-group">
-                <label for="commissionFromDate">From Date:</label>
-                <input type="date" id="commissionFromDate" />
+            <div id="paymentSection" class="sub-section">
+                <h2><span class="material-icons icon-left">account_balance_wallet</span> My Payments</h2>
+                <div class="date-selection">
+                    <div class="form-group">
+                        <label for="paymentFromDate">From Date:</label>
+                        <input type="date" id="paymentFromDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="paymentToDate">To Date:</label>
+                        <input type="date" id="paymentToDate">
+                    </div>
+                    <button type="button" class="submit-button track-button" id="trackPaymentButton">Track Payments</button>
+                </div>
+                <div class="tracking-loading status-message hidden"><span class="loader"></span> Loading Payments...</div>
+                <div class="tracking-error status-message hidden"></div>
+                <div class="tracking-result">
+                    <p class="tracking-summary">Total Payments: <strong>₹<span id="totalPaymentAmount">0</span></strong></p>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="paymentTableBody">
+                            <tr><td colspan="2" class="no-data-message">No data to display.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="commissionToDate">To Date:</label>
-                <input type="date" id="commissionToDate" />
-            </div>
-            <button class="submit-button track-button" data-report-type="Commission">Track Commission</button>
-        </div>
-        <div id="commissionResult" class="tracking-result">
-            <p class="tracking-summary">Total Commission: ₹<strong id="totalCommissionValue">0</strong></p>
-            <div class="tracking-loading status-message hidden"><span class="loader"></span> Loading commission...</div>
-            <div class="tracking-error status-message error hidden"></div>
-            <table id="commissionTable" class="data-table hidden">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Amount</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-            <p class="no-data-message hidden">No commission found for the selected dates.</p>
-        </div>
-    </div>
 
-    <div class="sub-section hidden" id="paymentsSection">
-        <h2><i class="material-icons icon-left">payment</i> Payments Tracking</h2>
-        <div class="date-selection">
-            <div class="form-group">
-                <label for="paymentsFromDate">From Date:</label>
-                <input type="date" id="paymentsFromDate" />
+            <div id="totalAmountSection" class="sub-section">
+                <h2><span class="material-icons icon-left">attach_money</span> Total Amount</h2>
+                <div class="date-selection">
+                    <div class="form-group">
+                        <label for="totalAmountFromDate">From Date:</label>
+                        <input type="date" id="totalAmountFromDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="totalAmountToDate">To Date:</label>
+                        <input type="date" id="totalAmountToDate">
+                    </div>
+                    <button type="button" class="submit-button track-button" id="trackTotalAmountButton">Track Total Amount</button>
+                </div>
+                <div class="tracking-loading status-message hidden"><span class="loader"></span> Loading Total Amount...</div>
+                <div class="tracking-error status-message hidden"></div>
+                <div class="tracking-result">
+                    <p class="tracking-summary">Grand Total: <strong>₹<span id="grandTotalAmount">0</span></strong></p>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="totalAmountTableBody">
+                            <tr><td colspan="2" class="no-data-message">No data to display.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="paymentsToDate">To Date:</label>
-                <input type="date" id="paymentsToDate" />
-            </div>
-            <button class="submit-button track-button" data-report-type="Payment">Track Payments</button>
-        </div>
-        <div id="paymentsResult" class="tracking-result">
-            <p class="tracking-summary">Total Payments: ₹<strong id="totalPaymentsValue">0</strong></p>
-            <div class="tracking-loading status-message hidden"><span class="loader"></span> Loading payments...</div>
-            <div class="tracking-error status-message error hidden"></div>
-            <table id="paymentsTable" class="data-table hidden">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Amount</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-            <p class="no-data-message hidden">No payments found for the selected dates.</p>
-        </div>
-    </div>
-
-    <div class="sub-section hidden" id="totalAmountSection">
-        <h2><i class="material-icons icon-left">currency_rupee</i> Total Amount Tracking</h2>
-        <div class="date-selection">
-            <div class="form-group">
-                <label for="totalAmountFromDate">From Date:</label>
-                <input type="date" id="totalAmountFromDate" />
-            </div>
-            <div class="form-group">
-                <label for="totalAmountToDate">To Date:</label>
-                <input type="date" id="totalAmountToDate" />
-            </div>
-            <button class="submit-button track-button" data-report-type="Total Amount">Track Total Amount</button>
-        </div>
-        <div id="totalAmountResult" class="tracking-result">
-            <p class="tracking-summary">Overall Total Amount: ₹<strong id="overallTotalAmountValue">0</strong></p>
-            <div class="tracking-loading status-message hidden"><span class="loader"></span> Loading total amount...</div>
-            <div class="tracking-error status-message error hidden"></div>
-            <table id="totalAmountTable" class="data-table hidden">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Amount</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-            <p class="no-data-message hidden">No total amount data found for the selected dates.</p>
         </div>
     </div>
 
-</div> <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="demoauth.js"></script> <script src="demoscript.js"></script>
+    <script src="https://unpkg.com/qrious@4.0.2/dist/qrious.min.js"></script>
+    <?!= HtmlService.createHtmlOutputFromFile('demoscript').getContent(); ?>
+    <?!= HtmlService.createHtmlOutputFromFile('demoauth').getContent(); ?>
 </body>
 </html>
