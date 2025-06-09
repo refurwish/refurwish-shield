@@ -138,8 +138,10 @@ document.addEventListener('DOMContentLoaded', function () {
             isValid = false;
         }
 
+        // Keep the phone price validation here for general form validity,
+        // but the specific alert will be handled in showPlanPricesButton click.
         const phonePrice = parseFloat(phonePriceInput.value);
-        if (isNaN(phonePrice) || phonePrice <= 0) {
+        if (isNaN(phonePrice) || phonePrice <= 0) { // This handles empty or non-numeric/zero values
             phonePriceInput.classList.add('error');
             isValid = false;
         } else {
@@ -164,37 +166,50 @@ document.addEventListener('DOMContentLoaded', function () {
     showPlanPricesButton.addEventListener('click', function (e) {
         e.preventDefault();
 
-        if (validateCustomerAndPhoneDetails()) {
-            const phonePrice = parseFloat(phonePriceInput.value);
-            populatePlanOptions(phonePrice);
-            confirmedPhonePriceDisplay.textContent = `₹${phonePrice.toLocaleString('en-IN')}`;
-
-            phonePriceGroup.classList.remove('visible');
-            phonePriceGroup.classList.add('hidden');
-
-            showPlanPricesButton.classList.remove('visible');
-            showPlanPricesButton.classList.add('hidden');
-
-            successContainer.classList.remove('visible');
-            successContainer.classList.add('hidden');
-            pdfLinkSection.classList.remove('visible');
-            pdfLinkSection.classList.add('hidden');
-
-            planSelectionSection.classList.remove('hidden');
-            setTimeout(() => {
-                planSelectionSection.classList.add('visible');
-            }, 10);
-
-            planOptionsContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        } else {
-            // Replaced alert with custom modal logic or a more integrated message if available.
-            // For now, retaining alert as per original for simplicity, but consider a custom UI.
+        // First, validate all fields generally
+        if (!validateCustomerAndPhoneDetails()) {
             alert('Please fill in all required details correctly before proceeding to plan selection.');
             const firstErrorField = document.querySelector('.form-group input.error, .form-group select.error');
             if (firstErrorField) {
                 firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
+            return; // Stop if basic validation fails
         }
+
+        // THEN, specifically check the phone price range
+        const phonePrice = parseFloat(phonePriceInput.value);
+        if (phonePrice < 5000 || phonePrice > 250000) {
+            alert('Please enter phone price between ₹5,000 to ₹2,50,000.');
+            phonePriceInput.classList.add('error'); // Highlight the field
+            phonePriceInput.focus(); // Bring focus to the field
+            phonePriceInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return; // Stop the function here
+        } else {
+            phonePriceInput.classList.remove('error'); // Ensure no error class if it was there
+        }
+
+
+        // If all validations pass, proceed to show plan prices
+        populatePlanOptions(phonePrice);
+        confirmedPhonePriceDisplay.textContent = `₹${phonePrice.toLocaleString('en-IN')}`;
+
+        phonePriceGroup.classList.remove('visible');
+        phonePriceGroup.classList.add('hidden');
+
+        showPlanPricesButton.classList.remove('visible');
+        showPlanPricesButton.classList.add('hidden');
+
+        successContainer.classList.remove('visible');
+        successContainer.classList.add('hidden');
+        pdfLinkSection.classList.remove('visible');
+        pdfLinkSection.classList.add('hidden');
+
+        planSelectionSection.classList.remove('hidden');
+        setTimeout(() => {
+            planSelectionSection.classList.add('visible');
+        }, 10);
+
+        planOptionsContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
 
     backToPhonePriceButton.addEventListener('click', function() {
@@ -258,7 +273,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 loading.classList.add('hidden');
 
                 if (data.status === 'success') {
-                    document.getElementById('successMessage').textContent = 'Certificate generated successfully!';
+                    document.getElementById('successMessage').textContent = 'Certificate generated successfully!'; // This line was updated in the previous turn
                     downloadLink.href = data.url;
                     qrcodeDiv.innerHTML = '';
                     new QRCode(qrcodeDiv, {
@@ -282,13 +297,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (storeId) {
                         storeIdInput.value = storeId;
                     }
-                    
+
                     planSelectionSection.classList.remove('visible');
                     planSelectionSection.classList.add('hidden');
 
                     phonePriceGroup.classList.remove('hidden');
                     phonePriceGroup.classList.add('visible');
-                    
+
                     showPlanPricesButton.classList.remove('hidden');
                     showPlanPricesButton.classList.add('visible');
 
@@ -438,7 +453,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Your App Script URL for this project (the one handling warranty submissions and now tracking)
         // This is the URL that corresponds to the code.gs you provided for warranty, not the login one.
-        const appScriptURL = 'https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec'; 
+        const appScriptURL = 'https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec';
 
         const queryParams = new URLSearchParams({
             action: 'getTrackingData', // New action to request tracking data
@@ -450,7 +465,7 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             // Use GET method as per the doGet function in code.gs
             const response = await fetch(`${appScriptURL}?${queryParams.toString()}`, {
-                method: 'GET' 
+                method: 'GET'
             });
             const data = await response.json();
 
