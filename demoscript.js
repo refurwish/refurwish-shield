@@ -258,7 +258,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 loading.classList.add('hidden');
 
                 if (data.status === 'success') {
-                    document.getElementById('successMessage').textContent = 'Warranty certificate generated successfully!';
+                    document.getElementById('successMessage').textContent = 'Certificate generated successfully!';
                     downloadLink.href = data.url;
                     qrcodeDiv.innerHTML = '';
                     new QRCode(qrcodeDiv, {
