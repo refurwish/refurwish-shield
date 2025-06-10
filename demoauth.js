@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
         loginButton.classList.add('hidden'); // Hide button
 
         const formData = new FormData(loginForm);
-        formData.append('action', 'verifyLogin');
+        formData.append('action', 'verifyStoreLogin'); // <-- RENAMED HERE!
 
         // IMPORTANT: This URL is for your separate login App Script.
         fetch('https://script.google.com/macros/s/AKfycbwxhL6X17U5Fr9i7ze3SnqqURZalpVsWRfCZLrSh11tD3yDGqn2bB6SzLAcdo-rGbJs1w/exec', {
