@@ -20,9 +20,13 @@
             <input type="text" id="loginStoreId" name="storeId" placeholder="Enter your Store ID" required autofocus />
         </div>
         <div class="form-group">
-            <label for="loginPassword">Password:</label>
-            <input type="password" id="loginPassword" name="password" placeholder="Enter your password" required />
-        </div>
+    <label for="loginPassword">Password:</label>
+    <div class="password-input-container"> {/* Add a container for better styling */}
+        <input type="password" id="loginPassword" name="password" placeholder="Enter your password" required />
+        <input type="checkbox" id="showPasswordToggle" aria-label="Show Password" /> {/* The checkbox */}
+        <label for="showPasswordToggle" class="show-password-label">Show Password</label> {/* Label for the checkbox */}
+    </div>
+</div>
         <button type="submit" class="submit-button">Login</button>
         <div id="loginLoading" class="status-message hidden">
             <span class="loader"></span> Logging in, please wait...
