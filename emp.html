@@ -30,8 +30,7 @@
         input[type="text"],
         input[type="tel"],
         input[type="email"],
-        input[type="password"],
-        textarea {
+        input[type="password"] { /* Removed textarea from here */
             width: calc(100% - 12px);
             padding: 8px;
             border: 1px solid #ddd;
@@ -136,7 +135,31 @@
 
             <div class="form-group">
                 <label for="address">Address Details:</label>
-                <textarea id="address" name="address" rows="4" required autocomplete="off"></textarea>
+                <input type="text" id="address" name="address" required autocomplete="off" /> </div>
+
+            <div class="form-group">
+                <label for="area">Area:</label>
+                <input type="text" id="area" name="area" required autocomplete="off" />
+            </div>
+
+            <div class="form-group">
+                <label for="landmark">Landmark:</label>
+                <input type="text" id="landmark" name="landmark" autocomplete="off" />
+            </div>
+
+            <div class="form-group">
+                <label for="pincode">Pincode:</label>
+                <input type="text" id="pincode" name="pincode" required autocomplete="off" />
+            </div>
+
+            <div class="form-group">
+                <label for="city">Town/City:</label>
+                <input type="text" id="city" name="city" required autocomplete="off" />
+            </div>
+
+            <div class="form-group">
+                <label for="state">State:</label>
+                <input type="text" id="state" name="state" required autocomplete="off" />
             </div>
 
             <button type="submit" class="submit-button">Register Employee</button>
@@ -154,7 +177,9 @@
 
     <script>
         async function fetchNextEmployeeId() {
-            const response = await fetch('https://script.google.com/macros/s/AKfycbwxhL6X17U5Fr9i7ze3SnqqURZalpVsWRfCZLrSh11tD3yDGqn2bB6SzLAcdo-rGbJs1w/exec?action=nextEmployeeId');
+            // Replace with your actual Web App URL
+            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwxhL6X17U5Fr9i7ze3SnqqURZalpVsWRfCZLrSh11tD3yDGqn2bB6SzLAcdo-rGbJs1w/exec';
+            const response = await fetch(`${SCRIPT_URL}?action=nextEmployeeId`);
             const data = await response.json();
             if (data.status === 'success') {
                 document.getElementById('employeeIdDisplay').textContent = 'Employee ID: ' + data.employeeId;
@@ -183,7 +208,10 @@
             formData.append('action', 'registerEmployee'); // Add action for employee registration
             formData.append('employeeId', submittedEmployeeId);
 
-            fetch('https://script.google.com/macros/s/AKfycbwxhL6X17U5Fr9i7ze3SnqqURZalpVsWRfCZLrSh11tD3yDGqn2bB6SzLAcdo-rGbJs1w/exec', {
+            // Replace with your actual Web App URL
+            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwxhL6X17U5Fr9i7ze3SnqqURZalpVsWRfCZLrSh11tD3yDGqn2bB6SzLAcdo-rGbJs1w/exec';
+
+            fetch(SCRIPT_URL, {
                 method: 'POST',
                 body: formData
             })
