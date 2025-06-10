@@ -9,6 +9,8 @@ const employeeLoginSection = document.getElementById('employeeLoginSection');
 const employeeLoginForm = document.getElementById('employeeLoginForm');
 const loginError = document.getElementById('loginError');
 const loginSubmitButton = document.getElementById('loginSubmitButton');
+const employeePasswordLogin = document.getElementById('employeePasswordLogin'); // Added for password toggle
+const showEmployeePasswordToggle = document.getElementById('showEmployeePasswordToggle'); // Added for password toggle
 
 const storeRegistrationSection = document.getElementById('storeRegistrationSection');
 const displayedEmployeeId = document.getElementById('displayedEmployeeId');
@@ -151,6 +153,15 @@ employeeLoginForm.addEventListener('submit', async function (e) {
         loginSubmitButton.classList.remove('loading');
         loginSubmitButton.disabled = false;
         showStatusMessage(loginError, 'An error occurred: ' + err.message, 'error');
+    }
+});
+
+// --- Show Password Toggle Functionality ---
+showEmployeePasswordToggle.addEventListener('change', function() {
+    if (this.checked) {
+        employeePasswordLogin.type = 'text';
+    } else {
+        employeePasswordLogin.type = 'password';
     }
 });
 
