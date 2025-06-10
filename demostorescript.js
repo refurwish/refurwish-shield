@@ -53,16 +53,20 @@ function showSection(sectionToShow, sectionToHide) {
     setTimeout(() => sectionToShow.classList.add('visible'), 10); // Add visible for opacity/transform
 }
 
-// Adjusted showStatusMessage and hideStatusMessage for clarity and consistent hiding
-function showStatusMessage(element, message, type) {
+// Adjusted showStatusMessage for clarity and consistent hiding, allowing HTML content
+function showStatusMessage(element, content, type, isHtml = false) { // Added isHtml parameter
     element.classList.remove('hidden'); // Ensure it's not display: none
+    
     // Apply type classes for status messages (excluding loginCredentialsDiv which has its own base class)
     if (element.classList.contains('status-message') && element.id !== 'loginCredentials') {
         element.className = `status-message ${type}`;
-        element.textContent = message; // Only set text for actual status messages
+        if (isHtml) {
+            element.innerHTML = content; // Use innerHTML for HTML content
+        } else {
+            element.textContent = content; // Use textContent for plain text
+        }
     } else {
         // For elements like loginCredentialsDiv that are not primarily status messages
-        // We ensure 'hidden' is removed, and 'visible' is added for consistency if they have transitions
         element.classList.add(type); // Add the 'credentials-box' type
     }
     element.classList.add('visible'); // Add visible for animation
@@ -350,8 +354,8 @@ async function fetchEmployeeEarnings() {
     employeeEarningsResults.classList.remove('visible');
     setTimeout(() => employeeEarningsResults.classList.add('hidden'), 400); 
 
-    // Show loading with correct type
-    showStatusMessage(employeeEarningsLoading, '<span class="loader"></span> Fetching earnings...', 'loading'); 
+    // Show loading with correct type and explicitly indicate it's HTML
+    showStatusMessage(employeeEarningsLoading, '<span class="loader"></span> Fetching earnings...', 'loading', true); 
 
     const queryParams = new URLSearchParams({
         action: 'getEmployeeEarnings',
