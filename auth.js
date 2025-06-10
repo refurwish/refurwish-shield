@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
     loginButton.classList.add('hidden');
 
     const formData = new FormData(loginForm);
-    formData.append('action', 'verifyLogin');
+    formData.append('action', 'verifyStoreLogin'); // <-- RENAMED HERE!
 
     fetch('https://script.google.com/macros/s/AKfycbwxhL6X17U5Fr9i7ze3SnqqURZalpVsWRfCZLrSh11tD3yDGqn2bB6SzLAcdo-rGbJs1w/exec', {
       method: 'POST',
