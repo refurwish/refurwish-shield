@@ -154,19 +154,20 @@ select {
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
-    color: #666;
+    /* Removed color from here to ensure `i` element's color takes precedence */
     font-size: 1.2rem;
     z-index: 1; /* Behind the hidden checkbox but above input */
 }
 
 .show-password-label i {
     pointer-events: none; /* Allow click to pass through to checkbox */
+    color: #4a4a4a; /* Explicitly set icon color to a darker shade */
 }
 
 /* Optional: change icon color on hover or when checked */
-.show-password-checkbox:hover + .show-password-label,
-.show-password-checkbox:focus + .show-password-label {
-    color: #007bff;
+.show-password-checkbox:hover + .show-password-label i, /* Target the icon directly on hover */
+.show-password-checkbox:focus + .show-password-label i { /* Target the icon directly on focus */
+    color: #007bff; /* Primary blue on hover/focus */
 }
 
 /* Submit & General Buttons */
