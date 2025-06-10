@@ -125,6 +125,50 @@ select {
     padding-right: 40px; /* Space for custom arrow */
 }
 
+/* Show Password Toggle */
+.password-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-input-wrapper input[type="password"],
+.password-input-wrapper input[type="text"] {
+    padding-right: 40px; /* Make space for the eye icon */
+}
+
+.show-password-checkbox {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2; /* Ensure it's clickable */
+    opacity: 0; /* Hide the actual checkbox */
+    width: 24px; /* Make it clickable */
+    height: 24px;
+    cursor: pointer;
+}
+
+.show-password-label {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #666;
+    font-size: 1.2rem;
+    z-index: 1; /* Behind the hidden checkbox but above input */
+}
+
+.show-password-label i {
+    pointer-events: none; /* Allow click to pass through to checkbox */
+}
+
+/* Optional: change icon color on hover or when checked */
+.show-password-checkbox:hover + .show-password-label,
+.show-password-checkbox:focus + .show-password-label {
+    color: #007bff;
+}
+
 /* Submit & General Buttons */
 .submit-button {
     background-color: #007bff; /* Primary blue */
