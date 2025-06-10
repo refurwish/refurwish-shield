@@ -22,10 +22,12 @@
             <label for="employeePasswordLogin">Password:</label>
             <input type="password" id="employeePasswordLogin" name="password" placeholder="Enter your password" required />
         </div>
-        <button type="submit" class="submit-button">Login</button>
-        <div id="loginLoading" class="status-message hidden">
-            <span class="loader"></span> Logging in, please wait...
-        </div>
+        <button type="submit" class="submit-button" id="loginSubmitButton">
+            <span class="button-content">Login</span>
+            <div class="loader-overlay">
+                <span class="loader"></span> Logging in...
+            </div>
+        </button>
         <div id="loginError" class="status-message error hidden"></div>
     </form>
 </div>
@@ -103,7 +105,9 @@
 
         <button type="submit" class="submit-button">Register Store</button>
 
-        <div id="storeRegLoading" class="status-message hidden">Processing...</div>
+        <div id="storeRegLoading" class="status-message hidden">
+            <span class="loader"></span> Processing...
+        </div>
         <div id="storeRegSuccess" class="status-message success hidden">Store registered successfully!</div>
         <div id="storeRegError" class="status-message error hidden">Error occurred. Please try again.</div>
 
