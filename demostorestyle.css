@@ -18,7 +18,7 @@ body {
     margin: 0;
     overflow-x: hidden;
     color: #333;
-    padding: 20px;
+    padding: 20px; /* Base padding */
     box-sizing: border-box;
 }
 
@@ -559,6 +559,9 @@ input.error {
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
+    body {
+        padding: 15px; /* Slightly less padding on body */
+    }
     .container {
         padding: 30px 20px;
         border-radius: 10px;
@@ -625,24 +628,27 @@ input.error {
 }
 
 @media (max-width: 480px) {
+    body {
+        padding: 10px; /* Even less padding on the body for very small screens */
+    }
     .container {
-        padding: 25px 20px; /* Slightly more vertical padding */
-        width: 95%; /* Make it take up more width */
-        max-width: 95%; /* Allow it to expand more */
+        padding: 20px 15px; /* Reduced internal padding for container */
+        width: 100%; /* Take full width on smallest screens */
+        max-width: none; /* Remove max-width constraint */
         border-radius: 8px;
     }
     h1, h2 {
-        font-size: 1.6em; /* Slightly larger headings */
+        font-size: 1.5em; /* Slightly smaller headings */
         margin-bottom: 15px;
     }
     .logo {
-        max-width: 130px; /* Slightly smaller logo for very small screens */
-        margin-bottom: 20px;
-    }
-    .form-group {
+        max-width: 120px; /* Slightly smaller logo for very small screens */
         margin-bottom: 15px;
     }
-    /* Increased padding and font size for inputs/buttons on smallest screens */
+    .form-group {
+        margin-bottom: 12px; /* Reduced gap between form groups */
+    }
+    /* Adjusted padding and font size for inputs/buttons on smallest screens to fit more snugly */
     input[type="text"],
     input[type="password"],
     input[type="email"],
@@ -650,15 +656,24 @@ input.error {
     input[type="number"],
     input[type="date"],
     input[type="url"] {
-        padding: 14px;
-        font-size: 1.1rem;
+        padding: 12px; /* Slightly less padding */
+        font-size: 1rem; /* Standard font size */
     }
     .submit-button {
-        padding: 16px;
-        font-size: 1.2rem;
+        padding: 14px; /* Slightly less padding */
+        font-size: 1.1rem; /* Standard font size */
+        margin-top: 20px; /* Adjust top margin if needed */
+    }
+    .submit-button.small-button {
+        padding: 10px 15px; /* Keep small button concise */
+        font-size: 0.9rem;
     }
     .drawer.open {
-        width: 90%; /* Keep some margin on the right */
-        max-width: 90%;
+        width: 85%; /* Make drawer take more width on small screens */
+        max-width: 85%;
+    }
+    .show-password-label {
+        right: 8px; /* Further adjust icon position for smaller screens */
+        font-size: 1rem; /* Adjust icon size */
     }
 }
