@@ -6,8 +6,8 @@
     <title>Refurwish Shield Plan Registration</title>
     <link rel="icon" type="image/png" sizes="32x32" href="favicon.png" />
     <link rel="stylesheet" href="demostyle.css" />
-    <!-- Material Icons for hamburger -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40JuKakVxf0NPTYADgpJjFkOvo8XfQeUqB4+Y5B/jJ2K5D1F6z/xM4u2h0J2E9q4h4g4k4x8w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
 
@@ -20,13 +20,14 @@
             <input type="text" id="loginStoreId" name="storeId" placeholder="Enter your Store ID" required autofocus />
         </div>
         <div class="form-group">
-    <label for="loginPassword">Password:</label>
-    <div class="password-input-container"> {/* Add a container for better styling */}
-        <input type="password" id="loginPassword" name="password" placeholder="Enter your password" required />
-        <input type="checkbox" id="showPasswordToggle" aria-label="Show Password" /> {/* The checkbox */}
-        <label for="showPasswordToggle" class="show-password-label">Show Password</label> {/* Label for the checkbox */}
-    </div>
-</div>
+            <label for="loginPassword">Password:</label>
+            <div class="password-input-wrapper">
+                <input type="password" id="loginPassword" name="password" placeholder="Enter your password" required />
+                <input type="checkbox" id="showPasswordToggle" class="show-password-checkbox" aria-label="Show Password" />
+                <label for="showPasswordToggle" class="show-password-label">
+                    <i class="fas fa-eye"></i> </label>
+            </div>
+        </div>
         <button type="submit" class="submit-button">Login</button>
         <div id="loginLoading" class="status-message hidden">
             <span class="loader"></span> Logging in, please wait...
@@ -36,7 +37,6 @@
 </div>
 
 <div class="container hidden" id="warrantySection">
-    <!-- Hamburger Icon -->
     <button class="hamburger-menu" id="hamburgerMenu">
         <i class="material-icons">menu</i>
     </button>
@@ -114,7 +114,6 @@
     </form>
 </div>
 
-<!-- Drawer (Sidebar) -->
 <div class="drawer" id="mainDrawer">
     <button class="drawer-close-button" id="drawerCloseButton">
         <i class="material-icons">close</i>
@@ -125,7 +124,6 @@
             <p class="store-id-label" style="margin-top: 10px;">Logged in as: <strong id="drawerDisplayedStoreId" class="store-id-value"></strong></p>
         </div>
         <nav class="drawer-nav">
-            <!-- Add other menu items here if needed -->
             <button class="drawer-menu-item" id="openTrackingButton">
                 <i class="material-icons">bar_chart</i> Tracking Data
             </button>
@@ -156,12 +154,10 @@
             </div>
         </div>
         
-        <!-- Logout Button - Moved inside drawer -->
         <button class="logout-button" id="logoutButtonDrawer">Logout</button>
     </div>
 </div>
 
-<!-- Drawer Overlay -->
 <div class="drawer-overlay hidden" id="drawerOverlay"></div>
 
 
