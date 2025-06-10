@@ -7,9 +7,9 @@ let loggedInEmployeeId = null;
 // --- Element References ---
 const employeeLoginSection = document.getElementById('employeeLoginSection');
 const employeeLoginForm = document.getElementById('employeeLoginForm');
-const loginLoading = document.getElementById('loginLoading');
+// Removed loginLoading as it's integrated into the button
 const loginError = document.getElementById('loginError');
-const loginButton = employeeLoginForm.querySelector('.submit-button');
+const loginSubmitButton = document.getElementById('loginSubmitButton'); // Changed from loginButton to loginSubmitButton
 
 const storeRegistrationSection = document.getElementById('storeRegistrationSection');
 const displayedEmployeeId = document.getElementById('displayedEmployeeId');
@@ -62,8 +62,16 @@ function showStatusMessage(element, message, type) {
 
 function hideStatusMessage(element) {
     element.classList.remove('visible');
-    element.classList.add('hidden');
+    // For elements with display:none !important, the class 'hidden' is enough
+    // For status messages, we leverage the height/padding/opacity transition
+    if (element.classList.contains('status-message')) {
+        element.classList.remove('visible');
+        // No need to add 'hidden' explicitly for status messages if the default style handles it
+    } else {
+        element.classList.add('hidden');
+    }
 }
+
 
 // Helper function to format dates for display
 function formatDateForDisplay(dateString) {
@@ -92,9 +100,9 @@ employeeLoginForm.addEventListener('submit', async function (e) {
     e.preventDefault();
 
     hideStatusMessage(loginError);
-    loginLoading.classList.remove('hidden');
-    setTimeout(() => loginLoading.classList.add('visible'), 10);
-    loginButton.classList.add('hidden');
+    // Add loading class to button and disable it
+    loginSubmitButton.classList.add('loading');
+    loginSubmitButton.disabled = true;
 
     const formData = new FormData(employeeLoginForm);
     formData.append('action', 'verifyEmployeeLogin');
@@ -106,9 +114,9 @@ employeeLoginForm.addEventListener('submit', async function (e) {
         });
         const data = await response.json();
 
-        loginLoading.classList.remove('visible');
-        loginLoading.classList.add('hidden');
-        loginButton.classList.remove('hidden');
+        // Remove loading class from button and re-enable it
+        loginSubmitButton.classList.remove('loading');
+        loginSubmitButton.disabled = false;
 
         if (data.status === 'success') {
             loggedInEmployeeId = data.employeeId;
@@ -122,9 +130,9 @@ employeeLoginForm.addEventListener('submit', async function (e) {
             showStatusMessage(loginError, data.message || 'Invalid Employee ID or Password.', 'error');
         }
     } catch (err) {
-        loginLoading.classList.remove('visible');
-        loginLoading.classList.add('hidden');
-        loginButton.classList.remove('hidden');
+        // Ensure button state is reset on error
+        loginSubmitButton.classList.remove('loading');
+        loginSubmitButton.disabled = false;
         showStatusMessage(loginError, 'An error occurred: ' + err.message, 'error');
     }
 });
@@ -157,9 +165,7 @@ function pasteMapLink() {
         navigator.clipboard.readText().then(text => {
             document.getElementById('mapLink').value = text;
         }).catch(err => {
-            // Fallback for clipboard access issues
             console.error('Failed to read clipboard contents: ', err);
-            // Using a custom message instead of alert
             showStatusMessage(storeRegError, 'Failed to paste from clipboard. Please paste manually.', 'error');
         });
     } else {
@@ -174,7 +180,8 @@ storeRegistrationForm.addEventListener('submit', async function (e) {
 
     hideStatusMessage(storeRegSuccess);
     hideStatusMessage(storeRegError);
-    loginCredentialsDiv.classList.add('hidden');
+    // Ensure loginCredentialsDiv is hidden before submission
+    hideStatusMessage(loginCredentialsDiv); 
 
     storeRegLoading.classList.remove('hidden');
     setTimeout(() => storeRegLoading.classList.add('visible'), 10);
@@ -199,7 +206,8 @@ storeRegistrationForm.addEventListener('submit', async function (e) {
             showStatusMessage(storeRegSuccess, 'Store registered successfully!', 'success');
             const generatedPassword = data.generatedPassword || 'N/A';
             submittedCredentialsDiv.innerHTML = `Store ID: <strong>${submittedStoreId}</strong><br>Password: <strong>${generatedPassword}</strong>`;
-            loginCredentialsDiv.classList.remove('hidden');
+            // Use showStatusMessage to handle visibility and transition for loginCredentialsDiv
+            showStatusMessage(loginCredentialsDiv, '', 'credentials-box'); // The message is already in innerHTML, just make it visible
             loginCredentialsDiv.scrollIntoView({ behavior: 'smooth' });
 
             this.reset();
@@ -232,10 +240,8 @@ function closeDrawer() {
     document.body.style.overflow = '';
 
     // Hide tracking section when drawer closes
-    employeeEarningsSection.classList.remove('visible');
-    employeeEarningsSection.classList.add('hidden');
-    employeeEarningsResults.classList.remove('visible');
-    employeeEarningsResults.classList.add('hidden');
+    hideStatusMessage(employeeEarningsSection); // Use hideStatusMessage for consistency
+    hideStatusMessage(employeeEarningsResults); // Use hideStatusMessage for consistency
     hideStatusMessage(employeeEarningsError);
     hideStatusMessage(employeeEarningsLoading);
 }
@@ -261,18 +267,17 @@ logoutButton.addEventListener('click', () => {
 
     // Reset all status messages
     hideStatusMessage(loginError);
-    hideStatusMessage(loginLoading);
+    // Ensure login button is not in loading state and is enabled
+    loginSubmitButton.classList.remove('loading');
+    loginSubmitButton.disabled = false;
     hideStatusMessage(storeRegSuccess);
     hideStatusMessage(storeRegError);
     hideStatusMessage(storeRegLoading);
-    loginCredentialsDiv.classList.add('hidden');
+    hideStatusMessage(loginCredentialsDiv); // Ensure this is hidden on logout
 
     // Close drawer and switch to login view
     closeDrawer();
     showSection(employeeLoginSection, storeRegistrationSection);
-
-    // Ensure login button is visible again
-    loginButton.classList.remove('hidden');
 });
 
 // --- Drawer Menu Item Handlers ---
@@ -280,14 +285,18 @@ logoutButton.addEventListener('click', () => {
 employeeStoreRegButton.addEventListener('click', () => {
     closeDrawer();
     showSection(storeRegistrationSection, employeeLoginSection);
+    // Ensure credentials box is hidden when navigating to store registration
+    hideStatusMessage(loginCredentialsDiv); 
+    storeRegistrationForm.reset(); // Clear form when navigating back to it
 });
 
 employeeEarningsButton.addEventListener('click', () => {
-    // Toggle visibility of tracking section
-    employeeEarningsSection.classList.toggle('hidden');
-    setTimeout(() => {
-        employeeEarningsSection.classList.toggle('visible');
-    }, 10);
+    // Toggle visibility of tracking section using showStatusMessage/hideStatusMessage for smooth transition
+    if (employeeEarningsSection.classList.contains('visible')) {
+        hideStatusMessage(employeeEarningsSection);
+    } else {
+        showStatusMessage(employeeEarningsSection, '', ''); // No specific message, just make it visible
+    }
 
     // Set default dates if not already set
     if (!employeeFromDateInput.value || !employeeToDateInput.value) {
@@ -297,7 +306,12 @@ employeeEarningsButton.addEventListener('click', () => {
         employeeFromDateInput.value = thirtyDaysAgo.toISOString().split('T')[0];
         employeeToDateInput.value = today.toISOString().split('T')[0];
     }
-    employeeEarningsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Scroll to section after a short delay to allow visibility transition
+    setTimeout(() => {
+        if (employeeEarningsSection.classList.contains('visible')) {
+            employeeEarningsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }, 450); // Slightly more than the transition duration
 });
 
 filterEmployeeEarningsButton.addEventListener('click', fetchEmployeeEarnings);
@@ -317,10 +331,8 @@ async function fetchEmployeeEarnings() {
     }
 
     hideStatusMessage(employeeEarningsError);
-    employeeEarningsResults.classList.remove('visible');
-    employeeEarningsResults.classList.add('hidden');
-    employeeEarningsLoading.classList.remove('hidden');
-    setTimeout(() => employeeEarningsLoading.classList.add('visible'), 10);
+    hideStatusMessage(employeeEarningsResults); // Hide results before new fetch
+    showStatusMessage(employeeEarningsLoading, '<span class="loader"></span> Fetching earnings...', 'loading'); // Use showStatusMessage
 
     const queryParams = new URLSearchParams({
         action: 'getEmployeeEarnings',
@@ -333,22 +345,19 @@ async function fetchEmployeeEarnings() {
         const response = await fetch(`${APP_SCRIPT_URL}?${queryParams.toString()}`, { method: 'GET' });
         const data = await response.json();
 
-        employeeEarningsLoading.classList.remove('visible');
-        employeeEarningsLoading.classList.add('hidden');
+        hideStatusMessage(employeeEarningsLoading); // Use hideStatusMessage
 
         if (data.status === 'success') {
             totalStoresRegisteredDisplay.textContent = data.storesRegistered;
             totalEmployeeEarningsDisplay.textContent = `₹${data.totalEarnings.toLocaleString('en-IN')}`;
             employeeEarningsDateRangeDisplay.textContent = `${formatDateForDisplay(fromDate)} to ${formatDateForDisplay(toDate)}`;
 
-            employeeEarningsResults.classList.remove('hidden');
-            setTimeout(() => employeeEarningsResults.classList.add('visible'), 10);
+            showStatusMessage(employeeEarningsResults, '', 'results'); // Use showStatusMessage
         } else {
             showStatusMessage(employeeEarningsError, data.message || 'Failed to fetch employee earnings.', 'error');
         }
     } catch (error) {
-        employeeEarningsLoading.classList.remove('visible');
-        employeeEarningsLoading.classList.add('hidden');
+        hideStatusMessage(employeeEarningsLoading); // Use hideStatusMessage
         showStatusMessage(employeeEarningsError, 'An error occurred while fetching earnings: ' + error.message, 'error');
     }
 }
