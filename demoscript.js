@@ -41,6 +41,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const totalPaymentDisplay = document.getElementById('totalPayment');
     const totalAmountDisplay = document.getElementById('totalAmount');
 
+    // --- Show Password Elements ---
+    const loginPasswordInput = document.getElementById('loginPassword');
+    const showPasswordToggle = document.getElementById('showPasswordToggle');
+
     // Define extended warranty base prices
     const extendedWarrantyPrices = [
         { maxPrice: 15000, planText: 'Under ₹15,000', price: 699 },
@@ -502,6 +506,19 @@ document.addEventListener('DOMContentLoaded', function () {
             day: '2-digit',
             month: '2-digit',
             year: 'numeric'
+        });
+    }
+
+    // --- Show Password Functionality ---
+    if (showPasswordToggle && loginPasswordInput) {
+        showPasswordToggle.addEventListener('change', () => {
+            // If the checkbox is checked, change the input type to 'text'
+            // Otherwise, change it back to 'password'
+            if (showPasswordToggle.checked) {
+                loginPasswordInput.type = 'text';
+            } else {
+                loginPasswordInput.type = 'password';
+            }
         });
     }
 });
