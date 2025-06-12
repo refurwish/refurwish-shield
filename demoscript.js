@@ -47,16 +47,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Define extended warranty base prices
     const extendedWarrantyPrices = [
-        { maxPrice: 15000, planText: 'Under ₹15,000', price: 699 },
-        { maxPrice: 25000, planText: '₹15,001 - ₹25,000', price: 799 },
-        { maxPrice: 35000, planText: '₹25,001 - ₹35,000', price: 899 },
-        { maxPrice: 45000, planText: '₹35,001 - ₹45,000', price: 999 },
-        { maxPrice: 60000, planText: '₹45,001 - ₹60,000', price: 1299 },
-        { maxPrice: 75000, planText: '₹60,001 - ₹75,000', price: 1599 },
-        { maxPrice: 100000, planText: '₹75,001 - ₹1,00,000', price: 1999 },
-        { maxPrice: 150000, planText: '₹1,00,001 - ₹1,50,000', price: 2499 },
-        { maxPrice: 200000, planText: '₹1,50,001 - ₹2,00,000', price: 2999 },
-        { maxPrice: 250000, planText: '₹2,00,001 - ₹2,50,000', price: 3499 },
+        { maxPrice: 10000, planText: '₹5,000 - ₹10,000', price: 449 },
+        { maxPrice: 15000, planText: '₹10,001 - ₹15,000', price: 649 },
+        { maxPrice: 20000, planText: '₹15,001 - ₹20,000', price: 899 },
+        { maxPrice: 25000, planText: '₹20,001 - ₹25,000', price: 1199 },
+        { maxPrice: 30000, planText: '₹25,001 - ₹30,000', price: 1499 },
+        { maxPrice: 40000, planText: '₹30,001 - ₹40,000', price: 1899 },
+        { maxPrice: 50000, planText: '₹40,001 - ₹50,000', price: 2199 },
+        { maxPrice: 70000, planText: '₹50,001 - ₹70,000', price: 2999 },
+        { maxPrice: 80000, planText: '₹70,001 - ₹80,000', price: 3799 },
+        { maxPrice: 100000, planText: '₹80,001 - ₹1,00,000', price: 4499 },
+        { maxPrice: 120000, planText: '₹1,00,001 - ₹1,20,000', price: 5999 },
+        { maxPrice: 150000, planText: '₹1,20,001 - ₹1,50,000', price: 6999 },
+        { maxPrice: 175000, planText: '₹1,50,001 - ₹1,75,000', price: 8499 },
+        { maxPrice: 200000, planText: '₹1,75,001 - ₹2,00,000', price: 9499 },
+        { maxPrice: 250000, planText: '₹2,00,001 - ₹2,50,000', price: 9999 },
     ];
 
     function getExtendedWarrantyPrice(phonePrice) {
@@ -72,15 +77,15 @@ document.addEventListener('DOMContentLoaded', function () {
         planOptionsContainer.innerHTML = '';
 
         const extendedPrice = getExtendedWarrantyPrice(phonePrice);
-        const screenDamagePrice = Math.round(phonePrice * 0.075);
-        const totalDamagePrice = Math.round(phonePrice * 0.125);
+        const screenDamagePrice = Math.round(phonePrice * 0.06);
+        const totalDamagePrice = Math.round(phonePrice * 0.1);
 
         const allPlans = [
             { value: 'extended_warranty', name: 'Extended Warranty', price: extendedPrice, internalType: 'extended', periodText: '12 Months Extended' },
-            { value: 'screen_protection', name: 'Screen Protection Plan', price: screenDamagePrice, internalType: 'screen_protection', periodText: '12 Months' },
+            { value: 'screen_protection', name: 'Screen Damage Protection', price: screenDamagePrice, internalType: 'screen_protection', periodText: '12 Months' },
             { value: 'total_damage_protection', name: 'Total Damage Protection', price: totalDamagePrice, internalType: 'total_damage', periodText: '12 Months' },
-            { value: 'combo_screen_extended', name: 'Combo (Screen Damage + Extended Warranty)', price: Math.round(screenDamagePrice + (extendedPrice * 0.5)), internalType: 'combo_screen_extended', periodText: '24 Months Total' },
-            { value: 'combo_total_extended', name: 'Combo (Total Damage Protection + Extended Warranty)', price: Math.round(totalDamagePrice + (extendedPrice * 0.5)), internalType: 'combo_total_extended', periodText: '24 Months Total' }
+            { value: 'combo_screen_extended', name: 'Combo (Screen Damage Protection + Extended Warranty)', price: Math.round(screenDamagePrice + (extendedPrice * 0.3)), internalType: 'combo_screen_extended', periodText: '24 Months Total' },
+            { value: 'combo_total_extended', name: 'Combo (Total Damage Protection + Extended Warranty)', price: Math.round(totalDamagePrice + (extendedPrice * 0.3)), internalType: 'combo_total_extended', periodText: '24 Months Total' }
         ];
 
         allPlans.forEach(plan => {
