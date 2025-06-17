@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="demostyle.css" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" referrerpolicy="no-referrer" />
+    <!-- NEW: Signature Pad library -->
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
 </head>
 <body>
 
@@ -96,7 +98,89 @@
             <input type="hidden" id="selectedPlanType" name="planType" />
             <input type="hidden" id="selectedPlanDetails" name="selectedPlanDetails" />
 
-            <button type="submit" class="submit-button" id="generateCertificateButton">Generate Certificate</button>
+            <!-- Terms and Conditions Section -->
+            <div class="terms-conditions-container">
+                <div class="terms-summary">
+                    <input type="checkbox" id="acceptTerms" name="acceptTerms" required />
+                    <label for="acceptTerms">I accept the <a href="#" id="viewTermsLink">Terms and Conditions</a></label>
+                </div>
+                <div id="termsContent" class="terms-content hidden">
+                    <p class="terms-heading">Refurwish Shield Plan Terms & Conditions</p>
+                    <div class="terms-list">
+                        <!-- Extended Warranty -->
+                        <div class="term-item" data-plan="extended">
+                            <p class="term-title">Extended Warranty Plan (12 Months Extended)</p>
+                            <ul>
+                                <li>Covers functional defects arising after the manufacturer's warranty expires, for an additional 12 months.</li>
+                                <li>Includes repair or replacement for mechanical/electrical breakdowns.</li>
+                                <li>Does not cover physical damage, liquid damage, battery, accessories, or software issues.</li>
+                                <li>Repair will be attempted first; if irreparable, a replacement (same model/specifications) or a depreciated refund will be provided.</li>
+                            </ul>
+                        </div>
+                        <!-- Screen Damage Protection -->
+                        <div class="term-item" data-plan="screen_protection">
+                            <p class="term-title">Screen Damage Protection Plan (12 Months)</p>
+                            <ul>
+                                <li>Covers accidental physical damage to the device screen (front display glass) for 12 months from purchase.</li>
+                                <li>One-time repair/replacement for screen damage during the plan period.</li>
+                                <li>Does not cover liquid damage, total loss, or damage affecting other parts of the device beyond the screen.</li>
+                                <li>Deductible may apply as per policy.</li>
+                            </ul>
+                        </div>
+                        <!-- Total Damage Protection -->
+                        <div class="term-item" data-plan="total_damage">
+                            <p class="term-title">Total Damage Protection Plan (12 Months)</p>
+                            <ul>
+                                <li>Comprehensive coverage for accidental physical damage and liquid damage for 12 months.</li>
+                                <li>Includes coverage for drops, spills, and other accidental damage.</li>
+                                <li>One-time repair/replacement for device damage during the plan period.</li>
+                                <li>Does not cover theft, loss, cosmetic damage, or manufacturer defects.</li>
+                                <li>Deductible may apply as per policy.</li>
+                            </ul>
+                        </div>
+                        <!-- Combo: Screen Damage Protection + Extended Warranty -->
+                        <div class="term-item" data-plan="combo_screen_extended">
+                            <p class="term-title">Combo Plan: Screen Damage Protection + Extended Warranty (24 Months Total)</p>
+                            <ul>
+                                <li>**Screen Damage Protection:** Covers accidental screen damage for the first 12 months.</li>
+                                <li>**Extended Warranty:** Covers functional defects for 12 months following the manufacturer's warranty (total 24 months coverage for functional defects).</li>
+                                <li>Combines benefits of both plans. Terms specific to each component (Screen Damage / Extended Warranty) apply as outlined above for their respective periods.</li>
+                                <li>Deductibles and exclusions specific to each component apply.</li>
+                            </ul>
+                        </div>
+                        <!-- Combo: Total Damage Protection + Extended Warranty -->
+                        <div class="term-item" data-plan="combo_total_extended">
+                            <p class="term-title">Combo Plan: Total Damage Protection + Extended Warranty (24 Months Total)</p>
+                            <ul>
+                                <li>**Total Damage Protection:** Covers accidental physical and liquid damage for the first 12 months.</li>
+                                <li>**Extended Warranty:** Covers functional defects for 12 months following the manufacturer's warranty (total 24 months coverage for functional defects).</li>
+                                <li>Combines benefits of both plans. Terms specific to each component (Total Damage / Extended Warranty) apply as outlined above for their respective periods.</li>
+                                <li>Deductibles and exclusions specific to each component apply.</li>
+                            </ul>
+                        </div>
+                        <p class="general-terms"><strong>General Terms Applicable to All Plans:</strong></p>
+                        <ul>
+                            <li>Device must be in perfect working condition at the time of plan purchase.</li>
+                            <li>Claims require original purchase invoice, plan certificate, and government-issued ID.</li>
+                            <li>Repair/replacement decisions are at Refurwish's sole discretion.</li>
+                            <li>Coverage limits and specific exclusions apply as detailed in the full policy document.</li>
+                            <li>The plan is non-transferable and applicable only to the device with the registered IMEI.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- End Terms and Conditions Section -->
+
+            <!-- NEW: Digital Signature Section -->
+            <div id="signatureArea" class="signature-area hidden">
+                <p>Please draw your digital signature:</p>
+                <canvas id="signatureCanvas" width="400" height="150"></canvas>
+                <button type="button" id="clearSignature" class="clear-signature-button">Clear Signature</button>
+                <input type="hidden" id="customerSignatureImage" name="customerSignatureImage">
+            </div>
+            <!-- END NEW: Digital Signature Section -->
+            
+            <button type="submit" class="submit-button" id="generateCertificateButton" disabled>Generate Certificate</button>
         </div>
 
         <div id="loading" class="status-message hidden">Processing...</div>
