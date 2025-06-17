@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- DEBUGGING LOGS END ---
 
     // Initialize Signature Pad
-    let signaturePad; // Declare with 'let' in case initialization needs to be inside if/else
+    let signaturePad; // Changed from const to let
     if (signatureCanvas) {
         try {
             signaturePad = new SignaturePad(signatureCanvas);
