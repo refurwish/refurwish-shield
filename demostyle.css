@@ -879,6 +879,10 @@ select.error {
     border-radius: 10px;
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.03);
     text-align: center;
+    /* Add a max-width to the signature area to control canvas max-width */
+    max-width: 440px; /* 400px canvas + 2*20px padding */
+    margin-left: auto; /* Center it */
+    margin-right: auto; /* Center it */
 }
 
 .signature-area p {
@@ -893,9 +897,17 @@ select.error {
     border: 1px solid #dcdcdc;
     border-radius: 6px;
     touch-action: none; /* Prevent browser scrolling/panning when drawing */
-    max-width: 100%; /* Ensure responsiveness */
-    height: auto; /* Maintain aspect ratio */
+    /* Remove max-width and height: auto from here, let JS handle internal size */
+    /* Instead, ensure it fits within its parent */
+    display: block; /* Remove extra space below canvas if it's inline */
+    /* The internal width/height attributes (400x150) will now be respected as the default */
+    /* But JavaScript will dynamically resize it to fit the parent's computed width */
+    width: 100%; /* Important: This makes the CANVAS element fill its parent's width */
+    height: auto; /* Maintain aspect ratio based on parent's width */
+    /* Add a min-height if you want to ensure it always has a certain visible height before JS sets it */
+    min-height: 100px; /* Example: Ensures visibility even before JS resize */
 }
+
 
 .clear-signature-button {
     background-color: #ffc107; /* Warning yellow color */
@@ -1075,9 +1087,13 @@ select.error {
     .signature-area {
         padding: 15px;
     }
+    /* Removed specific width/height from media query for canvas */
+    /* Let JS handle this by getting parent's width */
+    /* The 'width: 100%; height: auto;' in the main .signature-area canvas rule is sufficient */
+    /* And JS will use getBoundingClientRect() on this to set internal dimensions. */
     .signature-area canvas {
-        width: 100%; /* Ensure canvas takes full width on small screens */
-        height: 120px; /* Adjust height for smaller screens */
+        /* No specific width/height override needed here for the canvas element itself */
+        /* It will naturally scale to 100% of its parent width. */
     }
     .clear-signature-button {
         padding: 8px 15px;
