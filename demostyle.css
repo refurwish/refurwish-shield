@@ -198,6 +198,14 @@ select {
     box-shadow: 0 2px 4px rgba(0, 123, 255, 0.1);
 }
 
+.submit-button:disabled {
+    background-color: #cccccc; /* Greyed out when disabled */
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+
 .submit-button.small-button {
     padding: 10px 20px; /* Smaller padding for drawer buttons */
     font-size: 0.9rem;
@@ -740,6 +748,180 @@ select.error {
     font-weight: 700;
 }
 
+/* --- NEW: TERMS AND CONDITIONS STYLES --- */
+.terms-conditions-container {
+    margin-top: 30px;
+    margin-bottom: 20px;
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.03);
+}
+
+.terms-summary {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between checkbox and label */
+    margin-bottom: 15px;
+}
+
+.terms-summary input[type="checkbox"] {
+    width: auto; /* Revert full width */
+    margin-bottom: 0;
+    transform: scale(1.2); /* Make checkbox slightly larger */
+    cursor: pointer;
+}
+
+.terms-summary label {
+    display: inline-block; /* Adjust label for checkbox */
+    margin-bottom: 0;
+    font-size: 1rem;
+    color: #333;
+}
+
+.terms-summary label a {
+    color: #007bff; /* Blue link for terms */
+    text-decoration: underline;
+    font-weight: 600;
+    transition: color 0.2s ease-in-out;
+}
+
+.terms-summary label a:hover {
+    color: #0056b3;
+}
+
+.terms-content {
+    border-top: 1px dashed #e0e0e0; /* Dashed separator */
+    padding-top: 20px;
+    font-size: 0.9rem;
+    color: #555;
+    max-height: 0; /* Hidden by default */
+    overflow: hidden; /* Hide overflow */
+    transition: max-height 0.5s ease-in-out, opacity 0.4s ease-out; /* Smooth toggle */
+    opacity: 0;
+    background-color: #ffffff; /* White background for content area */
+    padding: 0 15px; /* Adjust padding for animation */
+    border-radius: 8px;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.05); /* Inner shadow for depth */
+}
+
+.terms-content.visible {
+    max-height: 500px; /* Expand to show content */
+    opacity: 1;
+    padding: 15px; /* Full padding when visible */
+}
+
+.terms-heading {
+    font-weight: bold;
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+}
+
+.terms-list {
+    margin-bottom: 15px;
+}
+
+.terms-list ul {
+    list-style-type: disc;
+    margin-left: 20px;
+    padding: 0;
+}
+
+.terms-list li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.term-item {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px dotted #e9ecef; /* Dotted line between plans */
+}
+
+.term-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.term-title {
+    font-weight: bold;
+    color: #007bff; /* Blue for plan titles */
+    margin-bottom: 8px;
+    font-size: 1rem;
+}
+
+.general-terms {
+    margin-top: 20px;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+/* Error state for accept terms checkbox */
+.terms-conditions-container.error .terms-summary label {
+    color: #dc3545; /* Red color for error */
+    font-weight: 600;
+}
+
+.terms-conditions-container.error .terms-summary input[type="checkbox"] {
+    border: 2px solid #dc3545;
+    outline: 2px solid #dc3545;
+}
+
+/* NEW: Signature Area Styles */
+.signature-area {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.03);
+    text-align: center;
+}
+
+.signature-area p {
+    margin-bottom: 15px;
+    font-size: 1rem;
+    color: #333;
+    font-weight: 500;
+}
+
+.signature-area canvas {
+    background-color: #ffffff;
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    touch-action: none; /* Prevent browser scrolling/panning when drawing */
+    max-width: 100%; /* Ensure responsiveness */
+    height: auto; /* Maintain aspect ratio */
+}
+
+.clear-signature-button {
+    background-color: #ffc107; /* Warning yellow color */
+    color: #333;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-top: 15px;
+    transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    box-shadow: 0 4px 8px rgba(255, 193, 7, 0.2);
+}
+
+.clear-signature-button:hover {
+    background-color: #e0a800;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(255, 193, 7, 0.3);
+}
+
+.clear-signature-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(255, 193, 7, 0.1);
+}
+
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
@@ -829,6 +1011,9 @@ select.error {
         font-size: 1.6rem;
     }
 
+    .drawer-content {
+        padding: 15px; /* Adjust padding for smaller screens */
+    }
     .drawer-header h3 {
         font-size: 1.3rem;
     }
@@ -856,6 +1041,47 @@ select.error {
 
     .tracking-results strong {
         font-size: 1rem;
+    }
+
+    /* Terms and Conditions responsiveness */
+    .terms-conditions-container {
+        padding: 15px;
+    }
+
+    .terms-summary label {
+        font-size: 0.95rem;
+    }
+
+    .terms-content {
+        padding: 10px;
+        font-size: 0.85rem;
+    }
+
+    .term-title {
+        font-size: 0.95rem;
+    }
+
+    .terms-summary {
+        flex-direction: column; /* Stack checkbox and label vertically */
+        align-items: flex-start;
+    }
+
+    .terms-summary input[type="checkbox"] {
+        margin-right: auto; /* Push checkbox to the left */
+        margin-bottom: 5px;
+    }
+
+    /* Signature Area responsiveness */
+    .signature-area {
+        padding: 15px;
+    }
+    .signature-area canvas {
+        width: 100%; /* Ensure canvas takes full width on small screens */
+        height: 120px; /* Adjust height for smaller screens */
+    }
+    .clear-signature-button {
+        padding: 8px 15px;
+        font-size: 0.85rem;
     }
 }
 
@@ -912,5 +1138,23 @@ select.error {
     .drawer.open {
         width: 100%; /* Full width on very small screens */
         max-width: 100%;
+    }
+
+    /* Terms and Conditions responsiveness for smaller screens */
+    .terms-conditions-container {
+        padding: 10px;
+    }
+
+    .terms-summary label {
+        font-size: 0.9rem;
+    }
+
+    .terms-content {
+        padding: 8px;
+        font-size: 0.8rem;
+    }
+
+    .term-title {
+        font-size: 0.9rem;
     }
 }
