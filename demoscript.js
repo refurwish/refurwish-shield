@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const termsContent = document.getElementById('termsContent');
     const termItems = document.querySelectorAll('.term-item');
 
-    // --- NEW: Signature Elements ---
+    // --- Signature Elements ---
     const signatureArea = document.getElementById('signatureArea');
     const signatureCanvas = document.getElementById('signatureCanvas');
     const clearSignatureButton = document.getElementById('clearSignature');
@@ -42,23 +42,59 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Initialize Signature Pad
     let signaturePad;
-    // CRITICAL: Ensure SignaturePad constructor is available AND canvas element exists
+
+    // Function to resize canvas - CRITICAL for SignaturePad
+    function resizeCanvas() {
+        if (signatureCanvas) {
+            // Get the current computed display size of the canvas element
+            const rect = signatureCanvas.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1; // Get device pixel ratio for sharp rendering on HiDPI screens
+
+            // Set the canvas's internal drawing buffer size to match its display size
+            // This needs to be done *before* initializing SignaturePad
+            signatureCanvas.width = rect.width * dpr;
+            signatureCanvas.height = rect.height * dpr;
+
+            // Scale the context to counter the device pixel ratio
+            const ctx = signatureCanvas.getContext('2d');
+            if (ctx) {
+                ctx.scale(dpr, dpr);
+                console.log(`Canvas resized: ${signatureCanvas.width}x${signatureCanvas.height} (DPR: ${dpr})`);
+
+                // If signaturePad already exists, clear it and restore any previous signature
+                // (Useful if the canvas is resized while a signature is present)
+                if (signaturePad && !signaturePad.isEmpty()) {
+                    const data = signaturePad.toData();
+                    signaturePad.clear();
+                    signaturePad.fromData(data);
+                    console.log("Signature restored after resize.");
+                } else if (signaturePad) {
+                    signaturePad.clear(); // Ensure it's clear if it was empty
+                }
+            } else {
+                console.error("Could not get 2D context for signatureCanvas.");
+            }
+        }
+    }
+
+    // CRITICAL: Initialize SignaturePad AFTER canvas dimensions are potentially set by CSS
+    // and then manually set the internal canvas dimensions.
+    // We will initialize SignaturePad only once DOM is loaded and canvas exists.
     if (typeof SignaturePad !== 'undefined' && signatureCanvas) {
+        // Initial resize *before* creating the SignaturePad instance
+        // This makes sure the pad starts with correct dimensions.
+        resizeCanvas();
+
         try {
             signaturePad = new SignaturePad(signatureCanvas);
-            // --- DEBUGGING LOGS START ---
             console.log("signatureCanvas found:", signatureCanvas);
-            console.log("SignaturePad instance created successfully:");
-            console.log(signaturePad);
+            console.log("SignaturePad instance created successfully:", signaturePad);
             window.debugSignaturePad = signaturePad; // Make it globally accessible for console debugging
-            // --- DEBUGGING LOGS END ---
         } catch (e) {
-            // This catch block will tell us if there's an error *during* SignaturePad's own construction
             console.error("ERROR during SignaturePad initialization (caught in try-catch):", e);
             console.error("Please check if the canvas element is valid and SignaturePad library is compatible.");
         }
     } else {
-        // This else block will tell us if SignaturePad constructor or canvas was missing
         if (typeof SignaturePad === 'undefined') {
             console.error("CRITICAL ERROR: SignaturePad constructor is UNDEFINED. Is the library loaded correctly?");
         }
@@ -67,10 +103,18 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // --- DEBUGGING LOGS START ---
-    console.log("Value of 'signaturePad' variable after initialization block:");
-    console.log(signaturePad);
-    // --- DEBUGGING LOGS END ---
+    // Add a resize listener to handle dynamic resizing (e.g., screen rotation, window resize)
+    window.addEventListener('resize', () => {
+        if (signaturePad) { // Only resize if signaturePad was successfully initialized
+            resizeCanvas();
+            // After resize, if the pad was empty, it will remain empty.
+            // If it had a signature, we tried to restore it in resizeCanvas().
+            // Always update button state after a resize.
+            updateSubmitButtonState();
+        }
+    });
+
+    console.log("Value of 'signaturePad' variable after initialization block:", signaturePad);
 
 
     // Function to update the visibility and required status of the signature area
@@ -78,6 +122,15 @@ document.addEventListener('DOMContentLoaded', function () {
         if (acceptTermsCheckbox.checked) {
             signatureArea.classList.remove('hidden');
             setTimeout(() => signatureArea.classList.add('visible'), 10);
+            // Re-initialize SignaturePad if it's hidden and shown again, to reset state
+            // Or more robustly, resize the canvas if dimensions change due to visibility
+            if (signaturePad) {
+                // Resize and potentially clear if signature area was hidden then shown
+                resizeCanvas();
+                if (signaturePad.isEmpty()) { // Only clear if it was empty initially, to avoid losing signature
+                    signaturePad.clear();
+                }
+            }
         } else {
             signatureArea.classList.remove('visible');
             setTimeout(() => signatureArea.classList.add('hidden'), 300);
@@ -112,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log("updateSubmitButtonState called:");
         console.log("  isPlanSelected:", isPlanSelected);
         console.log("  isTermsAccepted:", isTermsAccepted);
-        console.log("  isSignatureDrawn:", isSignatureDrawn);
+        console.log("  isSignatureDrawn (from signaturePad.isEmpty()):", isSignatureDrawn);
         console.log("  generateCertificateButton.disabled set to:", generateCertificateButton.disabled);
         // --- DEBUGGING LOGS END ---
     }
@@ -393,6 +446,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             } else {
                 signatureArea.classList.remove('error');
+                // Capture the signature as a PNG Data URL
                 customerSignatureImageInput.value = signaturePad.toDataURL('image/png');
             }
         } else {
@@ -452,7 +506,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (signaturePad) {
                         signaturePad.clear();
                     }
-                    updateSignatureAreaState();
+                    updateSignatureAreaState(); // This will also call resizeCanvas and updateSubmitButtonState
 
                     const storeId = sessionStorage.getItem('storeId');
                     if (storeId) {
@@ -505,8 +559,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (this.checked) {
             termsConditionsContainer.classList.remove('error');
         }
-        updateSignatureAreaState();
-        updateSubmitButtonState();
+        updateSignatureAreaState(); // This will handle signature area visibility and canvas resize
     });
 
     // Signature Pad Event Listeners
@@ -516,6 +569,7 @@ document.addEventListener('DOMContentLoaded', function () {
             signatureArea.classList.remove('error');
         };
         signaturePad.onEnd = function() {
+            console.log("SignaturePad.onEnd fired! Re-checking button state.");
             updateSubmitButtonState();
         };
     } else {
@@ -593,7 +647,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (signaturePad) {
             signaturePad.clear();
         }
-        updateSignatureAreaState();
+        updateSignatureAreaState(); // This will handle signature area visibility and canvas resize
     });
 
     openTrackingButton.addEventListener('click', () => {
@@ -703,5 +757,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Initial update for submit button state
+    // This needs to be called after signaturePad is initialized and canvas dimensions are set.
     updateSubmitButtonState();
 });
