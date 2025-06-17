@@ -21,6 +21,53 @@ document.addEventListener('DOMContentLoaded', function () {
     const selectedPlanDetailsInput = document.getElementById('selectedPlanDetails');
     const backToPhonePriceButton = document.getElementById('backToPhonePriceButton');
 
+    // --- Terms and Conditions Elements ---
+    const termsConditionsContainer = document.querySelector('.terms-conditions-container');
+    const acceptTermsCheckbox = document.getElementById('acceptTerms');
+    const viewTermsLink = document.getElementById('viewTermsLink');
+    const termsContent = document.getElementById('termsContent');
+    const termItems = document.querySelectorAll('.term-item'); // Get all individual T&C blocks
+
+    // --- NEW: Signature Elements ---
+    const signatureArea = document.getElementById('signatureArea');
+    const signatureCanvas = document.getElementById('signatureCanvas');
+    const clearSignatureButton = document.getElementById('clearSignature');
+    const customerSignatureImageInput = document.getElementById('customerSignatureImage');
+    const generateCertificateButton = document.getElementById('generateCertificateButton'); // Submit button
+
+    // Initialize Signature Pad
+    const signaturePad = new SignaturePad(signatureCanvas);
+    
+    // Function to update the visibility and required status of the signature area
+    function updateSignatureAreaState() {
+        if (acceptTermsCheckbox.checked) {
+            signatureArea.classList.remove('hidden');
+            setTimeout(() => signatureArea.classList.add('visible'), 10);
+            // The hidden input field will hold the base64 data, not directly validate its presence
+            // The check for signaturePad.isEmpty() will happen before form submission
+        } else {
+            signatureArea.classList.remove('visible');
+            setTimeout(() => signatureArea.classList.add('hidden'), 300); // Small delay for animation
+            signaturePad.clear(); // Clear signature if terms are unchecked
+            customerSignatureImageInput.value = '';
+        }
+        updateSubmitButtonState(); // Update submit button state when signature area state changes
+    }
+
+    // Function to enable/disable the submit button
+    function updateSubmitButtonState() {
+        const isPlanSelected = selectedPlanValueInput.value !== '';
+        const isTermsAccepted = acceptTermsCheckbox.checked;
+        const isSignatureDrawn = !signaturePad.isEmpty();
+
+        if (isPlanSelected && isTermsAccepted && isSignatureDrawn) {
+            generateCertificateButton.disabled = false;
+        } else {
+            generateCertificateButton.disabled = true;
+        }
+    }
+
+
     // --- Drawer and Tracking Elements ---
     const hamburgerMenu = document.getElementById('hamburgerMenu');
     const mainDrawer = document.getElementById('mainDrawer');
@@ -112,6 +159,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 selectedPlanDetailsInput.value = button.getAttribute('data-details');
 
                 planOptionsContainer.classList.remove('error');
+                updateSubmitButtonState(); // Update submit button state after plan selection
+
+                // NEW: Show only relevant T&C in the termsContent div
+                updateTermsContentDisplay(plan.internalType);
             });
 
             planOptionsContainer.appendChild(button);
@@ -122,6 +173,21 @@ document.addEventListener('DOMContentLoaded', function () {
         selectedPlanTypeInput.value = '';
         selectedPlanDetailsInput.value = '';
     }
+
+    // NEW: Function to dynamically show/hide T&C content based on selected plan
+    function updateTermsContentDisplay(selectedPlanType) {
+        termItems.forEach(item => {
+            if (item.dataset.plan === selectedPlanType) {
+                item.style.display = 'block'; // Show relevant T&C
+            } else {
+                item.style.display = 'none'; // Hide others
+            }
+        });
+        // Ensure general terms are always visible
+        document.querySelector('.general-terms').style.display = 'block'; 
+        document.querySelector('.terms-list ul:last-of-type').style.display = 'block'; // Ensure the unordered list for general terms is visible
+    }
+
 
     function validateCustomerAndPhoneDetails() {
         let isValid = true;
@@ -219,6 +285,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 10);
 
         planOptionsContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        updateSubmitButtonState(); // Initial update of submit button state
     });
 
     backToPhonePriceButton.addEventListener('click', function() {
@@ -243,19 +310,50 @@ document.addEventListener('DOMContentLoaded', function () {
         selectedPlanDetailsInput.value = '';
         planOptionsContainer.classList.remove('error');
 
+        // Hide terms content and uncheck checkbox on going back
+        termsContent.classList.remove('visible');
+        termsContent.classList.add('hidden');
+        acceptTermsCheckbox.checked = false;
+        termsConditionsContainer.classList.remove('error'); // Remove error state if any
+        updateSignatureAreaState(); // Hide signature area and reset
+
         phonePriceInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        updateSubmitButtonState(); // Update submit button state
     });
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();
 
         if (!selectedPlanValueInput.value) {
-            alert('Please select a Plan.'); // Retaining alert for now, consider custom UI
+            alert('Please select a Plan.');
             planOptionsContainer.classList.add('error');
             planOptionsContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
             return;
         } else {
             planOptionsContainer.classList.remove('error');
+        }
+
+        // Validate Terms and Conditions acceptance
+        if (!acceptTermsCheckbox.checked) {
+            alert('You must accept the Terms and Conditions to generate the certificate.');
+            termsConditionsContainer.classList.add('error'); // Add error class to the container
+            acceptTermsCheckbox.focus();
+            termsConditionsContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+        } else {
+            termsConditionsContainer.classList.remove('error'); // Remove error class if checked
+        }
+
+        // NEW: Validate Signature
+        if (signaturePad.isEmpty()) {
+            alert('Please provide your digital signature.');
+            signatureArea.classList.add('error'); // Optional: add error styling to signature area
+            signatureArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+        } else {
+            signatureArea.classList.remove('error'); // Remove error styling
+            // Get the signature image data as base64 PNG
+            customerSignatureImageInput.value = signaturePad.toDataURL('image/png');
         }
 
         successContainer.classList.remove('visible');
@@ -270,7 +368,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const formData = new FormData(form);
         // The URL for warranty submission is fixed, as per your original code.gs logic.
-        const appScriptWarrantyURL = 'https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec';
+        const appScriptWarrantyURL = 'https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec'; // <-- VERIFY THIS IS YOUR CORRECT APPS SCRIPT URL
 
         fetch(appScriptWarrantyURL, {
             method: 'POST',
@@ -282,7 +380,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 loading.classList.add('hidden');
 
                 if (data.status === 'success') {
-                    document.getElementById('successMessage').textContent = 'Certificate generated successfully!'; // This line was updated in the previous turn
+                    document.getElementById('successMessage').textContent = 'Certificate generated successfully!';
                     downloadLink.href = data.url;
                     qrcodeDiv.innerHTML = '';
                     new QRCode(qrcodeDiv, {
@@ -302,6 +400,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     }, 10);
 
                     form.reset();
+                    // Reset terms checkbox and hide terms content after successful submission
+                    acceptTermsCheckbox.checked = false;
+                    termsContent.classList.remove('visible');
+                    termsContent.classList.add('hidden');
+                    termsConditionsContainer.classList.remove('error');
+                    signaturePad.clear(); // Clear signature on success
+                    updateSignatureAreaState(); // Hide signature area and reset
+
                     const storeId = sessionStorage.getItem('storeId');
                     if (storeId) {
                         storeIdInput.value = storeId;
@@ -337,6 +443,40 @@ document.addEventListener('DOMContentLoaded', function () {
                 errorMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
             });
     });
+
+    // --- Terms and Conditions Toggle ---
+    viewTermsLink.addEventListener('click', function(e) {
+        e.preventDefault(); // Prevent default link behavior
+        termsContent.classList.toggle('hidden');
+        termsContent.classList.toggle('visible');
+        if (termsContent.classList.contains('visible')) {
+            termsContent.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    });
+
+    // Event listener for terms checkbox change
+    acceptTermsCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            termsConditionsContainer.classList.remove('error');
+        }
+        updateSignatureAreaState(); // Update signature area visibility
+        updateSubmitButtonState(); // Update submit button state
+    });
+
+    // NEW: Signature Pad Event Listeners
+    signaturePad.onBegin = function() {
+        signatureArea.classList.remove('error'); // Clear error state on interaction
+    };
+    signaturePad.onEnd = function() {
+        updateSubmitButtonState(); // Update submit button state when drawing ends
+    };
+
+    clearSignatureButton.addEventListener('click', function() {
+        signaturePad.clear();
+        customerSignatureImageInput.value = '';
+        updateSubmitButtonState(); // Update submit button state after clearing
+    });
+
 
     // --- Drawer and Tracking Functionality ---
 
@@ -407,6 +547,14 @@ document.addEventListener('DOMContentLoaded', function () {
         // Also reset tracking section inputs
         fromDateInput.value = '';
         toDateInput.value = '';
+
+        // Also reset signature and T&C state on logout
+        acceptTermsCheckbox.checked = false;
+        termsContent.classList.remove('visible');
+        termsContent.classList.add('hidden');
+        termsConditionsContainer.classList.remove('error');
+        signaturePad.clear();
+        updateSignatureAreaState();
     });
 
     // Tracking Data functionality
@@ -462,7 +610,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Your App Script URL for this project (the one handling warranty submissions and now tracking)
         // This is the URL that corresponds to the code.gs you provided for warranty, not the login one.
-        const appScriptURL = 'https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec';
+        const appScriptURL = 'https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec'; // <-- VERIFY THIS IS YOUR CORRECT APPS SCRIPT URL
 
         const queryParams = new URLSearchParams({
             action: 'getTrackingData', // New action to request tracking data
@@ -526,4 +674,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
+
+    // Initial update for submit button state
+    updateSubmitButtonState();
 });
