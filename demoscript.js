@@ -262,7 +262,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 selectedPlanDetailsInput.value = button.getAttribute('data-details');
 
                 planOptionsContainer.classList.remove('error');
-                updateSubmitButtonState();
+                updateSubmitButtonState(); // Ensure button state is updated after plan selection
 
                 updateTermsContentDisplay(plan.internalType);
             });
@@ -379,7 +379,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 10);
 
         planOptionsContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        updateSubmitButtonState();
+        updateSubmitButtonState(); // Update button state after showing plan selection
     });
 
     backToPhonePriceButton.addEventListener('click', function() {
@@ -402,21 +402,23 @@ document.addEventListener('DOMContentLoaded', function () {
         selectedPlanPriceInput.value = '';
         selectedPlanTypeInput.value = '';
         selectedPlanDetailsInput.value = '';
-        planOptionsContainer.classList.remove('error');
+        planOptionsContainer.classList.remove('error'); // Clear error state on back
 
         termsContent.classList.remove('visible');
         termsContent.classList.add('hidden');
         acceptTermsCheckbox.checked = false;
         termsConditionsContainer.classList.remove('error');
-        updateSignatureAreaState();
+        updateSignatureAreaState(); // This will also call updateSubmitButtonState
 
         phonePriceInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        updateSubmitButtonState();
+        updateSubmitButtonState(); // Final update after resetting state
     });
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();
 
+        // Basic validation (should ideally be handled by updateSubmitButtonState
+        // and prevent submission if button is disabled, but good to have server-side checks too).
         if (!selectedPlanValueInput.value) {
             alert('Please select a Plan.');
             planOptionsContainer.classList.add('error');
@@ -436,8 +438,7 @@ document.addEventListener('DOMContentLoaded', function () {
             termsConditionsContainer.classList.remove('error');
         }
 
-        // NEW: Validate Signature
-        // Check if signaturePad exists and is initialized, and if it's empty
+        // Validate Signature just before submission (redundant if onEnd works, but safe)
         if (signaturePad && typeof signaturePad.isEmpty === 'function') {
             if (signaturePad.isEmpty()) {
                 alert('Please provide your digital signature.');
@@ -446,8 +447,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             } else {
                 signatureArea.classList.remove('error');
-                // Capture the signature as a PNG Data URL
-                customerSignatureImageInput.value = signaturePad.toDataURL('image/png');
+                // Ensure signature is captured for submission in case onEnd was missed or cleared
+                // This is a fallback, the primary capture happens in onEnd now.
+                if (!customerSignatureImageInput.value) {
+                     customerSignatureImageInput.value = signaturePad.toDataURL('image/png');
+                }
             }
         } else {
             console.error("SignaturePad not initialized or isEmpty method missing. Cannot validate signature.");
@@ -570,6 +574,13 @@ document.addEventListener('DOMContentLoaded', function () {
         };
         signaturePad.onEnd = function() {
             console.log("SignaturePad.onEnd fired! Re-checking button state.");
+            // *** PROPOSED FIX: Capture signature data immediately on end of drawing ***
+            if (!signaturePad.isEmpty()) {
+                customerSignatureImageInput.value = signaturePad.toDataURL('image/png');
+                console.log("Signature captured and assigned to customerSignatureImageInput.value.");
+            } else {
+                customerSignatureImageInput.value = ''; // Clear if the signature was somehow drawn then erased
+            }
             updateSubmitButtonState();
         };
     } else {
@@ -581,7 +592,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (signaturePad) {
             signaturePad.clear();
         }
-        customerSignatureImageInput.value = '';
+        customerSignatureImageInput.value = ''; // Ensure the hidden input is also cleared
         updateSubmitButtonState();
     });
 
