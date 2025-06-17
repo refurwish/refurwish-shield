@@ -35,9 +35,39 @@ document.addEventListener('DOMContentLoaded', function () {
     const customerSignatureImageInput = document.getElementById('customerSignatureImage');
     const generateCertificateButton = document.getElementById('generateCertificateButton'); // Submit button
 
+    // --- DEBUGGING LOGS START ---
+    console.log("--- Starting demoscript.js initialization ---");
+    console.log("Attempting to find signatureCanvas element...");
+    // --- DEBUGGING LOGS END ---
+
     // Initialize Signature Pad
-    const signaturePad = new SignaturePad(signatureCanvas);
-    
+    let signaturePad; // Declare with 'let' in case initialization needs to be inside if/else
+    if (signatureCanvas) {
+        try {
+            signaturePad = new SignaturePad(signatureCanvas);
+            // --- DEBUGGING LOGS START ---
+            console.log("signatureCanvas found:", signatureCanvas);
+            console.log("SignaturePad instance created successfully:");
+            console.log(signaturePad);
+            window.debugSignaturePad = signaturePad; // Make it globally accessible for console debugging
+            // --- DEBUGGING LOGS END ---
+        } catch (e) {
+            // --- DEBUGGING LOGS START ---
+            console.error("ERROR during SignaturePad initialization (caught in try-catch):", e);
+            // --- DEBUGGING LOGS END ---
+        }
+    } else {
+        // --- DEBUGGING LOGS START ---
+        console.error("CRITICAL ERROR: signatureCanvas element with ID 'signatureCanvas' was NOT found in the DOM!");
+        // --- DEBUGGING LOGS END ---
+    }
+
+    // --- DEBUGGING LOGS START ---
+    console.log("Value of 'signaturePad' variable after initialization block:");
+    console.log(signaturePad);
+    // --- DEBUGGING LOGS END ---
+
+
     // Function to update the visibility and required status of the signature area
     function updateSignatureAreaState() {
         if (acceptTermsCheckbox.checked) {
@@ -48,7 +78,10 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
             signatureArea.classList.remove('visible');
             setTimeout(() => signatureArea.classList.add('hidden'), 300); // Small delay for animation
-            signaturePad.clear(); // Clear signature if terms are unchecked
+            // Ensure signaturePad is defined before calling clear()
+            if (signaturePad) {
+                signaturePad.clear(); // Clear signature if terms are unchecked
+            }
             customerSignatureImageInput.value = '';
         }
         updateSubmitButtonState(); // Update submit button state when signature area state changes
@@ -58,13 +91,31 @@ document.addEventListener('DOMContentLoaded', function () {
     function updateSubmitButtonState() {
         const isPlanSelected = selectedPlanValueInput.value !== '';
         const isTermsAccepted = acceptTermsCheckbox.checked;
-        const isSignatureDrawn = !signaturePad.isEmpty();
+        let isSignatureDrawn = false;
+
+        // Ensure signaturePad is defined before calling isEmpty()
+        if (signaturePad) {
+            isSignatureDrawn = !signaturePad.isEmpty();
+        } else {
+            // --- DEBUGGING LOGS START ---
+            console.warn("signaturePad is not defined when checking isEmpty() in updateSubmitButtonState. Button will be disabled.");
+            // --- DEBUGGING LOGS END ---
+            isSignatureDrawn = false; // Cannot check if signature pad is not initialized
+        }
+
 
         if (isPlanSelected && isTermsAccepted && isSignatureDrawn) {
             generateCertificateButton.disabled = false;
         } else {
             generateCertificateButton.disabled = true;
         }
+        // --- DEBUGGING LOGS START ---
+        console.log("updateSubmitButtonState called:");
+        console.log("  isPlanSelected:", isPlanSelected);
+        console.log("  isTermsAccepted:", isTermsAccepted);
+        console.log("  isSignatureDrawn:", isSignatureDrawn);
+        console.log("  generateCertificateButton.disabled set to:", generateCertificateButton.disabled);
+        // --- DEBUGGING LOGS END ---
     }
 
 
@@ -184,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
         // Ensure general terms are always visible
-        document.querySelector('.general-terms').style.display = 'block'; 
+        document.querySelector('.general-terms').style.display = 'block';
         document.querySelector('.terms-list ul:last-of-type').style.display = 'block'; // Ensure the unordered list for general terms is visible
     }
 
@@ -345,16 +396,22 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // NEW: Validate Signature
-        if (signaturePad.isEmpty()) {
+        // Ensure signaturePad is defined before calling isEmpty()
+        if (signaturePad && signaturePad.isEmpty()) { // Added check for signaturePad
             alert('Please provide your digital signature.');
             signatureArea.classList.add('error'); // Optional: add error styling to signature area
             signatureArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
             return;
-        } else {
+        } else if (signaturePad) { // Only if signaturePad is defined, proceed to get data
             signatureArea.classList.remove('error'); // Remove error styling
             // Get the signature image data as base64 PNG
             customerSignatureImageInput.value = signaturePad.toDataURL('image/png');
+        } else {
+            console.error("SignaturePad not initialized, cannot get signature data.");
+            alert("An internal error occurred: Signature pad not ready. Please try again or refresh.");
+            return;
         }
+
 
         successContainer.classList.remove('visible');
         successContainer.classList.add('hidden');
@@ -405,7 +462,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     termsContent.classList.remove('visible');
                     termsContent.classList.add('hidden');
                     termsConditionsContainer.classList.remove('error');
-                    signaturePad.clear(); // Clear signature on success
+                    // Ensure signaturePad is defined before calling clear()
+                    if (signaturePad) {
+                        signaturePad.clear(); // Clear signature on success
+                    }
                     updateSignatureAreaState(); // Hide signature area and reset
 
                     const storeId = sessionStorage.getItem('storeId');
@@ -464,15 +524,24 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // NEW: Signature Pad Event Listeners
-    signaturePad.onBegin = function() {
-        signatureArea.classList.remove('error'); // Clear error state on interaction
-    };
-    signaturePad.onEnd = function() {
-        updateSubmitButtonState(); // Update submit button state when drawing ends
-    };
+    // Ensure signaturePad is defined before assigning event handlers
+    if (signaturePad) {
+        signaturePad.onBegin = function() {
+            signatureArea.classList.remove('error'); // Clear error state on interaction
+        };
+        signaturePad.onEnd = function() {
+            updateSubmitButtonState(); // Update submit button state when drawing ends
+        };
+    } else {
+        console.warn("SignaturePad not initialized. Skipping onBegin and onEnd event handlers.");
+    }
+
 
     clearSignatureButton.addEventListener('click', function() {
-        signaturePad.clear();
+        // Ensure signaturePad is defined before calling clear()
+        if (signaturePad) {
+            signaturePad.clear();
+        }
         customerSignatureImageInput.value = '';
         updateSubmitButtonState(); // Update submit button state after clearing
     });
@@ -553,7 +622,10 @@ document.addEventListener('DOMContentLoaded', function () {
         termsContent.classList.remove('visible');
         termsContent.classList.add('hidden');
         termsConditionsContainer.classList.remove('error');
-        signaturePad.clear();
+        // Ensure signaturePad is defined before calling clear()
+        if (signaturePad) {
+            signaturePad.clear();
+        }
         updateSignatureAreaState();
     });
 
