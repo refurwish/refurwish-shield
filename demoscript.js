@@ -26,14 +26,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const acceptTermsCheckbox = document.getElementById('acceptTerms');
     const viewTermsLink = document.getElementById('viewTermsLink');
     const termsContent = document.getElementById('termsContent');
-    const termItems = document.querySelectorAll('.term-item'); // Get all individual T&C blocks
+    const termItems = document.querySelectorAll('.term-item');
 
     // --- NEW: Signature Elements ---
     const signatureArea = document.getElementById('signatureArea');
     const signatureCanvas = document.getElementById('signatureCanvas');
     const clearSignatureButton = document.getElementById('clearSignature');
     const customerSignatureImageInput = document.getElementById('customerSignatureImage');
-    const generateCertificateButton = document.getElementById('generateCertificateButton'); // Submit button
+    const generateCertificateButton = document.getElementById('generateCertificateButton');
 
     // --- DEBUGGING LOGS START ---
     console.log("--- Starting demoscript.js initialization ---");
@@ -41,8 +41,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- DEBUGGING LOGS END ---
 
     // Initialize Signature Pad
-    let signaturePad; // Changed from const to let
-    if (signatureCanvas) {
+    let signaturePad;
+    // CRITICAL: Ensure SignaturePad constructor is available AND canvas element exists
+    if (typeof SignaturePad !== 'undefined' && signatureCanvas) {
         try {
             signaturePad = new SignaturePad(signatureCanvas);
             // --- DEBUGGING LOGS START ---
@@ -52,14 +53,18 @@ document.addEventListener('DOMContentLoaded', function () {
             window.debugSignaturePad = signaturePad; // Make it globally accessible for console debugging
             // --- DEBUGGING LOGS END ---
         } catch (e) {
-            // --- DEBUGGING LOGS START ---
+            // This catch block will tell us if there's an error *during* SignaturePad's own construction
             console.error("ERROR during SignaturePad initialization (caught in try-catch):", e);
-            // --- DEBUGGING LOGS END ---
+            console.error("Please check if the canvas element is valid and SignaturePad library is compatible.");
         }
     } else {
-        // --- DEBUGGING LOGS START ---
-        console.error("CRITICAL ERROR: signatureCanvas element with ID 'signatureCanvas' was NOT found in the DOM!");
-        // --- DEBUGGING LOGS END ---
+        // This else block will tell us if SignaturePad constructor or canvas was missing
+        if (typeof SignaturePad === 'undefined') {
+            console.error("CRITICAL ERROR: SignaturePad constructor is UNDEFINED. Is the library loaded correctly?");
+        }
+        if (!signatureCanvas) {
+            console.error("CRITICAL ERROR: signatureCanvas element with ID 'signatureCanvas' was NOT found in the DOM!");
+        }
     }
 
     // --- DEBUGGING LOGS START ---
@@ -73,18 +78,15 @@ document.addEventListener('DOMContentLoaded', function () {
         if (acceptTermsCheckbox.checked) {
             signatureArea.classList.remove('hidden');
             setTimeout(() => signatureArea.classList.add('visible'), 10);
-            // The hidden input field will hold the base64 data, not directly validate its presence
-            // The check for signaturePad.isEmpty() will happen before form submission
         } else {
             signatureArea.classList.remove('visible');
-            setTimeout(() => signatureArea.classList.add('hidden'), 300); // Small delay for animation
-            // Ensure signaturePad is defined before calling clear()
-            if (signaturePad) {
-                signaturePad.clear(); // Clear signature if terms are unchecked
+            setTimeout(() => signatureArea.classList.add('hidden'), 300);
+            if (signaturePad) { // Safely clear signature if pad exists
+                signaturePad.clear();
             }
             customerSignatureImageInput.value = '';
         }
-        updateSubmitButtonState(); // Update submit button state when signature area state changes
+        updateSubmitButtonState();
     }
 
     // Function to enable/disable the submit button
@@ -93,16 +95,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const isTermsAccepted = acceptTermsCheckbox.checked;
         let isSignatureDrawn = false;
 
-        // Ensure signaturePad is defined before calling isEmpty()
-        if (signaturePad) {
+        // Ensure signaturePad is defined and not null before calling isEmpty()
+        if (signaturePad && typeof signaturePad.isEmpty === 'function') {
             isSignatureDrawn = !signaturePad.isEmpty();
         } else {
-            // --- DEBUGGING LOGS START ---
-            console.warn("signaturePad is not defined when checking isEmpty() in updateSubmitButtonState. Button will be disabled.");
-            // --- DEBUGGING LOGS END ---
-            isSignatureDrawn = false; // Cannot check if signature pad is not initialized
+            console.warn("SignaturePad is not initialized or isEmpty method is missing. isSignatureDrawn will be false.");
+            isSignatureDrawn = false;
         }
-
 
         if (isPlanSelected && isTermsAccepted && isSignatureDrawn) {
             generateCertificateButton.disabled = false;
@@ -119,12 +118,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 
-    // --- Drawer and Tracking Elements ---
+    // --- Drawer and Tracking Elements (unchanged from previous version for brevity) ---
     const hamburgerMenu = document.getElementById('hamburgerMenu');
     const mainDrawer = document.getElementById('mainDrawer');
     const drawerCloseButton = document.getElementById('drawerCloseButton');
     const drawerOverlay = document.getElementById('drawerOverlay');
-    const logoutButtonDrawer = document.getElementById('logoutButtonDrawer'); // New logout button in drawer
+    const logoutButtonDrawer = document.getElementById('logoutButtonDrawer');
     const openTrackingButton = document.getElementById('openTrackingButton');
     const trackingSection = document.getElementById('trackingSection');
     const fromDateInput = document.getElementById('fromDate');
@@ -210,9 +209,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 selectedPlanDetailsInput.value = button.getAttribute('data-details');
 
                 planOptionsContainer.classList.remove('error');
-                updateSubmitButtonState(); // Update submit button state after plan selection
+                updateSubmitButtonState();
 
-                // NEW: Show only relevant T&C in the termsContent div
                 updateTermsContentDisplay(plan.internalType);
             });
 
@@ -225,18 +223,16 @@ document.addEventListener('DOMContentLoaded', function () {
         selectedPlanDetailsInput.value = '';
     }
 
-    // NEW: Function to dynamically show/hide T&C content based on selected plan
     function updateTermsContentDisplay(selectedPlanType) {
         termItems.forEach(item => {
             if (item.dataset.plan === selectedPlanType) {
-                item.style.display = 'block'; // Show relevant T&C
+                item.style.display = 'block';
             } else {
-                item.style.display = 'none'; // Hide others
+                item.style.display = 'none';
             }
         });
-        // Ensure general terms are always visible
         document.querySelector('.general-terms').style.display = 'block';
-        document.querySelector('.terms-list ul:last-of-type').style.display = 'block'; // Ensure the unordered list for general terms is visible
+        document.querySelector('.terms-list ul:last-of-type').style.display = 'block';
     }
 
 
@@ -264,10 +260,8 @@ document.addEventListener('DOMContentLoaded', function () {
             isValid = false;
         }
 
-        // Keep the phone price validation here for general form validity,
-        // but the specific alert will be handled in showPlanPricesButton click.
         const phonePrice = parseFloat(phonePriceInput.value);
-        if (isNaN(phonePrice) || phonePrice <= 0) { // This handles empty or non-numeric/zero values
+        if (isNaN(phonePrice) || phonePrice <= 0) {
             phonePriceInput.classList.add('error');
             isValid = false;
         } else {
@@ -292,30 +286,26 @@ document.addEventListener('DOMContentLoaded', function () {
     showPlanPricesButton.addEventListener('click', function (e) {
         e.preventDefault();
 
-        // First, validate all fields generally
         if (!validateCustomerAndPhoneDetails()) {
             alert('Please fill in all required details correctly before proceeding to plan selection.');
             const firstErrorField = document.querySelector('.form-group input.error, .form-group select.error');
             if (firstErrorField) {
                 firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
-            return; // Stop if basic validation fails
+            return;
         }
 
-        // THEN, specifically check the phone price range
         const phonePrice = parseFloat(phonePriceInput.value);
         if (phonePrice < 5000 || phonePrice > 250000) {
             alert('Please enter phone price between ₹5,000 to ₹2,50,000.');
-            phonePriceInput.classList.add('error'); // Highlight the field
-            phonePriceInput.focus(); // Bring focus to the field
+            phonePriceInput.classList.add('error');
+            phonePriceInput.focus();
             phonePriceInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            return; // Stop the function here
+            return;
         } else {
-            phonePriceInput.classList.remove('error'); // Ensure no error class if it was there
+            phonePriceInput.classList.remove('error');
         }
 
-
-        // If all validations pass, proceed to show plan prices
         populatePlanOptions(phonePrice);
         confirmedPhonePriceDisplay.textContent = `₹${phonePrice.toLocaleString('en-IN')}`;
 
@@ -336,7 +326,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 10);
 
         planOptionsContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        updateSubmitButtonState(); // Initial update of submit button state
+        updateSubmitButtonState();
     });
 
     backToPhonePriceButton.addEventListener('click', function() {
@@ -361,15 +351,14 @@ document.addEventListener('DOMContentLoaded', function () {
         selectedPlanDetailsInput.value = '';
         planOptionsContainer.classList.remove('error');
 
-        // Hide terms content and uncheck checkbox on going back
         termsContent.classList.remove('visible');
         termsContent.classList.add('hidden');
         acceptTermsCheckbox.checked = false;
-        termsConditionsContainer.classList.remove('error'); // Remove error state if any
-        updateSignatureAreaState(); // Hide signature area and reset
+        termsConditionsContainer.classList.remove('error');
+        updateSignatureAreaState();
 
         phonePriceInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        updateSubmitButtonState(); // Update submit button state
+        updateSubmitButtonState();
     });
 
     form.addEventListener('submit', function (e) {
@@ -384,30 +373,30 @@ document.addEventListener('DOMContentLoaded', function () {
             planOptionsContainer.classList.remove('error');
         }
 
-        // Validate Terms and Conditions acceptance
         if (!acceptTermsCheckbox.checked) {
             alert('You must accept the Terms and Conditions to generate the certificate.');
-            termsConditionsContainer.classList.add('error'); // Add error class to the container
+            termsConditionsContainer.classList.add('error');
             acceptTermsCheckbox.focus();
             termsConditionsContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
             return;
         } else {
-            termsConditionsContainer.classList.remove('error'); // Remove error class if checked
+            termsConditionsContainer.classList.remove('error');
         }
 
         // NEW: Validate Signature
-        // Ensure signaturePad is defined before calling isEmpty()
-        if (signaturePad && signaturePad.isEmpty()) { // Added check for signaturePad
-            alert('Please provide your digital signature.');
-            signatureArea.classList.add('error'); // Optional: add error styling to signature area
-            signatureArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            return;
-        } else if (signaturePad) { // Only if signaturePad is defined, proceed to get data
-            signatureArea.classList.remove('error'); // Remove error styling
-            // Get the signature image data as base64 PNG
-            customerSignatureImageInput.value = signaturePad.toDataURL('image/png');
+        // Check if signaturePad exists and is initialized, and if it's empty
+        if (signaturePad && typeof signaturePad.isEmpty === 'function') {
+            if (signaturePad.isEmpty()) {
+                alert('Please provide your digital signature.');
+                signatureArea.classList.add('error');
+                signatureArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            } else {
+                signatureArea.classList.remove('error');
+                customerSignatureImageInput.value = signaturePad.toDataURL('image/png');
+            }
         } else {
-            console.error("SignaturePad not initialized, cannot get signature data.");
+            console.error("SignaturePad not initialized or isEmpty method missing. Cannot validate signature.");
             alert("An internal error occurred: Signature pad not ready. Please try again or refresh.");
             return;
         }
@@ -424,8 +413,7 @@ document.addEventListener('DOMContentLoaded', function () {
         setTimeout(() => loading.classList.add('visible'), 10);
 
         const formData = new FormData(form);
-        // The URL for warranty submission is fixed, as per your original code.gs logic.
-        const appScriptWarrantyURL = 'https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec'; // <-- VERIFY THIS IS YOUR CORRECT APPS SCRIPT URL
+        const appScriptWarrantyURL = 'https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec';
 
         fetch(appScriptWarrantyURL, {
             method: 'POST',
@@ -457,16 +445,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     }, 10);
 
                     form.reset();
-                    // Reset terms checkbox and hide terms content after successful submission
                     acceptTermsCheckbox.checked = false;
                     termsContent.classList.remove('visible');
                     termsContent.classList.add('hidden');
                     termsConditionsContainer.classList.remove('error');
-                    // Ensure signaturePad is defined before calling clear()
                     if (signaturePad) {
-                        signaturePad.clear(); // Clear signature on success
+                        signaturePad.clear();
                     }
-                    updateSignatureAreaState(); // Hide signature area and reset
+                    updateSignatureAreaState();
 
                     const storeId = sessionStorage.getItem('storeId');
                     if (storeId) {
@@ -506,7 +492,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- Terms and Conditions Toggle ---
     viewTermsLink.addEventListener('click', function(e) {
-        e.preventDefault(); // Prevent default link behavior
+        e.preventDefault();
         termsContent.classList.toggle('hidden');
         termsContent.classList.toggle('visible');
         if (termsContent.classList.contains('visible')) {
@@ -519,51 +505,46 @@ document.addEventListener('DOMContentLoaded', function () {
         if (this.checked) {
             termsConditionsContainer.classList.remove('error');
         }
-        updateSignatureAreaState(); // Update signature area visibility
-        updateSubmitButtonState(); // Update submit button state
+        updateSignatureAreaState();
+        updateSubmitButtonState();
     });
 
-    // NEW: Signature Pad Event Listeners
-    // Ensure signaturePad is defined before assigning event handlers
+    // Signature Pad Event Listeners
+    // ONLY assign these if signaturePad was successfully initialized
     if (signaturePad) {
         signaturePad.onBegin = function() {
-            signatureArea.classList.remove('error'); // Clear error state on interaction
+            signatureArea.classList.remove('error');
         };
         signaturePad.onEnd = function() {
-            updateSubmitButtonState(); // Update submit button state when drawing ends
+            updateSubmitButtonState();
         };
     } else {
-        console.warn("SignaturePad not initialized. Skipping onBegin and onEnd event handlers.");
+        console.warn("SignaturePad not initialized. Skipping onBegin and onEnd event handlers. Signature validation will rely on explicit checks only.");
     }
 
 
     clearSignatureButton.addEventListener('click', function() {
-        // Ensure signaturePad is defined before calling clear()
         if (signaturePad) {
             signaturePad.clear();
         }
         customerSignatureImageInput.value = '';
-        updateSubmitButtonState(); // Update submit button state after clearing
+        updateSubmitButtonState();
     });
 
 
-    // --- Drawer and Tracking Functionality ---
-
-    // Function to open the drawer
+    // --- Drawer and Tracking Functionality (unchanged for brevity) ---
     function openDrawer() {
         mainDrawer.classList.add('open');
         drawerOverlay.classList.remove('hidden');
         setTimeout(() => drawerOverlay.classList.add('visible'), 10);
-        document.body.style.overflow = 'hidden'; // Prevent scrolling main content
+        document.body.style.overflow = 'hidden';
     }
 
-    // Function to close the drawer
     function closeDrawer() {
         mainDrawer.classList.remove('open');
         drawerOverlay.classList.remove('visible');
-        setTimeout(() => drawerOverlay.classList.add('hidden'), 300); // Match CSS transition
-        document.body.style.overflow = ''; // Allow scrolling main content
-        // Hide tracking section when drawer closes
+        setTimeout(() => drawerOverlay.classList.add('hidden'), 300);
+        document.body.style.overflow = '';
         trackingSection.classList.remove('visible');
         trackingSection.classList.add('hidden');
         trackingResults.classList.remove('visible');
@@ -574,81 +555,62 @@ document.addEventListener('DOMContentLoaded', function () {
         trackingLoading.classList.add('hidden');
     }
 
-    // Event listeners for drawer
     hamburgerMenu.addEventListener('click', openDrawer);
     drawerCloseButton.addEventListener('click', closeDrawer);
     drawerOverlay.addEventListener('click', closeDrawer);
 
-    // Logout button inside the drawer
     logoutButtonDrawer.addEventListener('click', () => {
-        // Clear session storage
         sessionStorage.removeItem('storeId');
 
-        // Reset forms (manual reset for mobile autofill issues)
         document.getElementById('loginForm').reset();
-        form.reset(); // This is the warrantyForm
+        form.reset();
 
-        // Manually clear the form fields to prevent autofill issues on mobile
         document.getElementById('loginStoreId').value = '';
         document.getElementById('loginPassword').value = '';
         storeIdInput.value = '';
         document.getElementById('displayedStoreId').textContent = '';
 
-        // Switch views with animation (from auth.js's logic)
-        // Since auth.js handles this, we'll simulate its showSection logic if needed
-        // or just directly apply classes assuming it will be re-initialized on next load.
-        // For simplicity, we'll directly hide/show sections as per original auth.js.
         document.getElementById('warrantySection').classList.remove('visible');
         document.getElementById('warrantySection').classList.add('hidden');
         document.getElementById('loginSection').classList.remove('hidden');
-        setTimeout(() => document.getElementById('loginSection').classList.add('visible'), 10); // Animate in
+        setTimeout(() => document.getElementById('loginSection').classList.add('visible'), 10);
 
-        // Ensure login form is in its initial state (no loading/error messages)
         document.getElementById('loginError').classList.add('hidden');
         document.getElementById('loginError').classList.remove('visible');
         document.getElementById('loginLoading').classList.add('hidden');
         document.getElementById('loginLoading').classList.remove('visible');
         document.getElementById('loginForm').querySelector('.submit-button').classList.remove('hidden');
 
-        // Close the drawer after logout
         closeDrawer();
 
-        // Also reset tracking section inputs
         fromDateInput.value = '';
         toDateInput.value = '';
 
-        // Also reset signature and T&C state on logout
         acceptTermsCheckbox.checked = false;
         termsContent.classList.remove('visible');
         termsContent.classList.add('hidden');
         termsConditionsContainer.classList.remove('error');
-        // Ensure signaturePad is defined before calling clear()
         if (signaturePad) {
             signaturePad.clear();
         }
         updateSignatureAreaState();
     });
 
-    // Tracking Data functionality
     openTrackingButton.addEventListener('click', () => {
-        // Toggle visibility of tracking section
         trackingSection.classList.toggle('hidden');
         setTimeout(() => {
             trackingSection.classList.toggle('visible');
-        }, 10); // Small delay for animation
+        }, 10);
 
-        // Set default dates if not already set
         if (!fromDateInput.value || !toDateInput.value) {
             const today = new Date();
             const thirtyDaysAgo = new Date();
             thirtyDaysAgo.setDate(today.getDate() - 30);
 
-            // Format dates to YYYY-MM-DD for input type="date"
             fromDateInput.value = thirtyDaysAgo.toISOString().split('T')[0];
             toDateInput.value = today.toISOString().split('T')[0];
         }
 
-        // Scroll to tracking section in drawer
         trackingSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
@@ -657,7 +619,7 @@ document.addEventListener('DOMContentLoaded', function () {
     async function fetchTrackingData() {
         const fromDate = fromDateInput.value;
         const toDate = toDateInput.value;
-        const storeId = sessionStorage.getItem('storeId'); // Get current logged-in store ID
+        const storeId = sessionStorage.getItem('storeId');
 
         if (!storeId) {
             trackingError.textContent = 'Store ID not found. Please log in again.';
@@ -680,19 +642,16 @@ document.addEventListener('DOMContentLoaded', function () {
         trackingLoading.classList.remove('hidden');
         setTimeout(() => trackingLoading.classList.add('visible'), 10);
 
-        // Your App Script URL for this project (the one handling warranty submissions and now tracking)
-        // This is the URL that corresponds to the code.gs you provided for warranty, not the login one.
-        const appScriptURL = 'https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec'; // <-- VERIFY THIS IS YOUR CORRECT APPS SCRIPT URL
+        const appScriptURL = 'https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec';
 
         const queryParams = new URLSearchParams({
-            action: 'getTrackingData', // New action to request tracking data
+            action: 'getTrackingData',
             storeId: storeId,
             fromDate: fromDate,
             toDate: toDate
         });
 
         try {
-            // Use GET method as per the doGet function in code.gs
             const response = await fetch(`${appScriptURL}?${queryParams.toString()}`, {
                 method: 'GET'
             });
@@ -724,7 +683,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Helper function to format dates for display (e.g., for "Summary for ...")
     function formatDateForDisplay(dateString) {
         const date = new Date(dateString);
         return date.toLocaleDateString('en-IN', {
@@ -734,11 +692,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // --- Show Password Functionality ---
     if (showPasswordToggle && loginPasswordInput) {
         showPasswordToggle.addEventListener('change', () => {
-            // If the checkbox is checked, change the input type to 'text'
-            // Otherwise, change it back to 'password'
             if (showPasswordToggle.checked) {
                 loginPasswordInput.type = 'text';
             } else {
