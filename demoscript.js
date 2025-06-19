@@ -88,23 +88,23 @@ document.addEventListener('DOMContentLoaded', function () {
     const termsAndConditionsData = {
         "Extended Warranty": {
             content: "<p>These are the **Terms and Conditions for Extended Warranty** plan.</p><p>This plan covers manufacturing defects and functional issues beyond the standard manufacturer's warranty for 12 months. Please refer to the full document for exclusions and claim procedures.</p><p>This content should ideally come from your Google Doc.</p>",
-            fullLink: "https://docs.google.com/document/d/1dh4wlhr1WdBLhzCaL4sAM79am5-h6r_o4i9t-rH_Z7Y/edit?usp=sharing" // Replace with actual Google Doc link
+            fullLink: "https://drive.google.com/uc?export=download&id=1sv9svRqkP2JW7hig9Lh2gUdedDhPZv_r" // Replace with actual Google Doc link
         },
         "Screen Damage Protection": {
             content: "<p>These are the **Terms and Conditions for Screen Damage Protection** plan.</p><p>This plan covers physical damage to the screen for 12 months. Coverage includes screen repair or replacement as per policy limits. Accidental damage to other parts of the device is not covered.</p>",
-            fullLink: "https://docs.google.com/document/d/1PDNbIXdySjtowBv7xmtYJAv9ynFsOs2HjHRe2hlWC_A/edit?usp=sharing" // Replace with actual Google Doc link
+            fullLink: "https://drive.google.com/uc?export=download&id=1styeSFp0T8lF3FYL6tU69xWk29t81snd" // Replace with actual Google Doc link
         },
         "Total Damage Protection": {
             content: "<p>These are the **Terms and Conditions for Total Damage Protection** plan.</p><p>This comprehensive plan covers accidental physical damage, liquid damage, and other specified perils for 12 months. Limits and exclusions apply, detailed in the full terms.</p>",
-            fullLink: "https://docs.google.com/document/d/1LObsUyHdGXZ_rmOaPMMV4m1EwaXLmdx5GJMe4xw5ARc/edit?usp=sharing" // Replace with actual Google Doc link
+            fullLink: "https://drive.google.com/uc?export=download&id=1sqXoSiJvHSfYoSqJjPqZzXAfg41Yiqar" // Replace with actual Google Doc link
         },
         "Combo (Screen Damage Protection + Extended Warranty)": {
             content: "<p>These are the **Terms and Conditions for Combo (Screen Damage Protection + Extended Warranty)** plan.</p><p>This combo offers both screen damage protection (12 months) and extended warranty (12 months after manufacturer's warranty, totaling 24 months coverage). Refer to individual plan terms for specific details.</p>",
-            fullLink: "https://docs.google.com/document/d/1xHIZ9F6OFPesPuM4Lxa7fo9vWPlS2J25W7HYgALQ6wk/edit?usp=sharing" // Replace with actual Google Doc link
+            fullLink: "https://drive.google.com/uc?export=download&id=1t3WJbGXiiyWOaaSCVjsk2u7RYLom0_B7" // Replace with actual Google Doc link
         },
         "Combo (Total Damage Protection + Extended Warranty)": {
             content: "<p>These are the **Terms and Conditions for Combo (Total Damage Protection + Extended Warranty)** plan.</p><p>This combo provides comprehensive total damage protection (12 months) and extended warranty (12 months after manufacturer's warranty, totaling 24 months coverage). Review both individual plan terms for complete understanding.</p>",
-            fullLink: "https://docs.google.com/document/d/1Gcf6fGEUV74G1dbNGjmZzzwAkPCFLDgbIhdHRnABBy4/edit?usp=sharing" // Replace with actual Google Doc link
+            fullLink: "https://drive.google.com/uc?export=download&id=1t0z5Dx_8jXqBL3kqxksgYfez8pzANOU8" // Replace with actual Google Doc link
         }
     };
 
