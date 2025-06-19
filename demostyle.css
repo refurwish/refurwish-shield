@@ -27,6 +27,8 @@ body {
     border-radius: 12px; /* Softer rounded corners */
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1); /* Deeper, more subtle shadow */
     width: 90%;
+    /* THIS IS THE MAX WIDTH OF YOUR MAIN LOGIN/WARRANTY BOXES */
+    /* If you want them wider, increase this value. */
     max-width: 550px; /* Slightly wider for better layout */
     position: relative;
     opacity: 0; /* Start hidden for entrance animation */
@@ -239,6 +241,7 @@ select {
 }
 
 /* Utility Class for Hidden Elements */
+/* These classes control the visibility and animation of sections */
 .hidden {
     display: none !important; /* Use !important to override other display properties */
     opacity: 0;
@@ -747,11 +750,6 @@ select.error {
     font-weight: 700;
 }
 
----
-
-### **New Styles for Terms and Conditions Section:**
-
-```css
 /* --- NEW: Terms and Conditions Section Styles --- */
 .terms-and-conditions-section {
     background-color: #fcfcfc; /* Slightly off-white */
@@ -771,7 +769,7 @@ select.error {
     transform: translateY(0);
 }
 
-.terms-and-conditions-section h3 {
+.terms-and-conditions-section h4 { /* Changed from h3 to h4 to match your HTML */
     text-align: center;
     color: #2c3e50;
     margin-top: 0;
@@ -886,4 +884,220 @@ select.error {
 .full-terms-link a:hover {
     color: #0056b3;
     text-decoration: underline;
+}
+
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: 30px 20px;
+        border-radius: 10px;
+        /* Re-evaluate max-width for tablets if it feels too small */
+        /* max-width: 600px; /* Example: increase slightly for tablets if needed */
+    }
+
+    h1, h2 {
+        font-size: 1.8em;
+        margin-bottom: 20px;
+    }
+
+    .logo {
+        max-width: 160px;
+        margin-bottom: 25px;
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="date"],
+    input[type="number"],
+    input[type="password"],
+    select {
+        padding: 10px 12px;
+        font-size: 0.95rem;
+    }
+
+    .submit-button,
+    .back-button,
+    #downloadLink {
+        padding: 12px 20px;
+        font-size: 1rem;
+    }
+
+    .plan-button {
+        font-size: 0.95rem;
+        padding: 12px 15px;
+    }
+
+    .plan-button .plan-price {
+        font-size: 1.05rem;
+    }
+
+    #pdfLinkSection {
+        padding: 15px;
+    }
+
+    /* Logout button inside drawer also adjusts */
+    .drawer .logout-button {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+
+    .displayed-phone-price-info {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+    }
+    .displayed-phone-price-info strong {
+        font-size: 1.1rem;
+    }
+    .displayed-phone-price-info .back-button {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+
+    .hamburger-menu {
+        font-size: 1.8rem;
+        top: 15px;
+        left: 15px;
+    }
+
+    .drawer {
+        max-width: 250px;
+    }
+
+    .drawer.open {
+        width: 250px;
+    }
+
+    .drawer-close-button {
+        font-size: 1.6rem;
+    }
+
+    .drawer-header h3 {
+        font-size: 1.3rem;
+    }
+
+    .drawer-menu-item {
+        font-size: 0.95rem;
+        padding: 10px 12px;
+    }
+
+    .drawer-menu-item i {
+        font-size: 1.3rem;
+    }
+
+    .tracking-section {
+        padding: 15px;
+    }
+
+    .tracking-section h4 {
+        font-size: 1.1rem;
+    }
+
+    .tracking-results p {
+        font-size: 0.9rem;
+    }
+
+    .tracking-results strong {
+        font-size: 1rem;
+    }
+
+    /* Terms and Conditions responsive adjustments */
+    .terms-and-conditions-section {
+        padding: 20px; /* Slightly less padding on smaller screens */
+    }
+    .terms-and-conditions-section h4 {
+        font-size: 1.2rem;
+    }
+    .terms-and-conditions-content {
+        max-height: 150px; /* Adjust max-height for T&C content on smaller screens */
+        padding: 12px;
+    }
+    .terms-agreement label {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 20px 15px;
+        border-radius: 8px;
+        /* Re-evaluate max-width for phones if it feels too small */
+        /* max-width: 380px; /* Example: increase slightly for small phones if needed */
+    }
+
+    h1, h2 {
+        font-size: 1.5em;
+        margin-bottom: 15px;
+    }
+
+    .logo {
+        max-width: 140px;
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .submit-button.small-button {
+        padding: 8px 15px;
+        font-size: 0.85rem;
+    }
+
+    .plan-options-container {
+        grid-template-columns: 1fr; /* Stack buttons on very small screens */
+        gap: 10px;
+    }
+    
+    .plan-button .plan-text {
+        margin-right: 5px;
+    }
+
+    .plan-button .plan-price {
+        font-size: 1rem;
+    }
+
+    .displayed-phone-price-info {
+        padding: 6px 8px;
+        font-size: 0.85rem;
+    }
+    .displayed-phone-price-info strong {
+        font-size: 1rem;
+    }
+    .displayed-phone-price-info .back-button {
+        padding: 5px 8px;
+        font-size: 0.75rem;
+    }
+
+    .drawer.open {
+        width: 100%; /* Full width on very small screens */
+        max-width: 100%;
+    }
+
+    /* Terms and Conditions responsive adjustments for very small screens */
+    .terms-and-conditions-section {
+        padding: 15px;
+    }
+    .terms-and-conditions-section h4 {
+        font-size: 1.1rem;
+    }
+    .terms-and-conditions-content {
+        max-height: 120px; /* Further adjust max-height for T&C content */
+        padding: 10px;
+    }
+    .terms-agreement label {
+        font-size: 0.85rem;
+    }
+    .terms-agreement input[type="checkbox"] {
+        min-width: 18px;
+        min-height: 18px;
+    }
+    .terms-agreement input[type="checkbox"]:checked::after {
+        font-size: 12px;
+    }
 }
