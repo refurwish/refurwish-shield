@@ -21,20 +21,23 @@ document.addEventListener('DOMContentLoaded', function () {
     const selectedPlanDetailsInput = document.getElementById('selectedPlanDetails');
     const backToPhonePriceButton = document.getElementById('backToPhonePriceButton');
 
-    // --- New: Terms and Conditions Elements ---
+    // --- New: Terms and Conditions Elements (Corrected IDs to match demoindex.html) ---
     const termsAndConditionsSection = document.getElementById('termsAndConditionsSection');
+    // Corrected variable name to match HTML ID 'termsAndConditionsContent'
     const termsAndConditionsContent = document.getElementById('termsAndConditionsContent');
+    // Corrected variable name to match HTML ID 'selectedPlanNameForTNC'
     const selectedPlanNameForTNC = document.getElementById('selectedPlanNameForTNC');
+    // Corrected variable name to match HTML ID 'agreeTerms'
     const agreeTermsCheckbox = document.getElementById('agreeTerms');
-    const generateCertificateButton = document.getElementById('generateCertificateButton'); // This already exists, just referencing for T&C logic
-    const viewFullTermsLink = document.getElementById('viewFullTermsLink');
+    const generateCertificateButton = document.getElementById('generateCertificateButton');
+    const viewFullTermsLink = document.getElementById('viewFullTermsLink'); // This ID exists on the <a> tag
 
     // --- Drawer and Tracking Elements ---
     const hamburgerMenu = document.getElementById('hamburgerMenu');
     const mainDrawer = document.getElementById('mainDrawer');
     const drawerCloseButton = document.getElementById('drawerCloseButton');
     const drawerOverlay = document.getElementById('drawerOverlay');
-    const logoutButtonDrawer = document.getElementById('logoutButtonDrawer'); // New logout button in drawer
+    const logoutButtonDrawer = document.getElementById('logoutButtonDrawer');
     const openTrackingButton = document.getElementById('openTrackingButton');
     const trackingSection = document.getElementById('trackingSection');
     const fromDateInput = document.getElementById('fromDate');
@@ -81,10 +84,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return extendedWarrantyPrices[extendedWarrantyPrices.length - 1].price;
     }
 
-    // --- New: Terms and Conditions Data and Functions ---
-    // IMPORTANT: Replace with actual accessible Google Docs links or embeddable content.
-    // For direct Google Docs links, you'll likely need to embed them via iframe
-    // or use Google Docs API to fetch the content. This is a placeholder for content.
+    // --- Terms and Conditions Data and Functions ---
     const termsAndConditionsData = {
         "Extended Warranty": {
             content: "<p>These are the **Terms and Conditions for Extended Warranty** plan.</p><p>This plan covers manufacturing defects and functional issues beyond the standard manufacturer's warranty for 12 months. Please refer to the full document for exclusions and claim procedures.</p><p>This content should ideally come from your Google Doc.</p>",
@@ -114,8 +114,12 @@ document.addEventListener('DOMContentLoaded', function () {
             selectedPlanNameForTNC.textContent = planName;
             termsAndConditionsContent.innerHTML = tnc.content; // Use innerHTML if content is HTML
             viewFullTermsLink.href = tnc.fullLink; // Set the link for "View Full Terms"
+            
             termsAndConditionsSection.classList.remove('hidden');
-            termsAndConditionsSection.classList.add('visible'); // Show with animation
+            setTimeout(() => { // Add a small delay for smoother transition with 'visible' class
+                termsAndConditionsSection.classList.add('visible');
+            }, 10);
+            
             agreeTermsCheckbox.checked = false; // Reset checkbox on plan change
             toggleGenerateButton(); // Update button state
             termsAndConditionsSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); // Scroll to T&C
@@ -124,16 +128,31 @@ document.addEventListener('DOMContentLoaded', function () {
             selectedPlanNameForTNC.textContent = "Selected Plan";
             viewFullTermsLink.href = "#"; // Clear the link
             termsAndConditionsSection.classList.remove('visible');
-            termsAndConditionsSection.classList.add('hidden'); // Hide if no T&C
+            setTimeout(() => { // Add a small delay for smoother transition with 'hidden' class
+                termsAndConditionsSection.classList.add('hidden');
+            }, 10);
+            
             agreeTermsCheckbox.checked = false;
             toggleGenerateButton();
         }
     }
 
     function toggleGenerateButton() {
+        // Add console logs for debugging. Uncomment these lines if you need to trace the logic.
+        // console.log("toggleGenerateButton called.");
+        // console.log("agreeTermsCheckbox.checked:", agreeTermsCheckbox.checked);
         generateCertificateButton.disabled = !agreeTermsCheckbox.checked;
+        // console.log("generateCertificateButton.disabled set to:", generateCertificateButton.disabled);
     }
-    // --- End New: Terms and Conditions Data and Functions ---
+
+    // --- IMPORTANT: Attach the event listener for the Terms & Conditions checkbox ---
+    // This ensures that toggleGenerateButton() is called whenever the checkbox state changes.
+    if (agreeTermsCheckbox && generateCertificateButton) {
+        agreeTermsCheckbox.addEventListener('change', toggleGenerateButton);
+    } else {
+        console.error("Error: Could not find 'agreeTerms' checkbox or 'generateCertificateButton'. Please check your HTML IDs.");
+    }
+    // --- End Terms and Conditions Data and Functions ---
 
 
     function populatePlanOptions(phonePrice) {
@@ -176,7 +195,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 planOptionsContainer.classList.remove('error');
 
-                // --- New: Load Terms and Conditions when a plan is selected ---
+                // --- Load Terms and Conditions when a plan is selected ---
                 loadTermsAndConditions(plan.name);
             });
 
@@ -188,7 +207,8 @@ document.addEventListener('DOMContentLoaded', function () {
         selectedPlanPriceInput.value = '';
         selectedPlanTypeInput.value = '';
         selectedPlanDetailsInput.value = '';
-        termsAndConditionsSection.classList.remove('visible'); // Hide T&C section initially until a plan is clicked
+        // Ensure T&C section is hidden initially until a plan is clicked
+        termsAndConditionsSection.classList.remove('visible'); 
         termsAndConditionsSection.classList.add('hidden');
         agreeTermsCheckbox.checked = false; // Ensure checkbox is unchecked
         toggleGenerateButton(); // Disable button
