@@ -154,7 +154,6 @@ select {
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
-    /* Removed color from here to ensure `i` element's color takes precedence */
     font-size: 1.2rem;
     z-index: 1; /* Behind the hidden checkbox but above input */
 }
@@ -199,7 +198,7 @@ select {
 }
 
 .submit-button:disabled {
-    background-color: #cccccc; /* Greyed out when disabled */
+    background-color: #cccccc;
     cursor: not-allowed;
     box-shadow: none;
     transform: none;
@@ -748,429 +747,143 @@ select.error {
     font-weight: 700;
 }
 
-/* --- NEW: TERMS AND CONDITIONS STYLES --- */
-.terms-conditions-container {
-    margin-top: 30px;
-    margin-bottom: 20px;
-    background-color: #f8f9fa;
-    border: 1px solid #e9ecef;
+---
+
+### **New Styles for Terms and Conditions Section:**
+
+```css
+/* --- NEW: Terms and Conditions Section Styles --- */
+.terms-and-conditions-section {
+    background-color: #fcfcfc; /* Slightly off-white */
+    border: 1px solid #e0e0e0;
     border-radius: 10px;
-    padding: 20px;
+    padding: 25px;
+    margin-top: 25px;
+    margin-bottom: 30px; /* Space before the submit button */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+    opacity: 0; /* Start hidden for animation */
+    transform: translateY(15px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.terms-and-conditions-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.terms-and-conditions-section h3 {
+    text-align: center;
+    color: #2c3e50;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.terms-and-conditions-section .plan-name-display {
+    font-weight: bold;
+    color: #007bff;
+}
+
+.terms-and-conditions-content {
+    background-color: #ffffff;
+    border: 1px solid #f0f0f0;
+    border-radius: 8px;
+    padding: 15px;
+    max-height: 200px; /* Limit height for scrollability */
+    overflow-y: auto; /* Enable scrolling for long content */
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #555;
+    margin-bottom: 15px;
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.03);
 }
 
-.terms-summary {
+.terms-and-conditions-content p {
+    margin-bottom: 10px;
+}
+
+/* Basic styling for bold text inside T&C content, if present */
+.terms-and-conditions-content strong {
+    font-weight: 600;
+    color: #333;
+}
+
+.terms-agreement {
     display: flex;
     align-items: center;
-    gap: 10px; /* Space between checkbox and label */
-    margin-bottom: 15px;
-}
-
-.terms-summary input[type="checkbox"] {
-    width: auto; /* Revert full width */
-    margin-bottom: 0;
-    transform: scale(1.2); /* Make checkbox slightly larger */
-    cursor: pointer;
-}
-
-.terms-summary label {
-    display: inline-block; /* Adjust label for checkbox */
-    margin-bottom: 0;
-    font-size: 1rem;
-    color: #333;
-}
-
-.terms-summary label a {
-    color: #007bff; /* Blue link for terms */
-    text-decoration: underline;
-    font-weight: 600;
-    transition: color 0.2s ease-in-out;
-}
-
-.terms-summary label a:hover {
-    color: #0056b3;
-}
-
-.terms-content {
-    border-top: 1px dashed #e0e0e0; /* Dashed separator */
-    padding-top: 20px;
-    font-size: 0.9rem;
-    color: #555;
-    max-height: 0; /* Hidden by default */
-    overflow: hidden; /* Hide overflow */
-    transition: max-height 0.5s ease-in-out, opacity 0.4s ease-out; /* Smooth toggle */
-    opacity: 0;
-    background-color: #ffffff; /* White background for content area */
-    padding: 0 15px; /* Adjust padding for animation */
-    border-radius: 8px;
-    box-shadow: inset 0 0 5px rgba(0,0,0,0.05); /* Inner shadow for depth */
-}
-
-.terms-content.visible {
-    max-height: 500px; /* Expand to show content */
-    opacity: 1;
-    padding: 15px; /* Full padding when visible */
-}
-
-.terms-heading {
-    font-weight: bold;
-    color: #2c3e50;
-    text-align: center;
-    margin-bottom: 15px;
-    font-size: 1.1rem;
-}
-
-.terms-list {
-    margin-bottom: 15px;
-}
-
-.terms-list ul {
-    list-style-type: disc;
-    margin-left: 20px;
-    padding: 0;
-}
-
-.terms-list li {
-    margin-bottom: 8px;
-    line-height: 1.4;
-}
-
-.term-item {
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px dotted #e9ecef; /* Dotted line between plans */
-}
-
-.term-item:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-}
-
-.term-title {
-    font-weight: bold;
-    color: #007bff; /* Blue for plan titles */
-    margin-bottom: 8px;
-    font-size: 1rem;
-}
-
-.general-terms {
     margin-top: 20px;
-    font-weight: bold;
-    color: #2c3e50;
-}
-
-/* Error state for accept terms checkbox */
-.terms-conditions-container.error .terms-summary label {
-    color: #dc3545; /* Red color for error */
-    font-weight: 600;
-}
-
-.terms-conditions-container.error .terms-summary input[type="checkbox"] {
-    border: 2px solid #dc3545;
-    outline: 2px solid #dc3545;
-}
-
-/* NEW: Signature Area Styles */
-.signature-area {
-    margin-top: 30px;
-    padding: 20px;
-    background-color: #f8f9fa;
-    border: 1px solid #e9ecef;
-    border-radius: 10px;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.03);
-    text-align: center;
-    /* Add a max-width to the signature area to control canvas max-width */
-    max-width: 440px; /* 400px canvas + 2*20px padding */
-    margin-left: auto; /* Center it */
-    margin-right: auto; /* Center it */
-}
-
-.signature-area p {
-    margin-bottom: 15px;
-    font-size: 1rem;
-    color: #333;
-    font-weight: 500;
-}
-
-.signature-area canvas {
-    background-color: #ffffff;
-    border: 1px solid #dcdcdc;
-    border-radius: 6px;
-    touch-action: none; /* Prevent browser scrolling/panning when drawing */
-    /* Remove max-width and height: auto from here, let JS handle internal size */
-    /* Instead, ensure it fits within its parent */
-    display: block; /* Remove extra space below canvas if it's inline */
-    /* The internal width/height attributes (400x150) will now be respected as the default */
-    /* But JavaScript will dynamically resize it to fit the parent's computed width */
-    width: 100%; /* Important: This makes the CANVAS element fill its parent's width */
-    height: auto; /* Maintain aspect ratio based on parent's width */
-    /* Add a min-height if you want to ensure it always has a certain visible height before JS sets it */
-    min-height: 100px; /* Example: Ensures visibility even before JS resize */
-}
-
-
-.clear-signature-button {
-    background-color: #ffc107; /* Warning yellow color */
-    color: #333;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
+    margin-bottom: 20px;
     cursor: pointer;
+    user-select: none; /* Prevent text selection on label */
+}
+
+.terms-agreement input[type="checkbox"] {
+    margin-right: 10px;
+    min-width: 20px; /* Ensure checkbox is not too small */
+    min-height: 20px;
+    cursor: pointer;
+    /* Basic custom checkbox styling */
+    appearance: none;
+    background-color: #fff;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+    top: 1px; /* Align with text */
+}
+
+.terms-agreement input[type="checkbox"]:checked {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.terms-agreement input[type="checkbox"]:checked::after {
+    content: '✔'; /* Checkmark symbol */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.terms-agreement label {
+    margin: 0; /* Override default label margin */
     font-size: 0.95rem;
-    font-weight: 600;
-    margin-top: 15px;
-    transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    box-shadow: 0 4px 8px rgba(255, 193, 7, 0.2);
+    color: #333;
+    cursor: pointer;
+    font-weight: normal; /* Override potential bolder label style */
 }
 
-.clear-signature-button:hover {
-    background-color: #e0a800;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(255, 193, 7, 0.3);
+.terms-agreement label a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease-in-out, text-decoration 0.2s ease-in-out;
 }
 
-.clear-signature-button:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(255, 193, 7, 0.1);
+.terms-agreement label a:hover {
+    color: #0056b3;
+    text-decoration: underline;
 }
 
-
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-    .container {
-        padding: 30px 20px;
-        border-radius: 10px;
-    }
-
-    h1, h2 {
-        font-size: 1.8em;
-        margin-bottom: 20px;
-    }
-
-    .logo {
-        max-width: 160px;
-        margin-bottom: 25px;
-    }
-
-    .form-group {
-        margin-bottom: 18px;
-    }
-
-    input[type="text"],
-    input[type="email"],
-    input[type="tel"],
-    input[type="date"],
-    input[type="number"],
-    input[type="password"],
-    select {
-        padding: 10px 12px;
-        font-size: 0.95rem;
-    }
-
-    .submit-button,
-    .back-button,
-    #downloadLink {
-        padding: 12px 20px;
-        font-size: 1rem;
-    }
-
-    .plan-button {
-        font-size: 0.95rem;
-        padding: 12px 15px;
-    }
-
-    .plan-button .plan-price {
-        font-size: 1.05rem;
-    }
-
-    #pdfLinkSection {
-        padding: 15px;
-    }
-
-    /* Logout button inside drawer also adjusts */
-    .drawer .logout-button {
-        padding: 10px 15px;
-        font-size: 0.9rem;
-    }
-
-    .displayed-phone-price-info {
-        padding: 8px 10px;
-        font-size: 0.9rem;
-    }
-    .displayed-phone-price-info strong {
-        font-size: 1.1rem;
-    }
-    .displayed-phone-price-info .back-button {
-        padding: 6px 10px;
-        font-size: 0.8rem;
-    }
-
-    .hamburger-menu {
-        font-size: 1.8rem;
-        top: 15px;
-        left: 15px;
-    }
-
-    .drawer {
-        max-width: 250px;
-    }
-
-    .drawer.open {
-        width: 250px;
-    }
-
-    .drawer-close-button {
-        font-size: 1.6rem;
-    }
-
-    .drawer-content {
-        padding: 15px; /* Adjust padding for smaller screens */
-    }
-    .drawer-header h3 {
-        font-size: 1.3rem;
-    }
-
-    .drawer-menu-item {
-        font-size: 0.95rem;
-        padding: 10px 12px;
-    }
-
-    .drawer-menu-item i {
-        font-size: 1.3rem;
-    }
-
-    .tracking-section {
-        padding: 15px;
-    }
-
-    .tracking-section h4 {
-        font-size: 1.1rem;
-    }
-
-    .tracking-results p {
-        font-size: 0.9rem;
-    }
-
-    .tracking-results strong {
-        font-size: 1rem;
-    }
-
-    /* Terms and Conditions responsiveness */
-    .terms-conditions-container {
-        padding: 15px;
-    }
-
-    .terms-summary label {
-        font-size: 0.95rem;
-    }
-
-    .terms-content {
-        padding: 10px;
-        font-size: 0.85rem;
-    }
-
-    .term-title {
-        font-size: 0.95rem;
-    }
-
-    .terms-summary {
-        flex-direction: column; /* Stack checkbox and label vertically */
-        align-items: flex-start;
-    }
-
-    .terms-summary input[type="checkbox"] {
-        margin-right: auto; /* Push checkbox to the left */
-        margin-bottom: 5px;
-    }
-
-    /* Signature Area responsiveness */
-    .signature-area {
-        padding: 15px;
-    }
-    /* Removed specific width/height from media query for canvas */
-    /* Let JS handle this by getting parent's width */
-    /* The 'width: 100%; height: auto;' in the main .signature-area canvas rule is sufficient */
-    /* And JS will use getBoundingClientRect() on this to set internal dimensions. */
-    .signature-area canvas {
-        /* No specific width/height override needed here for the canvas element itself */
-        /* It will naturally scale to 100% of its parent width. */
-    }
-    .clear-signature-button {
-        padding: 8px 15px;
-        font-size: 0.85rem;
-    }
+.full-terms-link {
+    display: block; /* Make it a block element to take full width */
+    text-align: center; /* Center the text */
+    margin-top: 15px; /* Space above the link */
+    font-size: 0.9rem;
 }
 
-@media (max-width: 480px) {
-    .container {
-        padding: 20px 15px;
-        border-radius: 8px;
-    }
+.full-terms-link a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease-in-out, text-decoration 0.2s ease-in-out;
+}
 
-    h1, h2 {
-        font-size: 1.5em;
-        margin-bottom: 15px;
-    }
-
-    .logo {
-        max-width: 140px;
-        margin-bottom: 20px;
-    }
-
-    .form-group {
-        margin-bottom: 15px;
-    }
-
-    .submit-button.small-button {
-        padding: 8px 15px;
-        font-size: 0.85rem;
-    }
-
-    .plan-options-container {
-        grid-template-columns: 1fr; /* Stack buttons on very small screens */
-        gap: 10px;
-    }
-    
-    .plan-button .plan-text {
-        margin-right: 5px;
-    }
-
-    .plan-button .plan-price {
-        font-size: 1rem;
-    }
-
-    .displayed-phone-price-info {
-        padding: 6px 8px;
-        font-size: 0.85rem;
-    }
-    .displayed-phone-price-info strong {
-        font-size: 1rem;
-    }
-    .displayed-phone-price-info .back-button {
-        padding: 5px 8px;
-        font-size: 0.75rem;
-    }
-
-    .drawer.open {
-        width: 100%; /* Full width on very small screens */
-        max-width: 100%;
-    }
-
-    /* Terms and Conditions responsiveness for smaller screens */
-    .terms-conditions-container {
-        padding: 10px;
-    }
-
-    .terms-summary label {
-        font-size: 0.9rem;
-    }
-
-    .terms-content {
-        padding: 8px;
-        font-size: 0.8rem;
-    }
-
-    .term-title {
-        font-size: 0.9rem;
-    }
+.full-terms-link a:hover {
+    color: #0056b3;
+    text-decoration: underline;
 }
