@@ -18,7 +18,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const selectedPlanValueInput = document.getElementById('selectedPlanValue');
     const selectedPlanPriceInput = document.getElementById('selectedPlanPrice');
     const selectedPlanTypeInput = document.getElementById('selectedPlanType');
-    const selectedPlanDetailsInput = document('selectedPlanDetails');
+    // FIX: Corrected typo from document() to document.getElementById()
+    const selectedPlanDetailsInput = document.getElementById('selectedPlanDetails'); 
     const backToPhonePriceButton = document.getElementById('backToPhonePriceButton');
 
     // --- New: Terms and Conditions Elements (IDs match demoindex.html) ---
