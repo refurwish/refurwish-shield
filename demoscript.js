@@ -21,162 +21,20 @@ document.addEventListener('DOMContentLoaded', function () {
     const selectedPlanDetailsInput = document.getElementById('selectedPlanDetails');
     const backToPhonePriceButton = document.getElementById('backToPhonePriceButton');
 
-    // --- Terms and Conditions Elements ---
-    const termsConditionsContainer = document.querySelector('.terms-conditions-container');
-    const acceptTermsCheckbox = document.getElementById('acceptTerms');
-    const viewTermsLink = document.getElementById('viewTermsLink');
-    const termsContent = document.getElementById('termsContent');
-    const termItems = document.querySelectorAll('.term-item');
+    // --- New: Terms and Conditions Elements ---
+    const termsAndConditionsSection = document.getElementById('termsAndConditionsSection');
+    const termsAndConditionsContent = document.getElementById('termsAndConditionsContent');
+    const selectedPlanNameForTNC = document.getElementById('selectedPlanNameForTNC');
+    const agreeTermsCheckbox = document.getElementById('agreeTerms');
+    const generateCertificateButton = document.getElementById('generateCertificateButton'); // This already exists, just referencing for T&C logic
+    const viewFullTermsLink = document.getElementById('viewFullTermsLink');
 
-    // --- Signature Elements ---
-    const signatureArea = document.getElementById('signatureArea');
-    const signatureCanvas = document.getElementById('signatureCanvas');
-    const clearSignatureButton = document.getElementById('clearSignature');
-    const customerSignatureImageInput = document.getElementById('customerSignatureImage');
-    const generateCertificateButton = document.getElementById('generateCertificateButton');
-
-    // --- DEBUGGING LOGS START ---
-    console.log("--- Starting demoscript.js initialization ---");
-    console.log("Attempting to find signatureCanvas element...");
-    // --- DEBUGGING LOGS END ---
-
-    // Initialize Signature Pad
-    let signaturePad;
-
-    // Function to resize canvas - CRITICAL for SignaturePad
-    function resizeCanvas() {
-        if (signatureCanvas) {
-            // Get the current computed display size of the canvas element
-            const rect = signatureCanvas.getBoundingClientRect();
-            const dpr = window.devicePixelRatio || 1; // Get device pixel ratio for sharp rendering on HiDPI screens
-
-            // Set the canvas's internal drawing buffer size to match its display size
-            // This needs to be done *before* initializing SignaturePad
-            signatureCanvas.width = rect.width * dpr;
-            signatureCanvas.height = rect.height * dpr;
-
-            // Scale the context to counter the device pixel ratio
-            const ctx = signatureCanvas.getContext('2d');
-            if (ctx) {
-                ctx.scale(dpr, dpr);
-                console.log(`Canvas resized: ${signatureCanvas.width}x${signatureCanvas.height} (DPR: ${dpr})`);
-
-                // If signaturePad already exists, clear it and restore any previous signature
-                // (Useful if the canvas is resized while a signature is present)
-                if (signaturePad && !signaturePad.isEmpty()) {
-                    const data = signaturePad.toData();
-                    signaturePad.clear();
-                    signaturePad.fromData(data);
-                    console.log("Signature restored after resize.");
-                } else if (signaturePad) {
-                    signaturePad.clear(); // Ensure it's clear if it was empty
-                }
-            } else {
-                console.error("Could not get 2D context for signatureCanvas.");
-            }
-        }
-    }
-
-    // CRITICAL: Initialize SignaturePad AFTER canvas dimensions are potentially set by CSS
-    // and then manually set the internal canvas dimensions.
-    // We will initialize SignaturePad only once DOM is loaded and canvas exists.
-    if (typeof SignaturePad !== 'undefined' && signatureCanvas) {
-        // Initial resize *before* creating the SignaturePad instance
-        // This makes sure the pad starts with correct dimensions.
-        resizeCanvas();
-
-        try {
-            signaturePad = new SignaturePad(signatureCanvas);
-            console.log("signatureCanvas found:", signatureCanvas);
-            console.log("SignaturePad instance created successfully:", signaturePad);
-            window.debugSignaturePad = signaturePad; // Make it globally accessible for console debugging
-        } catch (e) {
-            console.error("ERROR during SignaturePad initialization (caught in try-catch):", e);
-            console.error("Please check if the canvas element is valid and SignaturePad library is compatible.");
-        }
-    } else {
-        if (typeof SignaturePad === 'undefined') {
-            console.error("CRITICAL ERROR: SignaturePad constructor is UNDEFINED. Is the library loaded correctly?");
-        }
-        if (!signatureCanvas) {
-            console.error("CRITICAL ERROR: signatureCanvas element with ID 'signatureCanvas' was NOT found in the DOM!");
-        }
-    }
-
-    // Add a resize listener to handle dynamic resizing (e.g., screen rotation, window resize)
-    window.addEventListener('resize', () => {
-        if (signaturePad) { // Only resize if signaturePad was successfully initialized
-            resizeCanvas();
-            // After resize, if the pad was empty, it will remain empty.
-            // If it had a signature, we tried to restore it in resizeCanvas().
-            // Always update button state after a resize.
-            updateSubmitButtonState();
-        }
-    });
-
-    console.log("Value of 'signaturePad' variable after initialization block:", signaturePad);
-
-
-    // Function to update the visibility and required status of the signature area
-    function updateSignatureAreaState() {
-        if (acceptTermsCheckbox.checked) {
-            signatureArea.classList.remove('hidden');
-            setTimeout(() => signatureArea.classList.add('visible'), 10);
-            // Re-initialize SignaturePad if it's hidden and shown again, to reset state
-            // Or more robustly, resize the canvas if dimensions change due to visibility
-            if (signaturePad) {
-                // Resize and potentially clear if signature area was hidden then shown
-                resizeCanvas();
-                if (signaturePad.isEmpty()) { // Only clear if it was empty initially, to avoid losing signature
-                    signaturePad.clear();
-                }
-            }
-        } else {
-            signatureArea.classList.remove('visible');
-            setTimeout(() => signatureArea.classList.add('hidden'), 300);
-            if (signaturePad) { // Safely clear signature if pad exists
-                signaturePad.clear();
-            }
-            customerSignatureImageInput.value = '';
-        }
-        updateSubmitButtonState();
-    }
-
-    // Function to enable/disable the submit button
-    function updateSubmitButtonState() {
-        const isPlanSelected = selectedPlanValueInput.value !== '';
-        const isTermsAccepted = acceptTermsCheckbox.checked;
-        let isSignatureDrawn = false;
-
-        // Ensure signaturePad is defined and not null before calling isEmpty()
-        if (signaturePad && typeof signaturePad.isEmpty === 'function') {
-            isSignatureDrawn = !signaturePad.isEmpty();
-        } else {
-            console.warn("SignaturePad is not initialized or isEmpty method is missing. isSignatureDrawn will be false.");
-            isSignatureDrawn = false;
-        }
-
-        if (isPlanSelected && isTermsAccepted && isSignatureDrawn) {
-            generateCertificateButton.disabled = false;
-        } else {
-            generateCertificateButton.disabled = true;
-        }
-        // --- DEBUGGING LOGS START ---
-        console.log("updateSubmitButtonState called:");
-        console.log("  isPlanSelected:", isPlanSelected);
-        console.log("  isTermsAccepted:", isTermsAccepted);
-        console.log("  isSignatureDrawn (from signaturePad.isEmpty()):", isSignatureDrawn);
-        console.log("  generateCertificateButton.disabled set to:", generateCertificateButton.disabled);
-        // --- DEBUGGING LOGS END ---
-    }
-
-
-    // --- Drawer and Tracking Elements (unchanged from previous version for brevity) ---
+    // --- Drawer and Tracking Elements ---
     const hamburgerMenu = document.getElementById('hamburgerMenu');
     const mainDrawer = document.getElementById('mainDrawer');
     const drawerCloseButton = document.getElementById('drawerCloseButton');
     const drawerOverlay = document.getElementById('drawerOverlay');
-    const logoutButtonDrawer = document.getElementById('logoutButtonDrawer');
+    const logoutButtonDrawer = document.getElementById('logoutButtonDrawer'); // New logout button in drawer
     const openTrackingButton = document.getElementById('openTrackingButton');
     const trackingSection = document.getElementById('trackingSection');
     const fromDateInput = document.getElementById('fromDate');
@@ -223,6 +81,61 @@ document.addEventListener('DOMContentLoaded', function () {
         return extendedWarrantyPrices[extendedWarrantyPrices.length - 1].price;
     }
 
+    // --- New: Terms and Conditions Data and Functions ---
+    // IMPORTANT: Replace with actual accessible Google Docs links or embeddable content.
+    // For direct Google Docs links, you'll likely need to embed them via iframe
+    // or use Google Docs API to fetch the content. This is a placeholder for content.
+    const termsAndConditionsData = {
+        "Extended Warranty": {
+            content: "<p>These are the **Terms and Conditions for Extended Warranty** plan.</p><p>This plan covers manufacturing defects and functional issues beyond the standard manufacturer's warranty for 12 months. Please refer to the full document for exclusions and claim procedures.</p><p>This content should ideally come from your Google Doc.</p>",
+            fullLink: "https://docs.google.com/document/d/1dh4wlhr1WdBLhzCaL4sAM79am5-h6r_o4i9t-rH_Z7Y/edit?usp=sharing" // Replace with actual Google Doc link
+        },
+        "Screen Damage Protection": {
+            content: "<p>These are the **Terms and Conditions for Screen Damage Protection** plan.</p><p>This plan covers physical damage to the screen for 12 months. Coverage includes screen repair or replacement as per policy limits. Accidental damage to other parts of the device is not covered.</p>",
+            fullLink: "https://docs.google.com/document/d/1PDNbIXdySjtowBv7xmtYJAv9ynFsOs2HjHRe2hlWC_A/edit?usp=sharing" // Replace with actual Google Doc link
+        },
+        "Total Damage Protection": {
+            content: "<p>These are the **Terms and Conditions for Total Damage Protection** plan.</p><p>This comprehensive plan covers accidental physical damage, liquid damage, and other specified perils for 12 months. Limits and exclusions apply, detailed in the full terms.</p>",
+            fullLink: "https://docs.google.com/document/d/1LObsUyHdGXZ_rmOaPMMV4m1EwaXLmdx5GJMe4xw5ARc/edit?usp=sharing" // Replace with actual Google Doc link
+        },
+        "Combo (Screen Damage Protection + Extended Warranty)": {
+            content: "<p>These are the **Terms and Conditions for Combo (Screen Damage Protection + Extended Warranty)** plan.</p><p>This combo offers both screen damage protection (12 months) and extended warranty (12 months after manufacturer's warranty, totaling 24 months coverage). Refer to individual plan terms for specific details.</p>",
+            fullLink: "https://docs.google.com/document/d/1xHIZ9F6OFPesPuM4Lxa7fo9vWPlS2J25W7HYgALQ6wk/edit?usp=sharing" // Replace with actual Google Doc link
+        },
+        "Combo (Total Damage Protection + Extended Warranty)": {
+            content: "<p>These are the **Terms and Conditions for Combo (Total Damage Protection + Extended Warranty)** plan.</p><p>This combo provides comprehensive total damage protection (12 months) and extended warranty (12 months after manufacturer's warranty, totaling 24 months coverage). Review both individual plan terms for complete understanding.</p>",
+            fullLink: "https://docs.google.com/document/d/1Gcf6fGEUV74G1dbNGjmZzzwAkPCFLDgbIhdHRnABBy4/edit?usp=sharing" // Replace with actual Google Doc link
+        }
+    };
+
+    function loadTermsAndConditions(planName) {
+        const tnc = termsAndConditionsData[planName];
+        if (tnc) {
+            selectedPlanNameForTNC.textContent = planName;
+            termsAndConditionsContent.innerHTML = tnc.content; // Use innerHTML if content is HTML
+            viewFullTermsLink.href = tnc.fullLink; // Set the link for "View Full Terms"
+            termsAndConditionsSection.classList.remove('hidden');
+            termsAndConditionsSection.classList.add('visible'); // Show with animation
+            agreeTermsCheckbox.checked = false; // Reset checkbox on plan change
+            toggleGenerateButton(); // Update button state
+            termsAndConditionsSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); // Scroll to T&C
+        } else {
+            termsAndConditionsContent.innerHTML = "<p>No specific terms found for this plan. Please select a different plan.</p>";
+            selectedPlanNameForTNC.textContent = "Selected Plan";
+            viewFullTermsLink.href = "#"; // Clear the link
+            termsAndConditionsSection.classList.remove('visible');
+            termsAndConditionsSection.classList.add('hidden'); // Hide if no T&C
+            agreeTermsCheckbox.checked = false;
+            toggleGenerateButton();
+        }
+    }
+
+    function toggleGenerateButton() {
+        generateCertificateButton.disabled = !agreeTermsCheckbox.checked;
+    }
+    // --- End New: Terms and Conditions Data and Functions ---
+
+
     function populatePlanOptions(phonePrice) {
         planOptionsContainer.innerHTML = '';
 
@@ -262,32 +175,24 @@ document.addEventListener('DOMContentLoaded', function () {
                 selectedPlanDetailsInput.value = button.getAttribute('data-details');
 
                 planOptionsContainer.classList.remove('error');
-                updateSubmitButtonState(); // Ensure button state is updated after plan selection
 
-                updateTermsContentDisplay(plan.internalType);
+                // --- New: Load Terms and Conditions when a plan is selected ---
+                loadTermsAndConditions(plan.name);
             });
 
             planOptionsContainer.appendChild(button);
         });
 
+        // Clear previously selected plan inputs and T&C
         selectedPlanValueInput.value = '';
         selectedPlanPriceInput.value = '';
         selectedPlanTypeInput.value = '';
         selectedPlanDetailsInput.value = '';
+        termsAndConditionsSection.classList.remove('visible'); // Hide T&C section initially until a plan is clicked
+        termsAndConditionsSection.classList.add('hidden');
+        agreeTermsCheckbox.checked = false; // Ensure checkbox is unchecked
+        toggleGenerateButton(); // Disable button
     }
-
-    function updateTermsContentDisplay(selectedPlanType) {
-        termItems.forEach(item => {
-            if (item.dataset.plan === selectedPlanType) {
-                item.style.display = 'block';
-            } else {
-                item.style.display = 'none';
-            }
-        });
-        document.querySelector('.general-terms').style.display = 'block';
-        document.querySelector('.terms-list ul:last-of-type').style.display = 'block';
-    }
-
 
     function validateCustomerAndPhoneDetails() {
         let isValid = true;
@@ -379,7 +284,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 10);
 
         planOptionsContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        updateSubmitButtonState(); // Update button state after showing plan selection
     });
 
     backToPhonePriceButton.addEventListener('click', function() {
@@ -402,23 +306,29 @@ document.addEventListener('DOMContentLoaded', function () {
         selectedPlanPriceInput.value = '';
         selectedPlanTypeInput.value = '';
         selectedPlanDetailsInput.value = '';
-        planOptionsContainer.classList.remove('error'); // Clear error state on back
+        planOptionsContainer.classList.remove('error');
 
-        termsContent.classList.remove('visible');
-        termsContent.classList.add('hidden');
-        acceptTermsCheckbox.checked = false;
-        termsConditionsContainer.classList.remove('error');
-        updateSignatureAreaState(); // This will also call updateSubmitButtonState
+        // --- New: Hide T&C section when going back ---
+        termsAndConditionsSection.classList.remove('visible');
+        termsAndConditionsSection.classList.add('hidden');
+        agreeTermsCheckbox.checked = false; // Uncheck T&C
+        toggleGenerateButton(); // Disable button
 
         phonePriceInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        updateSubmitButtonState(); // Final update after resetting state
     });
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();
 
-        // Basic validation (should ideally be handled by updateSubmitButtonState
-        // and prevent submission if button is disabled, but good to have server-side checks too).
+        // --- New: Validate T&C agreement before submission ---
+        if (!agreeTermsCheckbox.checked) {
+            alert('Please agree to the Terms and Conditions before generating the certificate.');
+            agreeTermsCheckbox.focus();
+            termsAndConditionsSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+        }
+        // --- End New ---
+
         if (!selectedPlanValueInput.value) {
             alert('Please select a Plan.');
             planOptionsContainer.classList.add('error');
@@ -427,38 +337,6 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
             planOptionsContainer.classList.remove('error');
         }
-
-        if (!acceptTermsCheckbox.checked) {
-            alert('You must accept the Terms and Conditions to generate the certificate.');
-            termsConditionsContainer.classList.add('error');
-            acceptTermsCheckbox.focus();
-            termsConditionsContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            return;
-        } else {
-            termsConditionsContainer.classList.remove('error');
-        }
-
-        // Validate Signature just before submission (redundant if onEnd works, but safe)
-        if (signaturePad && typeof signaturePad.isEmpty === 'function') {
-            if (signaturePad.isEmpty()) {
-                alert('Please provide your digital signature.');
-                signatureArea.classList.add('error');
-                signatureArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                return;
-            } else {
-                signatureArea.classList.remove('error');
-                // Ensure signature is captured for submission in case onEnd was missed or cleared
-                // This is a fallback, the primary capture happens in onEnd now.
-                if (!customerSignatureImageInput.value) {
-                     customerSignatureImageInput.value = signaturePad.toDataURL('image/png');
-                }
-            }
-        } else {
-            console.error("SignaturePad not initialized or isEmpty method missing. Cannot validate signature.");
-            alert("An internal error occurred: Signature pad not ready. Please try again or refresh.");
-            return;
-        }
-
 
         successContainer.classList.remove('visible');
         successContainer.classList.add('hidden');
@@ -503,15 +381,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     }, 10);
 
                     form.reset();
-                    acceptTermsCheckbox.checked = false;
-                    termsContent.classList.remove('visible');
-                    termsContent.classList.add('hidden');
-                    termsConditionsContainer.classList.remove('error');
-                    if (signaturePad) {
-                        signaturePad.clear();
-                    }
-                    updateSignatureAreaState(); // This will also call resizeCanvas and updateSubmitButtonState
-
                     const storeId = sessionStorage.getItem('storeId');
                     if (storeId) {
                         storeIdInput.value = storeId;
@@ -535,6 +404,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     selectedPlanTypeInput.value = '';
                     selectedPlanDetailsInput.value = '';
 
+                    // --- New: Hide T&C section after successful submission ---
+                    termsAndConditionsSection.classList.remove('visible');
+                    termsAndConditionsSection.classList.add('hidden');
+                    agreeTermsCheckbox.checked = false; // Uncheck T&C
+                    toggleGenerateButton(); // Disable button
+
                     pdfLinkSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 } else {
                     throw new Error(data.message || 'Unknown error');
@@ -548,68 +423,23 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     });
 
-    // --- Terms and Conditions Toggle ---
-    viewTermsLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        termsContent.classList.toggle('hidden');
-        termsContent.classList.toggle('visible');
-        if (termsContent.classList.contains('visible')) {
-            termsContent.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-    });
+    // --- Drawer and Tracking Functionality ---
 
-    // Event listener for terms checkbox change
-    acceptTermsCheckbox.addEventListener('change', function() {
-        if (this.checked) {
-            termsConditionsContainer.classList.remove('error');
-        }
-        updateSignatureAreaState(); // This will handle signature area visibility and canvas resize
-    });
-
-    // Signature Pad Event Listeners
-    // ONLY assign these if signaturePad was successfully initialized
-    if (signaturePad) {
-        signaturePad.onBegin = function() {
-            signatureArea.classList.remove('error');
-        };
-        signaturePad.onEnd = function() {
-            console.log("SignaturePad.onEnd fired! Re-checking button state.");
-            // *** PROPOSED FIX: Capture signature data immediately on end of drawing ***
-            if (!signaturePad.isEmpty()) {
-                customerSignatureImageInput.value = signaturePad.toDataURL('image/png');
-                console.log("Signature captured and assigned to customerSignatureImageInput.value.");
-            } else {
-                customerSignatureImageInput.value = ''; // Clear if the signature was somehow drawn then erased
-            }
-            updateSubmitButtonState();
-        };
-    } else {
-        console.warn("SignaturePad not initialized. Skipping onBegin and onEnd event handlers. Signature validation will rely on explicit checks only.");
-    }
-
-
-    clearSignatureButton.addEventListener('click', function() {
-        if (signaturePad) {
-            signaturePad.clear();
-        }
-        customerSignatureImageInput.value = ''; // Ensure the hidden input is also cleared
-        updateSubmitButtonState();
-    });
-
-
-    // --- Drawer and Tracking Functionality (unchanged for brevity) ---
+    // Function to open the drawer
     function openDrawer() {
         mainDrawer.classList.add('open');
         drawerOverlay.classList.remove('hidden');
         setTimeout(() => drawerOverlay.classList.add('visible'), 10);
-        document.body.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden'; // Prevent scrolling main content
     }
 
+    // Function to close the drawer
     function closeDrawer() {
         mainDrawer.classList.remove('open');
         drawerOverlay.classList.remove('visible');
-        setTimeout(() => drawerOverlay.classList.add('hidden'), 300);
-        document.body.style.overflow = '';
+        setTimeout(() => drawerOverlay.classList.add('hidden'), 300); // Match CSS transition
+        document.body.style.overflow = ''; // Allow scrolling main content
+        // Hide tracking section when drawer closes
         trackingSection.classList.remove('visible');
         trackingSection.classList.add('hidden');
         trackingResults.classList.remove('visible');
@@ -620,62 +450,73 @@ document.addEventListener('DOMContentLoaded', function () {
         trackingLoading.classList.add('hidden');
     }
 
+    // Event listeners for drawer
     hamburgerMenu.addEventListener('click', openDrawer);
     drawerCloseButton.addEventListener('click', closeDrawer);
     drawerOverlay.addEventListener('click', closeDrawer);
 
+    // Logout button inside the drawer
     logoutButtonDrawer.addEventListener('click', () => {
+        // Clear session storage
         sessionStorage.removeItem('storeId');
 
+        // Reset forms (manual reset for mobile autofill issues)
         document.getElementById('loginForm').reset();
-        form.reset();
+        form.reset(); // This is the warrantyForm
 
+        // Manually clear the form fields to prevent autofill issues on mobile
         document.getElementById('loginStoreId').value = '';
         document.getElementById('loginPassword').value = '';
         storeIdInput.value = '';
         document.getElementById('displayedStoreId').textContent = '';
 
+        // Switch views with animation (from auth.js's logic)
         document.getElementById('warrantySection').classList.remove('visible');
         document.getElementById('warrantySection').classList.add('hidden');
         document.getElementById('loginSection').classList.remove('hidden');
-        setTimeout(() => document.getElementById('loginSection').classList.add('visible'), 10);
+        setTimeout(() => document.getElementById('loginSection').classList.add('visible'), 10); // Animate in
 
+        // Ensure login form is in its initial state (no loading/error messages)
         document.getElementById('loginError').classList.add('hidden');
         document.getElementById('loginError').classList.remove('visible');
         document.getElementById('loginLoading').classList.add('hidden');
         document.getElementById('loginLoading').classList.remove('visible');
         document.getElementById('loginForm').querySelector('.submit-button').classList.remove('hidden');
 
+        // Close the drawer after logout
         closeDrawer();
 
+        // Also reset tracking section inputs
         fromDateInput.value = '';
         toDateInput.value = '';
 
-        acceptTermsCheckbox.checked = false;
-        termsContent.classList.remove('visible');
-        termsContent.classList.add('hidden');
-        termsConditionsContainer.classList.remove('error');
-        if (signaturePad) {
-            signaturePad.clear();
-        }
-        updateSignatureAreaState(); // This will handle signature area visibility and canvas resize
+        // --- New: Hide T&C section after logout ---
+        termsAndConditionsSection.classList.remove('visible');
+        termsAndConditionsSection.classList.add('hidden');
+        agreeTermsCheckbox.checked = false; // Uncheck T&C
+        toggleGenerateButton(); // Disable button
     });
 
+    // Tracking Data functionality
     openTrackingButton.addEventListener('click', () => {
+        // Toggle visibility of tracking section
         trackingSection.classList.toggle('hidden');
         setTimeout(() => {
             trackingSection.classList.toggle('visible');
-        }, 10);
+        }, 10); // Small delay for animation
 
+        // Set default dates if not already set
         if (!fromDateInput.value || !toDateInput.value) {
             const today = new Date();
             const thirtyDaysAgo = new Date();
             thirtyDaysAgo.setDate(today.getDate() - 30);
 
+            // Format dates to YYYY-MM-DD for input type="date"
             fromDateInput.value = thirtyDaysAgo.toISOString().split('T')[0];
             toDateInput.value = today.toISOString().split('T')[0];
         }
 
+        // Scroll to tracking section in drawer
         trackingSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
@@ -684,7 +525,7 @@ document.addEventListener('DOMContentLoaded', function () {
     async function fetchTrackingData() {
         const fromDate = fromDateInput.value;
         const toDate = toDateInput.value;
-        const storeId = sessionStorage.getItem('storeId');
+        const storeId = sessionStorage.getItem('storeId'); // Get current logged-in store ID
 
         if (!storeId) {
             trackingError.textContent = 'Store ID not found. Please log in again.';
@@ -710,7 +551,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const appScriptURL = 'https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec';
 
         const queryParams = new URLSearchParams({
-            action: 'getTrackingData',
+            action: 'getTrackingData', // New action to request tracking data
             storeId: storeId,
             fromDate: fromDate,
             toDate: toDate
@@ -757,6 +598,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // --- Show Password Functionality ---
     if (showPasswordToggle && loginPasswordInput) {
         showPasswordToggle.addEventListener('change', () => {
             if (showPasswordToggle.checked) {
@@ -767,7 +609,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Initial update for submit button state
-    // This needs to be called after signaturePad is initialized and canvas dimensions are set.
-    updateSubmitButtonState();
+    // --- Initial setup on page load ---
+    toggleGenerateButton(); // Disable the generate button initially
+    termsAndConditionsSection.classList.add('hidden'); // Ensure T&C section is hidden on load
 });
