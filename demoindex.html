@@ -96,25 +96,17 @@
             <input type="hidden" id="selectedPlanType" name="planType" />
             <input type="hidden" id="selectedPlanDetails" name="selectedPlanDetails" />
 
-            <div id="termsAndConditionsSection" class="terms-and-conditions-section hidden">
-                <h3>Terms and Conditions for <span class="plan-name-display" id="planNameDisplay"></span></h3>
-                <div class="terms-and-conditions-content" id="termsContent">
-                    <p>By proceeding, you agree to the following terms for your Refurwish Shield Plan:</p>
-                    <p><strong>1. Plan Coverage:</strong> This plan covers accidental damage to your device, including screen damage, liquid damage, and other physical damages not covered by the manufacturer's warranty. Specific coverage details vary by plan tier.</p>
-                    <p><strong>2. Validity:</strong> The plan is valid for the duration specified at the time of purchase (e.g., 6 months, 1 year) starting from the phone purchase date.</p>
-                    <p><strong>3. Claim Process:</strong> In case of damage, you must notify Refurwish within [X] days of the incident. Claims require submission of purchase proof, IMEI, and a description of damage. A processing fee may apply.</p>
-                    <p><strong>4. Repair/Replacement:</strong> Refurwish reserves the right to repair the device with genuine or high-quality compatible parts, or replace it with a refurbished device of equivalent model/value, at its sole discretion.</p>
-                    <p><strong>5. Exclusions:</strong> This plan does not cover theft, loss, intentional damage, cosmetic damage, software issues, normal wear and tear, accessories, or damages covered by existing warranties/insurance. Unauthorised repairs void the plan.</p>
-                    <p><strong>6. Cancellation:</strong> The plan is non-refundable after [Y] days of purchase or if a claim has been initiated.</p>
-                    <p><strong>7. Governing Law:</strong> This agreement is governed by the laws of India.</p>
-                    <p>For full details, please refer to the complete terms available on the Refurwish website or upon request.</p>
+            <div id="termsAndConditionsSection" class="hidden">
+                <h4 style="margin-top: 20px;">Terms and Conditions for <span id="selectedPlanNameForTNC"></span></h4>
+                <div id="termsAndConditionsContent" class="terms-content-box">
+                    <p>Please select a plan to view its specific terms and conditions.</p>
                 </div>
-                <div class="terms-agreement">
-                    <input type="checkbox" id="agreeToTerms" />
-                    <label for="agreeToTerms">I have read and agree to the <a href="#" target="_blank">Terms and Conditions</a>.</label>
+                <div class="form-group terms-checkbox-group">
+                    <input type="checkbox" id="agreeTerms" name="agreeTerms" required />
+                    <label for="agreeTerms">I agree to the <a href="#" id="viewFullTermsLink" target="_blank">Terms and Conditions</a></label>
                 </div>
-                </div>
-            <button type="submit" class="submit-button" id="generateCertificateButton" disabled>Generate Certificate</button>
+            </div>
+            <button type="submit" class="submit-button" id="generateCertificateButton">Generate Certificate</button>
         </div>
 
         <div id="loading" class="status-message hidden">Processing...</div>
