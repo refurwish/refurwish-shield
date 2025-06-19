@@ -21,16 +21,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const selectedPlanDetailsInput = document.getElementById('selectedPlanDetails');
     const backToPhonePriceButton = document.getElementById('backToPhonePriceButton');
 
-    // --- New: Terms and Conditions Elements (Corrected IDs to match demoindex.html) ---
+    // --- New: Terms and Conditions Elements (IDs match demoindex.html) ---
     const termsAndConditionsSection = document.getElementById('termsAndConditionsSection');
-    // Corrected variable name to match HTML ID 'termsAndConditionsContent'
     const termsAndConditionsContent = document.getElementById('termsAndConditionsContent');
-    // Corrected variable name to match HTML ID 'selectedPlanNameForTNC'
     const selectedPlanNameForTNC = document.getElementById('selectedPlanNameForTNC');
-    // Corrected variable name to match HTML ID 'agreeTerms'
-    const agreeTermsCheckbox = document.getElementById('agreeTerms');
+    const agreeTermsCheckbox = document.getElementById('agreeTerms'); // Corrected ID reference
     const generateCertificateButton = document.getElementById('generateCertificateButton');
-    const viewFullTermsLink = document.getElementById('viewFullTermsLink'); // This ID exists on the <a> tag
+    const viewFullTermsLink = document.getElementById('viewFullTermsLink');
 
     // --- Drawer and Tracking Elements ---
     const hamburgerMenu = document.getElementById('hamburgerMenu');
@@ -85,26 +82,27 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // --- Terms and Conditions Data and Functions ---
+    // IMPORTANT: Updated fullLink to use Google Docs /preview format for direct viewing in new tab.
     const termsAndConditionsData = {
         "Extended Warranty": {
             content: "<p>These are the **Terms and Conditions for Extended Warranty** plan.</p><p>This plan covers manufacturing defects and functional issues beyond the standard manufacturer's warranty for 12 months. Please refer to the full document for exclusions and claim procedures.</p><p>This content should ideally come from your Google Doc.</p>",
-            fullLink: "https://drive.google.com/uc?export=download&id=1sv9svRqkP2JW7hig9Lh2gUdedDhPZv_r" // Replace with actual Google Doc link
+            fullLink: "https://docs.google.com/document/d/1dh4wlhr1WdBLhzCaL4sAM79am5-h6r_o4i9t-rH_Z7Y/preview" // Changed from /edit?usp=sharing to /preview
         },
         "Screen Damage Protection": {
             content: "<p>These are the **Terms and Conditions for Screen Damage Protection** plan.</p><p>This plan covers physical damage to the screen for 12 months. Coverage includes screen repair or replacement as per policy limits. Accidental damage to other parts of the device is not covered.</p>",
-            fullLink: "https://drive.google.com/uc?export=download&id=1styeSFp0T8lF3FYL6tU69xWk29t81snd" // Replace with actual Google Doc link
+            fullLink: "https://docs.google.com/document/d/1PDNbIXdySjtowBv7xmtYJAv9ynFsOs2HjHRe2hlWC_A/preview" // Changed
         },
         "Total Damage Protection": {
             content: "<p>These are the **Terms and Conditions for Total Damage Protection** plan.</p><p>This comprehensive plan covers accidental physical damage, liquid damage, and other specified perils for 12 months. Limits and exclusions apply, detailed in the full terms.</p>",
-            fullLink: "https://drive.google.com/uc?export=download&id=1sqXoSiJvHSfYoSqJjPqZzXAfg41Yiqar" // Replace with actual Google Doc link
+            fullLink: "https://docs.google.com/document/d/1LObsUyHdGXZ_rmOaPMMV4m1EwaXLmdx5GJMe4xw5ARc/preview" // Changed
         },
         "Combo (Screen Damage Protection + Extended Warranty)": {
             content: "<p>These are the **Terms and Conditions for Combo (Screen Damage Protection + Extended Warranty)** plan.</p><p>This combo offers both screen damage protection (12 months) and extended warranty (12 months after manufacturer's warranty, totaling 24 months coverage). Refer to individual plan terms for specific details.</p>",
-            fullLink: "https://drive.google.com/uc?export=download&id=1t3WJbGXiiyWOaaSCVjsk2u7RYLom0_B7" // Replace with actual Google Doc link
+            fullLink: "https://docs.google.com/document/d/1xHIZ9F6OFPesPuM4Lxa7fo9vWPlS2J25W7HYgALQ6wk/preview" // Changed
         },
         "Combo (Total Damage Protection + Extended Warranty)": {
             content: "<p>These are the **Terms and Conditions for Combo (Total Damage Protection + Extended Warranty)** plan.</p><p>This combo provides comprehensive total damage protection (12 months) and extended warranty (12 months after manufacturer's warranty, totaling 24 months coverage). Review both individual plan terms for complete understanding.</p>",
-            fullLink: "https://drive.google.com/uc?export=download&id=1t0z5Dx_8jXqBL3kqxksgYfez8pzANOU8" // Replace with actual Google Doc link
+            fullLink: "https://docs.google.com/document/d/1Gcf6fGEUV74G1dbNGjmZzzwAkPCFLDgbIhdHRnABBy4/preview" // Changed
         }
     };
 
@@ -116,19 +114,19 @@ document.addEventListener('DOMContentLoaded', function () {
             viewFullTermsLink.href = tnc.fullLink; // Set the link for "View Full Terms"
             
             termsAndConditionsSection.classList.remove('hidden');
-            setTimeout(() => { // Add a small delay for smoother transition with 'visible' class
+            setTimeout(() => {
                 termsAndConditionsSection.classList.add('visible');
             }, 10);
             
             agreeTermsCheckbox.checked = false; // Reset checkbox on plan change
             toggleGenerateButton(); // Update button state
-            termsAndConditionsSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); // Scroll to T&C
+            termsAndConditionsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
         } else {
             termsAndConditionsContent.innerHTML = "<p>No specific terms found for this plan. Please select a different plan.</p>";
             selectedPlanNameForTNC.textContent = "Selected Plan";
             viewFullTermsLink.href = "#"; // Clear the link
             termsAndConditionsSection.classList.remove('visible');
-            setTimeout(() => { // Add a small delay for smoother transition with 'hidden' class
+            setTimeout(() => {
                 termsAndConditionsSection.classList.add('hidden');
             }, 10);
             
@@ -138,21 +136,21 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function toggleGenerateButton() {
-        // Add console logs for debugging. Uncomment these lines if you need to trace the logic.
-        // console.log("toggleGenerateButton called.");
-        // console.log("agreeTermsCheckbox.checked:", agreeTermsCheckbox.checked);
+        // console.log("toggleGenerateButton called. agreeTermsCheckbox.checked:", agreeTermsCheckbox.checked); // Debugging
         generateCertificateButton.disabled = !agreeTermsCheckbox.checked;
-        // console.log("generateCertificateButton.disabled set to:", generateCertificateButton.disabled);
+        // console.log("generateCertificateButton.disabled set to:", generateCertificateButton.disabled); // Debugging
     }
 
-    // --- IMPORTANT: Attach the event listener for the Terms & Conditions checkbox ---
+    // --- IMPORTANT FIX: Attach event listener to the checkbox ---
     // This ensures that toggleGenerateButton() is called whenever the checkbox state changes.
     if (agreeTermsCheckbox && generateCertificateButton) {
         agreeTermsCheckbox.addEventListener('change', toggleGenerateButton);
+        // Call it once initially to set the correct state on page load
+        toggleGenerateButton();
     } else {
         console.error("Error: Could not find 'agreeTerms' checkbox or 'generateCertificateButton'. Please check your HTML IDs.");
     }
-    // --- End Terms and Conditions Data and Functions ---
+    // --- End of Terms and Conditions related functions ---
 
 
     function populatePlanOptions(phonePrice) {
@@ -207,8 +205,7 @@ document.addEventListener('DOMContentLoaded', function () {
         selectedPlanPriceInput.value = '';
         selectedPlanTypeInput.value = '';
         selectedPlanDetailsInput.value = '';
-        // Ensure T&C section is hidden initially until a plan is clicked
-        termsAndConditionsSection.classList.remove('visible'); 
+        termsAndConditionsSection.classList.remove('visible'); // Hide T&C section initially until a plan is clicked
         termsAndConditionsSection.classList.add('hidden');
         agreeTermsCheckbox.checked = false; // Ensure checkbox is unchecked
         toggleGenerateButton(); // Disable button
@@ -328,19 +325,18 @@ document.addEventListener('DOMContentLoaded', function () {
         selectedPlanDetailsInput.value = '';
         planOptionsContainer.classList.remove('error');
 
-        // --- New: Hide T&C section when going back ---
+        // --- Hide T&C section when going back ---
         termsAndConditionsSection.classList.remove('visible');
         termsAndConditionsSection.classList.add('hidden');
         agreeTermsCheckbox.checked = false; // Uncheck T&C
         toggleGenerateButton(); // Disable button
-
         phonePriceInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();
 
-        // --- New: Validate T&C agreement before submission ---
+        // --- Validate T&C agreement before submission ---
         if (!agreeTermsCheckbox.checked) {
             alert('Please agree to the Terms and Conditions before generating the certificate.');
             agreeTermsCheckbox.focus();
@@ -630,6 +626,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // --- Initial setup on page load ---
-    toggleGenerateButton(); // Disable the generate button initially
+    // The toggleGenerateButton() call here ensures the button state is correctly set on initial page load.
+    // The event listener added above will handle subsequent changes to the checkbox.
+    toggleGenerateButton();
     termsAndConditionsSection.classList.add('hidden'); // Ensure T&C section is hidden on load
 });
