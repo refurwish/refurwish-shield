@@ -18,14 +18,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const selectedPlanValueInput = document.getElementById('selectedPlanValue');
     const selectedPlanPriceInput = document.getElementById('selectedPlanPrice');
     const selectedPlanTypeInput = document.getElementById('selectedPlanType');
-    const selectedPlanDetailsInput = document.getElementById('selectedPlanDetails');
+    const selectedPlanDetailsInput = document('selectedPlanDetails');
     const backToPhonePriceButton = document.getElementById('backToPhonePriceButton');
 
     // --- New: Terms and Conditions Elements (IDs match demoindex.html) ---
     const termsAndConditionsSection = document.getElementById('termsAndConditionsSection');
     const termsAndConditionsContent = document.getElementById('termsAndConditionsContent');
     const selectedPlanNameForTNC = document.getElementById('selectedPlanNameForTNC');
-    const agreeTermsCheckbox = document.getElementById('agreeTerms'); // Corrected ID reference
+    const agreeTermsCheckbox = document.getElementById('agreeTerms');
     const generateCertificateButton = document.getElementById('generateCertificateButton');
     const viewFullTermsLink = document.getElementById('viewFullTermsLink');
 
@@ -82,27 +82,29 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // --- Terms and Conditions Data and Functions ---
-    // IMPORTANT: Updated fullLink to use Google Docs /preview format for direct viewing in new tab.
+    // IMPORTANT: fullLink now uses Google Drive direct download/view links for pre-saved PDFs.
+    // Replace 'YOUR_PDF_FILE_ID' with the actual File IDs of your PDFs in Google Drive.
+    // Ensure these PDFs are shared publicly ("Anyone with the link can view").
     const termsAndConditionsData = {
         "Extended Warranty": {
             content: "<p>These are the **Terms and Conditions for Extended Warranty** plan.</p><p>This plan covers manufacturing defects and functional issues beyond the standard manufacturer's warranty for 12 months. Please refer to the full document for exclusions and claim procedures.</p><p>This content should ideally come from your Google Doc.</p>",
-            fullLink: "https://docs.google.com/document/d/1dh4wlhr1WdBLhzCaL4sAM79am5-h6r_o4i9t-rH_Z7Y/preview" // Changed from /edit?usp=sharing to /preview
+            fullLink: "https://drive.google.com/uc?export=download&id=1sv9svRqkP2JW7hig9Lh2gUdedDhPZv_r"
         },
         "Screen Damage Protection": {
             content: "<p>These are the **Terms and Conditions for Screen Damage Protection** plan.</p><p>This plan covers physical damage to the screen for 12 months. Coverage includes screen repair or replacement as per policy limits. Accidental damage to other parts of the device is not covered.</p>",
-            fullLink: "https://docs.google.com/document/d/1PDNbIXdySjtowBv7xmtYJAv9ynFsOs2HjHRe2hlWC_A/preview" // Changed
+            fullLink: "https://drive.google.com/uc?export=download&id=1styeSFp0T8lF3FYL6tU69xWk29t81snd"
         },
         "Total Damage Protection": {
             content: "<p>These are the **Terms and Conditions for Total Damage Protection** plan.</p><p>This comprehensive plan covers accidental physical damage, liquid damage, and other specified perils for 12 months. Limits and exclusions apply, detailed in the full terms.</p>",
-            fullLink: "https://docs.google.com/document/d/1LObsUyHdGXZ_rmOaPMMV4m1EwaXLmdx5GJMe4xw5ARc/preview" // Changed
+            fullLink: "https://drive.google.com/uc?export=download&id=1sqXoSiJvHSfYoSqJjPqZzXAfg41Yiqar"
         },
         "Combo (Screen Damage Protection + Extended Warranty)": {
             content: "<p>These are the **Terms and Conditions for Combo (Screen Damage Protection + Extended Warranty)** plan.</p><p>This combo offers both screen damage protection (12 months) and extended warranty (12 months after manufacturer's warranty, totaling 24 months coverage). Refer to individual plan terms for specific details.</p>",
-            fullLink: "https://docs.google.com/document/d/1xHIZ9F6OFPesPuM4Lxa7fo9vWPlS2J25W7HYgALQ6wk/preview" // Changed
+            fullLink: "https://drive.google.com/uc?export=download&id=1t3WJbGXiiyWOaaSCVjsk2u7RYLom0_B7"
         },
         "Combo (Total Damage Protection + Extended Warranty)": {
             content: "<p>These are the **Terms and Conditions for Combo (Total Damage Protection + Extended Warranty)** plan.</p><p>This combo provides comprehensive total damage protection (12 months) and extended warranty (12 months after manufacturer's warranty, totaling 24 months coverage). Review both individual plan terms for complete understanding.</p>",
-            fullLink: "https://docs.google.com/document/d/1Gcf6fGEUV74G1dbNGjmZzzwAkPCFLDgbIhdHRnABBy4/preview" // Changed
+            fullLink: "https://drive.google.com/uc?export=download&id=1t0z5Dx_8jXqBL3kqxksgYfez8pzANOU8"
         }
     };
 
@@ -110,21 +112,23 @@ document.addEventListener('DOMContentLoaded', function () {
         const tnc = termsAndConditionsData[planName];
         if (tnc) {
             selectedPlanNameForTNC.textContent = planName;
-            termsAndConditionsContent.innerHTML = tnc.content; // Use innerHTML if content is HTML
-            viewFullTermsLink.href = tnc.fullLink; // Set the link for "View Full Terms"
-            
+            termsAndConditionsContent.innerHTML = tnc.content;
+            viewFullTermsLink.href = tnc.fullLink;
+            viewFullTermsLink.target = "_blank"; // Ensure it opens in a new tab
+
             termsAndConditionsSection.classList.remove('hidden');
             setTimeout(() => {
                 termsAndConditionsSection.classList.add('visible');
             }, 10);
             
-            agreeTermsCheckbox.checked = false; // Reset checkbox on plan change
-            toggleGenerateButton(); // Update button state
+            agreeTermsCheckbox.checked = false;
+            toggleGenerateButton();
             termsAndConditionsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
         } else {
             termsAndConditionsContent.innerHTML = "<p>No specific terms found for this plan. Please select a different plan.</p>";
             selectedPlanNameForTNC.textContent = "Selected Plan";
-            viewFullTermsLink.href = "#"; // Clear the link
+            viewFullTermsLink.href = "#";
+            viewFullTermsLink.target = ""; // Clear target attribute if no valid link
             termsAndConditionsSection.classList.remove('visible');
             setTimeout(() => {
                 termsAndConditionsSection.classList.add('hidden');
@@ -136,22 +140,15 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function toggleGenerateButton() {
-        // console.log("toggleGenerateButton called. agreeTermsCheckbox.checked:", agreeTermsCheckbox.checked); // Debugging
         generateCertificateButton.disabled = !agreeTermsCheckbox.checked;
-        // console.log("generateCertificateButton.disabled set to:", generateCertificateButton.disabled); // Debugging
     }
 
-    // --- IMPORTANT FIX: Attach event listener to the checkbox ---
-    // This ensures that toggleGenerateButton() is called whenever the checkbox state changes.
     if (agreeTermsCheckbox && generateCertificateButton) {
         agreeTermsCheckbox.addEventListener('change', toggleGenerateButton);
-        // Call it once initially to set the correct state on page load
         toggleGenerateButton();
     } else {
         console.error("Error: Could not find 'agreeTerms' checkbox or 'generateCertificateButton'. Please check your HTML IDs.");
     }
-    // --- End of Terms and Conditions related functions ---
-
 
     function populatePlanOptions(phonePrice) {
         planOptionsContainer.innerHTML = '';
@@ -193,22 +190,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 planOptionsContainer.classList.remove('error');
 
-                // --- Load Terms and Conditions when a plan is selected ---
                 loadTermsAndConditions(plan.name);
             });
 
             planOptionsContainer.appendChild(button);
         });
 
-        // Clear previously selected plan inputs and T&C
         selectedPlanValueInput.value = '';
         selectedPlanPriceInput.value = '';
         selectedPlanTypeInput.value = '';
         selectedPlanDetailsInput.value = '';
-        termsAndConditionsSection.classList.remove('visible'); // Hide T&C section initially until a plan is clicked
+        termsAndConditionsSection.classList.remove('visible');
         termsAndConditionsSection.classList.add('hidden');
-        agreeTermsCheckbox.checked = false; // Ensure checkbox is unchecked
-        toggleGenerateButton(); // Disable button
+        agreeTermsCheckbox.checked = false;
+        toggleGenerateButton();
     }
 
     function validateCustomerAndPhoneDetails() {
@@ -325,25 +320,22 @@ document.addEventListener('DOMContentLoaded', function () {
         selectedPlanDetailsInput.value = '';
         planOptionsContainer.classList.remove('error');
 
-        // --- Hide T&C section when going back ---
         termsAndConditionsSection.classList.remove('visible');
         termsAndConditionsSection.classList.add('hidden');
-        agreeTermsCheckbox.checked = false; // Uncheck T&C
-        toggleGenerateButton(); // Disable button
+        agreeTermsCheckbox.checked = false;
+        toggleGenerateButton();
         phonePriceInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();
 
-        // --- Validate T&C agreement before submission ---
         if (!agreeTermsCheckbox.checked) {
             alert('Please agree to the Terms and Conditions before generating the certificate.');
             agreeTermsCheckbox.focus();
             termsAndConditionsSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
             return;
         }
-        // --- End New ---
 
         if (!selectedPlanValueInput.value) {
             alert('Please select a Plan.');
@@ -420,11 +412,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     selectedPlanTypeInput.value = '';
                     selectedPlanDetailsInput.value = '';
 
-                    // --- New: Hide T&C section after successful submission ---
                     termsAndConditionsSection.classList.remove('visible');
                     termsAndConditionsSection.classList.add('hidden');
-                    agreeTermsCheckbox.checked = false; // Uncheck T&C
-                    toggleGenerateButton(); // Disable button
+                    agreeTermsCheckbox.checked = false;
+                    toggleGenerateButton();
 
                     pdfLinkSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 } else {
@@ -441,21 +432,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- Drawer and Tracking Functionality ---
 
-    // Function to open the drawer
     function openDrawer() {
         mainDrawer.classList.add('open');
         drawerOverlay.classList.remove('hidden');
         setTimeout(() => drawerOverlay.classList.add('visible'), 10);
-        document.body.style.overflow = 'hidden'; // Prevent scrolling main content
+        document.body.style.overflow = 'hidden';
     }
 
-    // Function to close the drawer
     function closeDrawer() {
         mainDrawer.classList.remove('open');
         drawerOverlay.classList.remove('visible');
-        setTimeout(() => drawerOverlay.classList.add('hidden'), 300); // Match CSS transition
-        document.body.style.overflow = ''; // Allow scrolling main content
-        // Hide tracking section when drawer closes
+        setTimeout(() => drawerOverlay.classList.add('hidden'), 300);
+        document.body.style.overflow = '';
         trackingSection.classList.remove('visible');
         trackingSection.classList.add('hidden');
         trackingResults.classList.remove('visible');
@@ -466,73 +454,58 @@ document.addEventListener('DOMContentLoaded', function () {
         trackingLoading.classList.add('hidden');
     }
 
-    // Event listeners for drawer
     hamburgerMenu.addEventListener('click', openDrawer);
     drawerCloseButton.addEventListener('click', closeDrawer);
     drawerOverlay.addEventListener('click', closeDrawer);
 
-    // Logout button inside the drawer
     logoutButtonDrawer.addEventListener('click', () => {
-        // Clear session storage
         sessionStorage.removeItem('storeId');
 
-        // Reset forms (manual reset for mobile autofill issues)
         document.getElementById('loginForm').reset();
-        form.reset(); // This is the warrantyForm
+        form.reset();
 
-        // Manually clear the form fields to prevent autofill issues on mobile
         document.getElementById('loginStoreId').value = '';
         document.getElementById('loginPassword').value = '';
         storeIdInput.value = '';
         document.getElementById('displayedStoreId').textContent = '';
 
-        // Switch views with animation (from auth.js's logic)
         document.getElementById('warrantySection').classList.remove('visible');
         document.getElementById('warrantySection').classList.add('hidden');
         document.getElementById('loginSection').classList.remove('hidden');
-        setTimeout(() => document.getElementById('loginSection').classList.add('visible'), 10); // Animate in
+        setTimeout(() => document.getElementById('loginSection').classList.add('visible'), 10);
 
-        // Ensure login form is in its initial state (no loading/error messages)
         document.getElementById('loginError').classList.add('hidden');
         document.getElementById('loginError').classList.remove('visible');
         document.getElementById('loginLoading').classList.add('hidden');
         document.getElementById('loginLoading').classList.remove('visible');
         document.getElementById('loginForm').querySelector('.submit-button').classList.remove('hidden');
 
-        // Close the drawer after logout
         closeDrawer();
 
-        // Also reset tracking section inputs
         fromDateInput.value = '';
         toDateInput.value = '';
 
-        // --- New: Hide T&C section after logout ---
         termsAndConditionsSection.classList.remove('visible');
         termsAndConditionsSection.classList.add('hidden');
-        agreeTermsCheckbox.checked = false; // Uncheck T&C
-        toggleGenerateButton(); // Disable button
+        agreeTermsCheckbox.checked = false;
+        toggleGenerateButton();
     });
 
-    // Tracking Data functionality
     openTrackingButton.addEventListener('click', () => {
-        // Toggle visibility of tracking section
         trackingSection.classList.toggle('hidden');
         setTimeout(() => {
             trackingSection.classList.toggle('visible');
-        }, 10); // Small delay for animation
+        }, 10);
 
-        // Set default dates if not already set
         if (!fromDateInput.value || !toDateInput.value) {
             const today = new Date();
             const thirtyDaysAgo = new Date();
             thirtyDaysAgo.setDate(today.getDate() - 30);
 
-            // Format dates to YYYY-MM-DD for input type="date"
             fromDateInput.value = thirtyDaysAgo.toISOString().split('T')[0];
             toDateInput.value = today.toISOString().split('T')[0];
         }
 
-        // Scroll to tracking section in drawer
         trackingSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
@@ -541,7 +514,7 @@ document.addEventListener('DOMContentLoaded', function () {
     async function fetchTrackingData() {
         const fromDate = fromDateInput.value;
         const toDate = toDateInput.value;
-        const storeId = sessionStorage.getItem('storeId'); // Get current logged-in store ID
+        const storeId = sessionStorage.getItem('storeId');
 
         if (!storeId) {
             trackingError.textContent = 'Store ID not found. Please log in again.';
@@ -567,7 +540,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const appScriptURL = 'https://script.google.com/macros/s/AKfycbzs4pDbrUTXRDnEHaL7CNrHOQ1OuCvc7G2JCeq6i1d5fqMtRSk-JNsElkgJAxvX_ULV/exec';
 
         const queryParams = new URLSearchParams({
-            action: 'getTrackingData', // New action to request tracking data
+            action: 'getTrackingData',
             storeId: storeId,
             fromDate: fromDate,
             toDate: toDate
@@ -626,8 +599,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // --- Initial setup on page load ---
-    // The toggleGenerateButton() call here ensures the button state is correctly set on initial page load.
-    // The event listener added above will handle subsequent changes to the checkbox.
     toggleGenerateButton();
-    termsAndConditionsSection.classList.add('hidden'); // Ensure T&C section is hidden on load
+    termsAndConditionsSection.classList.add('hidden');
 });
