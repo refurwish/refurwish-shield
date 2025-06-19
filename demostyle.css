@@ -27,9 +27,8 @@ body {
     border-radius: 12px; /* Softer rounded corners */
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1); /* Deeper, more subtle shadow */
     width: 90%;
-    /* THIS IS THE MAX WIDTH OF YOUR MAIN LOGIN/WARRANTY BOXES */
-    /* If you want them wider, increase this value. */
-    max-width: 550px; /* Slightly wider for better layout */
+    /* You can adjust this max-width if you want the main boxes (login/warranty) to be wider */
+    max-width: 550px; /* Current max-width for better layout on medium screens */
     position: relative;
     opacity: 0; /* Start hidden for entrance animation */
     transform: translateY(20px); /* Start slightly below for slide-up */
@@ -241,7 +240,6 @@ select {
 }
 
 /* Utility Class for Hidden Elements */
-/* These classes control the visibility and animation of sections */
 .hidden {
     display: none !important; /* Use !important to override other display properties */
     opacity: 0;
@@ -769,7 +767,7 @@ select.error {
     transform: translateY(0);
 }
 
-.terms-and-conditions-section h4 { /* Changed from h3 to h4 to match your HTML */
+.terms-and-conditions-section h4 {
     text-align: center;
     color: #2c3e50;
     margin-top: 0;
@@ -807,16 +805,17 @@ select.error {
     color: #333;
 }
 
-.terms-agreement {
-    display: flex;
-    align-items: center;
+/* FIX: Checkbox alignment styles for .terms-checkbox-group */
+.terms-checkbox-group { /* Target the div directly containing the checkbox and label */
+    display: flex; /* Makes content (checkbox and label) align horizontally */
+    align-items: flex-start; /* Aligns items to the start (top) if they have different heights */
     margin-top: 20px;
     margin-bottom: 20px;
-    cursor: pointer;
+    cursor: pointer; /* Makes the whole area clickable for the checkbox */
     user-select: none; /* Prevent text selection on label */
 }
 
-.terms-agreement input[type="checkbox"] {
+.terms-checkbox-group input[type="checkbox"] {
     margin-right: 10px;
     min-width: 20px; /* Ensure checkbox is not too small */
     min-height: 20px;
@@ -828,15 +827,16 @@ select.error {
     border-radius: 4px;
     transition: all 0.2s ease-in-out;
     position: relative;
-    top: 1px; /* Align with text */
+    top: 2px; /* Adjusted to align better with text baseline */
+    flex-shrink: 0; /* Prevent checkbox from shrinking */
 }
 
-.terms-agreement input[type="checkbox"]:checked {
+.terms-checkbox-group input[type="checkbox"]:checked {
     background-color: #007bff;
     border-color: #007bff;
 }
 
-.terms-agreement input[type="checkbox"]:checked::after {
+.terms-checkbox-group input[type="checkbox"]:checked::after {
     content: '✔'; /* Checkmark symbol */
     position: absolute;
     top: 50%;
@@ -847,44 +847,47 @@ select.error {
     font-weight: bold;
 }
 
-.terms-agreement label {
+.terms-checkbox-group label { /* Target the label inside the group */
     margin: 0; /* Override default label margin */
     font-size: 0.95rem;
     color: #333;
     cursor: pointer;
     font-weight: normal; /* Override potential bolder label style */
+    line-height: 1.3; /* Adjust line height for better wrapping and alignment */
 }
 
-.terms-agreement label a {
+.terms-checkbox-group label a {
     color: #007bff;
     text-decoration: none;
     font-weight: 500;
     transition: color 0.2s ease-in-out, text-decoration 0.2s ease-in-out;
 }
 
-.terms-agreement label a:hover {
+.terms-checkbox-group label a:hover {
     color: #0056b3;
     text-decoration: underline;
 }
 
+/* The .full-terms-link class from your previous CSS was not in your HTML structure
+   for the "View Full Terms" link. The label a {} styling handles it.
+   If you intend to have a separate link block for full terms, this would apply:
 .full-terms-link {
-    display: block; /* Make it a block element to take full width */
-    text-align: center; /* Center the text */
-    margin-top: 15px; /* Space above the link */
+    display: block;
+    text-align: center;
+    margin-top: 15px;
     font-size: 0.9rem;
 }
-
 .full-terms-link a {
     color: #007bff;
     text-decoration: none;
     font-weight: 500;
     transition: color 0.2s ease-in-out, text-decoration 0.2s ease-in-out;
 }
-
 .full-terms-link a:hover {
     color: #0056b3;
     text-decoration: underline;
 }
+*/
 
 
 /* Responsive Adjustments */
@@ -892,8 +895,8 @@ select.error {
     .container {
         padding: 30px 20px;
         border-radius: 10px;
-        /* Re-evaluate max-width for tablets if it feels too small */
-        /* max-width: 600px; /* Example: increase slightly for tablets if needed */
+        /* Consider adjusting max-width for tablets if it feels too small, e.g., */
+        /* max-width: 600px; */
     }
 
     h1, h2 {
@@ -1017,7 +1020,7 @@ select.error {
         max-height: 150px; /* Adjust max-height for T&C content on smaller screens */
         padding: 12px;
     }
-    .terms-agreement label {
+    .terms-checkbox-group label { /* Target the label directly within the group */
         font-size: 0.9rem;
     }
 }
@@ -1026,8 +1029,8 @@ select.error {
     .container {
         padding: 20px 15px;
         border-radius: 8px;
-        /* Re-evaluate max-width for phones if it feels too small */
-        /* max-width: 380px; /* Example: increase slightly for small phones if needed */
+        /* Consider adjusting max-width for phones if it feels too small, e.g., */
+        /* max-width: 380px; */
     }
 
     h1, h2 {
@@ -1090,14 +1093,14 @@ select.error {
         max-height: 120px; /* Further adjust max-height for T&C content */
         padding: 10px;
     }
-    .terms-agreement label {
+    .terms-checkbox-group label { /* Target the label directly within the group */
         font-size: 0.85rem;
     }
-    .terms-agreement input[type="checkbox"] {
+    .terms-checkbox-group input[type="checkbox"] {
         min-width: 18px;
         min-height: 18px;
     }
-    .terms-agreement input[type="checkbox"]:checked::after {
+    .terms-checkbox-group input[type="checkbox"]:checked::after {
         font-size: 12px;
     }
 }
