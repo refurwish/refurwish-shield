@@ -500,26 +500,25 @@ select.error {
     color: #ffc107; /* Yellow price when selected */
 }
 
-/* Best Value Ribbon Styling - FURTHER REFINED FOR VISIBILITY */
+/* Best Value Ribbon Styling - FURTHER REFINED FOR VISIBILITY AND BEAUTY */
 .best-value-ribbon {
     position: absolute;
-    /* Position the ribbon's top-right corner slightly outside the parent's top-right corner */
-    top: -15px; /* Adjust this value to control how far it extends upwards */
-    right: -15px; /* Adjust this value to control how far it extends to the right */
+    /* Adjusted to place the rotation origin point precisely at the corner */
+    top: 0px; /* Aligns the top of the ribbon with the top of the parent */
+    right: 0px; /* Aligns the right of the ribbon with the right of the parent */
     
-    width: 170px; /* INCREASED SIGNIFICANTLY: Make ribbon much wider to ensure text fits and it's not squashed */
+    width: 150px; /* Adjusted width for a balanced look */
     background-color: #FF4500; /* Orange-red for "Best Value" */
     color: white;
     text-align: center;
-    padding: 8px 0; /* MAINTAINED / INCREASED: Good vertical padding */
-    font-size: 0.9em; /* INCREASED: Larger font size for better readability */
+    padding: 8px 0; /* Consistent vertical padding */
+    font-size: 0.85em; /* Readable font size */
     font-weight: bold;
     
-    /* This transformation pulls the ribbon out from the corner and rotates it */
-    /* The translate values are now relative to the parent's top-right corner due to `top` and `right` */
-    transform: rotate(45deg); /* JUST ROTATE: The `top` and `right` now handle initial positioning */
-    transform-origin: 100% 100%; /* Origin of rotation is the BOTTOM-RIGHT of the RIBBON itself. */
-                                  /* This makes it pivot nicely into the corner when rotated */
+    /* This transformation pivots the ribbon from its top-right and rotates it */
+    transform: translate(50%, -50%) rotate(45deg); /* Pulls out from corner, then rotates */
+    transform-origin: 0% 0%; /* Pivot from the TOP-LEFT of the ribbon itself */
+                                  /* This combined with translate makes it pop out correctly */
     
     z-index: 100; /* IMPORTANT: Ensures it's above everything else */
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Stronger shadow for pop-out effect */
@@ -531,8 +530,8 @@ select.error {
 .best-value-ribbon::before, .best-value-ribbon::after {
     content: '';
     position: absolute;
-    bottom: -10px; /* Adjusted: Pull triangles slightly under the ribbon */
-    border: 10px solid transparent; /* INCREASED: Larger triangles for better visual balance */
+    bottom: -8px; /* Adjusted for aesthetic connection */
+    border: 8px solid transparent; /* Larger triangles for better visual balance */
 }
 
 .best-value-ribbon::before {
