@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const openTrackingButton = document.getElementById('openTrackingButton');
     const trackingSection = document.getElementById('trackingSection');
     const fromDateInput = document.getElementById('fromDate');
-    const toDateInput = document.getElementById('toDate');
+    const toDateInput = document = document.getElementById('toDate');
     const filterTrackingDataButton = document.getElementById('filterTrackingDataButton');
     const trackingLoading = document.getElementById('trackingLoading');
     const trackingError = document.getElementById('trackingError');
@@ -161,8 +161,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const planCard = document.createElement('div');
             planCard.classList.add('plan-card');
             
-            let comboRibbonHtml = '';
-            let comboOfferTextHtml = '';
+            let comboRibbonHtml = ''; // Reset for each plan
+            let comboOfferTextHtml = ''; // Reset for each plan
 
             if (plan.isCombo) {
                 planCard.classList.add('combo-plan-card');
@@ -264,7 +264,8 @@ document.addEventListener('DOMContentLoaded', function () {
         e.preventDefault();
 
         if (!validateCustomerAndPhoneDetails()) {
-            alert('Please fill in all required details correctly before proceeding to plan selection.');
+            // Using a custom modal/message box instead of alert()
+            displayCustomMessage('Please fill in all required details correctly before proceeding to plan selection.', 'error');
             const firstErrorField = document.querySelector('.form-group input.error, .form-group select.error');
             if (firstErrorField) {
                 firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -274,7 +275,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const phonePrice = parseFloat(phonePriceInput.value);
         if (phonePrice < 5000 || phonePrice > 250000) {
-            alert('Please enter phone price between ₹5,000 to ₹2,50,000.');
+            displayCustomMessage('Please enter phone price between ₹5,000 to ₹2,50,000.', 'error');
             phonePriceInput.classList.add('error');
             phonePriceInput.focus();
             phonePriceInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -296,6 +297,8 @@ document.addEventListener('DOMContentLoaded', function () {
         successContainer.classList.add('hidden');
         pdfLinkSection.classList.remove('visible');
         pdfLinkSection.classList.add('hidden');
+        errorMessage.classList.remove('visible');
+        errorMessage.classList.add('hidden'); // Also hide general error messages
 
         planSelectionSection.classList.remove('hidden');
         setTimeout(() => {
@@ -338,14 +341,14 @@ document.addEventListener('DOMContentLoaded', function () {
         e.preventDefault();
 
         if (!agreeTermsCheckbox.checked) {
-            alert('Please agree to the Terms and Conditions before generating the certificate.');
+            displayCustomMessage('Please agree to the Terms and Conditions before generating the certificate.', 'error');
             agreeTermsCheckbox.focus();
             termsAndConditionsSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
             return;
         }
 
         if (!selectedPlanValueInput.value) {
-            alert('Please select a Plan.');
+            displayCustomMessage('Please select a Plan.', 'error');
             planOptionsGrid.classList.add('error');
             planOptionsGrid.scrollIntoView({ behavior: 'smooth', block: 'center' });
             return;
@@ -353,6 +356,7 @@ document.addEventListener('DOMContentLoaded', function () {
             planOptionsGrid.classList.remove('error');
         }
 
+        // Hide previous messages and show loading
         successContainer.classList.remove('visible');
         successContainer.classList.add('hidden');
         errorMessage.classList.remove('visible');
@@ -360,6 +364,10 @@ document.addEventListener('DOMContentLoaded', function () {
         pdfLinkSection.classList.remove('visible');
         pdfLinkSection.classList.add('hidden');
 
+        // Hide the generate button and show loading immediately
+        generateCertificateButton.classList.remove('visible');
+        generateCertificateButton.classList.add('hidden'); 
+        
         loading.classList.remove('hidden');
         setTimeout(() => loading.classList.add('visible'), 10);
 
@@ -422,20 +430,56 @@ document.addEventListener('DOMContentLoaded', function () {
                     termsAndConditionsSection.classList.remove('visible');
                     termsAndConditionsSection.classList.add('hidden');
                     agreeTermsCheckbox.checked = false;
-                    toggleGenerateButton();
+                    toggleGenerateButton(); // This will disable the button if terms are not agreed
 
                     pdfLinkSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                    // Re-show the generate certificate button after success, and enable it based on terms
+                    generateCertificateButton.classList.remove('hidden');
+                    setTimeout(() => generateCertificateButton.classList.add('visible'), 10);
+                    toggleGenerateButton(); // Ensure disabled state is correct after reset
+
+
                 } else {
                     throw new Error(data.message || 'Unknown error');
                 }
             })
             .catch(error => {
+                loading.classList.remove('visible');
+                loading.classList.add('hidden');
+
                 errorMessage.textContent = 'An error occurred: ' + error.message;
                 errorMessage.classList.remove('hidden');
                 setTimeout(() => errorMessage.classList.add('visible'), 10);
                 errorMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                // Re-show the generate certificate button on error
+                generateCertificateButton.classList.remove('hidden');
+                setTimeout(() => generateCertificateButton.classList.add('visible'), 10);
+                toggleGenerateButton(); // Ensure disabled state is correct
             });
     });
+
+    // Helper function to display custom messages (replaces alert)
+    function displayCustomMessage(message, type) {
+        const customMessageContainer = document.createElement('div');
+        customMessageContainer.classList.add('custom-message', type);
+        customMessageContainer.textContent = message;
+
+        // Find a suitable place to append the message, e.g., right before the form
+        form.parentNode.insertBefore(customMessageContainer, form.nextSibling);
+
+        setTimeout(() => {
+            customMessageContainer.classList.add('show');
+        }, 10);
+
+        setTimeout(() => {
+            customMessageContainer.classList.remove('show');
+            customMessageContainer.classList.add('hide');
+            customMessageContainer.addEventListener('transitionend', () => customMessageContainer.remove());
+        }, 5000); // Message disappears after 5 seconds
+    }
+
 
     function openDrawer() {
         mainDrawer.classList.add('open');
@@ -483,7 +527,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('loginError').classList.remove('visible');
         document.getElementById('loginLoading').classList.add('hidden');
         document.getElementById('loginLoading').classList.remove('visible');
-        document.getElementById('loginForm').querySelector('.submit-button').classList.remove('hidden');
+        document.getElementById('loginForm').querySelector('.submit-button').classList.remove('hidden'); // Ensure login button reappears
 
         closeDrawer();
 
@@ -602,6 +646,44 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    toggleGenerateButton();
+    // New CSS for the custom message boxes
+    const style = document.createElement('style');
+    style.innerHTML = `
+        .custom-message {
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+            position: relative; /* Ensure stacking context for z-index */
+            z-index: 1001; /* Above almost everything else */
+        }
+        .custom-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .custom-message.hide {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        .custom-message.error {
+            background-color: #ffe6e6;
+            color: #dc3545;
+            border: 1px solid #e6a4a4;
+        }
+        .custom-message.success {
+            background-color: #e6ffe6;
+            color: #28a745;
+            border: 1px solid #a4e6a4;
+        }
+    `;
+    document.head.appendChild(style);
+
+
+    // Initial setup
+    toggleGenerateButton(); // This disables the button if terms are not agreed initially.
     termsAndConditionsSection.classList.add('hidden');
 });
