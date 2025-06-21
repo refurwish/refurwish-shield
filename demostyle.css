@@ -397,7 +397,8 @@ select.error {
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     display: flex;
     flex-direction: column; /* Stack text and price/features */
-    align-items: flex-start; /* Align content to the start */
+    /* Ensure content aligns to the start, and distribute space */
+    align-items: flex-start; 
     position: relative; /* CRITICAL: Establishes positioning context for absolute children */
     /* Ensure no overflow: hidden; here! */
 }
@@ -435,16 +436,38 @@ select.error {
     color: rgba(255, 255, 255, 0.8); /* Lighter white for selected description */
 }
 
+/* New: Plan Footer for Price & Period */
+.plan-footer {
+    width: 100%; /* Take full width of card */
+    display: flex;
+    justify-content: flex-end; /* Align content to the right */
+    align-items: baseline; /* Align price and period at their baseline */
+    margin-top: auto; /* Push to the bottom */
+    gap: 8px; /* Space between price and period */
+}
+
 .plan-card .plan-price {
     font-weight: 700; /* Bolder price */
     font-size: 1.25rem; /* Make price stand out more */
     color: #28a745; /* Green for price for better contrast/emphasis */
-    align-self: flex-end; /* Push price to the bottom right */
+    /* Removed align-self as flex-end on parent .plan-footer handles it */
 }
 
 .plan-card.selected .plan-price {
     color: white; /* White price when selected */
 }
+
+.plan-card .plan-period {
+    font-size: 0.85rem;
+    color: #555;
+    font-weight: 500;
+    /* Aligned by .plan-footer */
+}
+
+.plan-card.selected .plan-period {
+    color: rgba(255, 255, 255, 0.7);
+}
+
 
 /* Combo Plan Specific Styles - Eye Catchy Layout */
 .combo-plan-card {
@@ -490,9 +513,10 @@ select.error {
     color: rgba(255, 255, 255, 0.9); /* Lighter white description when selected */
 }
 
+/* Specific styling for combo plan price and period for better visibility */
 .combo-plan-card .plan-price {
     color: #ff4500; /* Orange-red for combo plan price */
-    font-size: 1.4rem; /* Even larger price */
+    font-size: 1.5rem; /* Even larger price for combo */
     font-weight: 900; /* Extra bold */
 }
 
@@ -500,38 +524,43 @@ select.error {
     color: #ffc107; /* Yellow price when selected */
 }
 
+
 /* Best Value Ribbon Styling - FURTHER REFINED FOR VISIBILITY AND BEAUTY */
 .best-value-ribbon {
     position: absolute;
-    /* Adjusted to place the rotation origin point precisely at the corner */
-    top: 0px; /* Aligns the top of the ribbon with the top of the parent */
-    right: 0px; /* Aligns the right of the ribbon with the right of the parent */
+    /* Push the ribbon's top-right corner slightly outside the parent's top-right corner.
+       These values are critical for the diagonal pop-out effect when combined with transform. */
+    top: -15px; /* Adjust as needed */
+    right: -15px; /* Adjust as needed */
     
-    width: 150px; /* Adjusted width for a balanced look */
+    width: 170px; /* Adjusted width for a balanced look and text fit */
     background-color: #FF4500; /* Orange-red for "Best Value" */
     color: white;
     text-align: center;
     padding: 8px 0; /* Consistent vertical padding */
-    font-size: 0.85em; /* Readable font size */
+    font-size: 0.9em; /* Readable font size */
     font-weight: bold;
     
-    /* This transformation pivots the ribbon from its top-right and rotates it */
-    transform: translate(50%, -50%) rotate(45deg); /* Pulls out from corner, then rotates */
-    transform-origin: 0% 0%; /* Pivot from the TOP-LEFT of the ribbon itself */
-                                  /* This combined with translate makes it pop out correctly */
+    /* This transformation pivots the ribbon from its bottom-right and rotates it.
+       The combination of 'top/right' offsets and 'transform-origin' makes it appear from the corner. */
+    transform: rotate(45deg); 
+    /* Pivot the rotation from the bottom-right corner of the RIBBON itself.
+       This makes it sweep into the card's top-right corner nicely and predictably. */
+    transform-origin: 100% 100%; 
     
     z-index: 100; /* IMPORTANT: Ensures it's above everything else */
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Stronger shadow for pop-out effect */
     white-space: nowrap; /* Prevent "BEST VALUE" text from wrapping */
-    overflow: hidden; /* This is okay for the ribbon itself to manage its shape */
+    /* Removed overflow: hidden; from here if it was causing issues with content being cut.
+       It should be safe here for shaping the ribbon itself. */
 }
 
 /* For the triangle effect at the ends of the ribbon */
 .best-value-ribbon::before, .best-value-ribbon::after {
     content: '';
     position: absolute;
-    bottom: -8px; /* Adjusted for aesthetic connection */
-    border: 8px solid transparent; /* Larger triangles for better visual balance */
+    bottom: -10px; /* Adjusted for aesthetic connection */
+    border: 10px solid transparent; /* Larger triangles for better visual balance */
 }
 
 .best-value-ribbon::before {
@@ -556,6 +585,8 @@ select.error {
     text-align: center;
     padding: 0 10px; /* Slightly more horizontal padding */
     line-height: 1.3; /* Ensure text doesn't look too squashed */
+    width: 100%; /* Ensure it takes full width for centering */
+    box-sizing: border-box; /* Include padding in width */
 }
 
 @keyframes pulseBorder {
