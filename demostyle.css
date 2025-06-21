@@ -27,7 +27,6 @@ body {
     border-radius: 12px; /* Softer rounded corners */
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1); /* Deeper, more subtle shadow */
     width: 90%;
-    /* You can adjust this max-width if you want the main boxes (login/warranty) to be wider */
     max-width: 550px; /* Current max-width for better layout on medium screens */
     position: relative;
     opacity: 0; /* Start hidden for entrance animation */
@@ -69,11 +68,9 @@ h1, h2 {
 /* Form Group & Labels */
 .form-group {
     margin-bottom: 20px; /* Increased spacing between form groups */
-    /* Add transition for show/hide animation for individual form groups */
     transition: opacity 0.4s ease-out, transform 0.4s ease-out, margin-bottom 0.3s ease-out;
 }
 
-/* Label for phone price input group that will be hidden/shown */
 #phonePriceGroup label {
     font-weight: 600; /* Make this label a bit bolder */
 }
@@ -92,16 +89,16 @@ input[type="email"],
 input[type="tel"],
 input[type="date"],
 input[type="number"],
-input[type="password"], /* Combined password input */
+input[type="password"],
 select {
-    width: 100%; /* Full width */
-    padding: 12px 15px; /* More padding */
-    border: 1px solid #dcdcdc; /* Lighter border */
-    border-radius: 6px; /* Softer border-radius */
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
     box-sizing: border-box;
     font-size: 1rem;
     color: #333;
-    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Smooth transitions */
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
 input[type="text"]:focus,
@@ -112,8 +109,8 @@ input[type="number"]:focus,
 input[type="password"]:focus,
 select:focus {
     outline: none;
-    border-color: #007bff; /* Highlight on focus */
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2); /* Soft focus glow */
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
 }
 
 /* Custom Select Arrow */
@@ -123,7 +120,7 @@ select {
     background-repeat: no-repeat;
     background-position: right 12px center;
     background-size: 18px;
-    padding-right: 40px; /* Space for custom arrow */
+    padding-right: 40px;
 }
 
 /* Show Password Toggle */
@@ -134,7 +131,7 @@ select {
 
 .password-input-wrapper input[type="password"],
 .password-input-wrapper input[type="text"] {
-    padding-right: 40px; /* Make space for the eye icon */
+    padding-right: 40px;
 }
 
 .show-password-checkbox {
@@ -142,9 +139,9 @@ select {
     right: 12px;
     top: 50%;
     transform: translateY(-50%);
-    z-index: 2; /* Ensure it's clickable */
-    opacity: 0; /* Hide the actual checkbox */
-    width: 24px; /* Make it clickable */
+    z-index: 2;
+    opacity: 0;
+    width: 24px;
     height: 24px;
     cursor: pointer;
 }
@@ -156,45 +153,44 @@ select {
     transform: translateY(-50%);
     cursor: pointer;
     font-size: 1.2rem;
-    z-index: 1; /* Behind the hidden checkbox but above input */
+    z-index: 1;
 }
 
 .show-password-label i {
-    pointer-events: none; /* Allow click to pass through to checkbox */
-    color: #4a4a4a; /* Explicitly set icon color to a darker shade */
+    pointer-events: none;
+    color: #4a4a4a;
 }
 
-/* Optional: change icon color on hover or when checked */
-.show-password-checkbox:hover + .show-password-label i, /* Target the icon directly on hover */
-.show-password-checkbox:focus + .show-password-label i { /* Target the icon directly on focus */
-    color: #007bff; /* Primary blue on hover/focus */
+.show-password-checkbox:hover + .show-password-label i,
+.show-password-checkbox:focus + .show-password-label i {
+    color: #007bff;
 }
 
 /* Submit & General Buttons */
 .submit-button {
-    background-color: #007bff; /* Primary blue */
+    background-color: #007bff;
     color: white;
-    padding: 14px 25px; /* Larger padding */
+    padding: 14px 25px;
     border: none;
-    border-radius: 8px; /* More rounded */
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 1.1rem; /* Slightly larger font */
-    font-weight: 600; /* Bolder text */
+    font-size: 1.1rem;
+    font-weight: 600;
     width: 100%;
     display: block;
-    margin-top: 25px; /* More space above button */
+    margin-top: 25px;
     transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2); /* Subtle shadow for depth */
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
 }
 
 .submit-button:hover {
     background-color: #0056b3;
-    transform: translateY(-2px); /* Slight lift on hover */
+    transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0, 123, 255, 0.3);
 }
 
 .submit-button:active {
-    transform: translateY(0); /* Press effect */
+    transform: translateY(0);
     box-shadow: 0 2px 4px rgba(0, 123, 255, 0.1);
 }
 
@@ -205,27 +201,25 @@ select {
     transform: none;
 }
 
-
 .submit-button.small-button {
-    padding: 10px 20px; /* Smaller padding for drawer buttons */
+    padding: 10px 20px;
     font-size: 0.9rem;
     margin-top: 15px;
 }
 
-
 /* Back Button (general style) */
 .back-button {
-    background-color: #e9ecef; /* Light grey background */
-    color: #495057; /* Darker grey text */
+    background-color: #e9ecef;
+    color: #495057;
     padding: 12px 20px;
-    border: 1px solid #ced4da; /* Subtle border */
+    border: 1px solid #ced4da;
     border-radius: 8px;
     cursor: pointer;
     font-size: 1rem;
     font-weight: 500;
     width: 100%;
     display: block;
-    margin-top: 15px; /* Consistent spacing */
+    margin-top: 15px;
     transition: all 0.3s ease-in-out;
 }
 
@@ -241,7 +235,7 @@ select {
 
 /* Utility Class for Hidden Elements */
 .hidden {
-    display: none !important; /* Use !important to override other display properties */
+    display: none !important;
     opacity: 0;
     transform: scale(0.95);
     transition: opacity 0.4s ease-out, transform 0.4s ease-out;
@@ -255,13 +249,13 @@ select {
 }
 
 /* Loading, Success, Error Messages */
-.status-message { /* General style for all messages */
+.status-message {
     margin-top: 25px;
     padding: 15px;
     border-radius: 8px;
     text-align: center;
     font-weight: 500;
-    opacity: 0; /* Start hidden for animation */
+    opacity: 0;
     transition: opacity 0.4s ease-in-out;
     transform: translateY(10px);
 }
@@ -273,29 +267,29 @@ select {
 
 #loading {
     color: #007bff;
-    background-color: #e6f7ff; /* Light blue background */
+    background-color: #e6f7ff;
     border: 1px solid #b3e0ff;
 }
 
-#successContainer { /* This is the container for success message AND pdf link section */
+#successContainer {
     color: #28a745;
-    background-color: #e6ffe6; /* Light green background */
+    background-color: #e6ffe6;
     border: 1px solid #a4e6a4;
 }
 
-#errorMessage, #loginError, #trackingError { /* Combined error styling */
+#errorMessage, #loginError, #trackingError {
     color: #dc3545;
-    background-color: #ffe6e6; /* Light red background */
+    background-color: #ffe6e6;
     border: 1px solid #e6a4a4;
 }
 
 /* Loader Animation */
 .loader {
     display: inline-block;
-    width: 20px; /* Slightly larger */
+    width: 20px;
     height: 20px;
-    border: 3px solid rgba(0, 123, 255, 0.3); /* Lighter border for loader */
-    border-top: 3px solid #007bff; /* Primary blue loader */
+    border: 3px solid rgba(0, 123, 255, 0.3);
+    border-top: 3px solid #007bff;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
     vertical-align: middle;
@@ -313,12 +307,12 @@ select {
     padding: 20px;
     border: 1px solid #e0e0e0;
     border-radius: 10px;
-    background-color: #f8f9fa; /* Very light grey */
+    background-color: #f8f9fa;
     text-align: center;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); /* Subtle inner shadow */
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
     opacity: 0;
     transform: translateY(10px);
-    animation: fadeInSlideUp 0.6s ease-out forwards 0.2s; /* Delayed appearance */
+    animation: fadeInSlideUp 0.6s ease-out forwards 0.2s;
 }
 
 #pdfLinkSection p {
@@ -332,15 +326,15 @@ select {
 }
 
 #qrcode canvas {
-    border: 4px solid #fff; /* White border for QR */
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* Shadow for QR */
+    border: 4px solid #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     border-radius: 4px;
 }
 
 /* Download Link as Button */
 #downloadLink {
     display: inline-block;
-    background-color: #28a745; /* Green for success action */
+    background-color: #28a745;
     color: white;
     padding: 12px 25px;
     border-radius: 8px;
@@ -365,70 +359,172 @@ select {
 /* Validation Error Highlighting */
 input.error,
 select.error {
-    border-color: #dc3545; /* Red border */
-    background-color: #fffafa; /* Very light red background */
-    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2); /* Red glow */
+    border-color: #dc3545;
+    background-color: #fffafa;
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2);
 }
 
-/* Plan Options Container & Buttons */
-.plan-options-container {
-    display: grid; /* Use CSS Grid for flexible layout */
+/* Plan Options Container (now grid) */
+.plan-options-grid { /* Renamed from .plan-options-container */
+    display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsive grid */
-    gap: 15px; /* More space between buttons */
+    gap: 20px; /* Increased gap for better separation */
     margin-top: 20px;
     margin-bottom: 25px;
     padding: 15px;
-    border: 1px solid #e9ecef; /* Lighter border */
+    border: 1px solid #e9ecef;
     border-radius: 10px;
     background-color: #f8f9fa;
     transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
-.plan-options-container.error {
-    border-color: #dc3545; /* Red border for validation error */
+.plan-options-grid.error {
+    border-color: #dc3545;
     box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2);
 }
 
-.plan-button {
+/* Individual Plan Button/Card - Renamed from .plan-button to .plan-card for clarity */
+.plan-card {
     background-color: #ffffff;
     border: 1px solid #e0e0e0;
-    padding: 15px 20px; /* More padding */
-    border-radius: 10px; /* Softer corners */
+    padding: 15px 20px;
+    border-radius: 10px;
     cursor: pointer;
-    font-size: 1.05rem; /* Slightly larger text */
+    font-size: 1.05rem;
     font-weight: 500;
-    text-align: left; /* Align text to the left */
+    text-align: left;
     transition: all 0.3s ease-in-out;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Subtle shadow for each button */
-    display: flex; /* For icon/text alignment */
-    align-items: center;
-    justify-content: space-between; /* To push price to right */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column; /* Stack text and price/features */
+    align-items: flex-start; /* Align content to the start */
+    position: relative; /* For badges/highlights */
+    overflow: hidden; /* For pseudo-elements */
 }
 
-.plan-button:hover {
-    background-color: #f0f8ff; /* Very light blue on hover */
-    border-color: #007bff; /* Primary blue border */
-    transform: translateY(-3px); /* Subtle lift */
+.plan-card:hover {
+    background-color: #f0f8ff;
+    border-color: #007bff;
+    transform: translateY(-3px);
     box-shadow: 0 5px 12px rgba(0, 123, 255, 0.1);
 }
 
-.plan-button.selected {
-    background-color: #007bff; /* Primary blue when selected */
+.plan-card.selected {
+    background-color: #007bff;
     color: white;
     border-color: #0056b3;
     box-shadow: 0 6px 12px rgba(0, 123, 255, 0.3);
-    transform: scale(1.02); /* Slightly larger when selected */
+    transform: scale(1.02);
 }
 
-.plan-button .plan-text {
-    flex-grow: 1; /* Allows text to take up space */
-    margin-right: 10px;
-}
-
-.plan-button .plan-price {
+.plan-card .plan-name {
     font-weight: 600;
-    font-size: 1.15rem; /* Make price stand out */
-    color: inherit; /* Inherit color from parent (white when selected) */
+    font-size: 1.1rem;
+    margin-bottom: 5px; /* Space between name and description */
+    color: inherit; /* Inherit color from parent */
+}
+
+.plan-card .plan-description {
+    font-size: 0.85rem;
+    color: #666; /* Lighter color for description */
+    margin-bottom: 10px; /* Space before price */
+    flex-grow: 1; /* Allow description to take available space */
+}
+
+.plan-card.selected .plan-description {
+    color: rgba(255, 255, 255, 0.8); /* Lighter white for selected description */
+}
+
+.plan-card .plan-price {
+    font-weight: 700; /* Bolder price */
+    font-size: 1.25rem; /* Make price stand out more */
+    color: #28a745; /* Green for price for better contrast/emphasis */
+    align-self: flex-end; /* Push price to the bottom right */
+}
+
+.plan-card.selected .plan-price {
+    color: white; /* White price when selected */
+}
+
+/* Combo Plan Specific Styles - Eye Catchy Layout */
+.combo-plan-card {
+    border: 2px solid #ffc107; /* Eye-catching yellow/orange border */
+    background: linear-gradient(145deg, #fffbe6 0%, #fff9d6 100%); /* Lighter, warmer background */
+    box-shadow: 0 5px 15px rgba(255, 193, 7, 0.2); /* More prominent shadow */
+    transform: scale(1.03); /* Slightly larger by default */
+    z-index: 10; /* Bring to front a bit */
+    animation: pulseBorder 1.5s infinite alternate ease-in-out; /* Subtle pulsing border */
+}
+
+.combo-plan-card:hover {
+    border-color: #ffa000; /* Darker orange on hover */
+    box-shadow: 0 8px 20px rgba(255, 160, 0, 0.3);
+    transform: translateY(-5px) scale(1.05); /* More pronounced lift and scale */
+}
+
+.combo-plan-card.selected {
+    background: linear-gradient(145deg, #0056b3 0%, #003d80 100%); /* Darker blue gradient when selected */
+    border-color: #ffc107; /* Keep yellow border when selected */
+    box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4), 0 0 0 4px rgba(255, 193, 7, 0.5); /* Blue glow with yellow outline */
+    transform: scale(1.05); /* Larger scale when selected */
+}
+
+.combo-plan-card .plan-name {
+    color: #d39e00; /* Darker yellow for combo plan name */
+    font-size: 1.25rem; /* Larger font for combo name */
+    font-weight: 700; /* Bolder */
+}
+
+.combo-plan-card.selected .plan-name {
+    color: white; /* White name when selected */
+}
+
+.combo-plan-card .plan-description {
+    color: #7a6100; /* Darker description for combo plan */
+    font-weight: 500;
+}
+
+.combo-plan-card.selected .plan-description {
+    color: rgba(255, 255, 255, 0.9); /* Lighter white description when selected */
+}
+
+.combo-plan-card .plan-price {
+    color: #ff4500; /* Orange-red for combo plan price */
+    font-size: 1.4rem; /* Even larger price */
+    font-weight: 900; /* Extra bold */
+}
+
+.combo-plan-card.selected .plan-price {
+    color: #ffc107; /* Yellow price when selected */
+}
+
+/* Optional: Ribbon/Badge for Combo Plans */
+.combo-plan-card::before {
+    content: 'BEST VALUE'; /* Or 'COMBO DEAL' */
+    position: absolute;
+    top: 10px;
+    right: -30px; /* Adjust to move outside then rotate */
+    background-color: #dc3545; /* Red ribbon */
+    color: white;
+    padding: 5px 30px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    transform: rotate(45deg);
+    transform-origin: 0% 100%; /* Rotate around top-left of the original element */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    border-top: 1px solid rgba(255,255,255,0.3);
+    border-bottom: 1px solid rgba(0,0,0,0.3);
+}
+
+.combo-plan-card.selected::before {
+    background-color: #28a745; /* Green ribbon when selected */
+}
+
+@keyframes pulseBorder {
+    0% { border-color: #ffc107; box-shadow: 0 5px 15px rgba(255, 193, 7, 0.2); }
+    100% { border-color: #ffd700; box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4); }
 }
 
 
@@ -437,39 +533,36 @@ select.error {
     text-align: center;
     margin-bottom: 20px;
     padding: 10px 15px;
-    background-color: #eaf5ff; /* Light blue background for info */
+    background-color: #eaf5ff;
     border: 1px solid #cce7ff;
     border-radius: 8px;
     font-size: 1rem;
     color: #333;
-    display: flex; /* Use flex for alignment */
-    flex-direction: column; /* Stack price and button vertically */
-    align-items: center; /* Center items horizontally */
-    gap: 10px; /* Space between price and button */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
 }
 
 .displayed-phone-price-info strong {
-    font-size: 1.3rem; /* Make the price stand out */
-    color: #007bff; /* Primary blue for the price value */
+    font-size: 1.3rem;
+    color: #007bff;
 }
 
-/* Adjust back button inside this info block for proper alignment */
 .displayed-phone-price-info .back-button {
-    width: auto; /* Allow button to size to content */
-    max-width: 250px; /* Constrain width */
-    margin: 0; /* Remove default margin-top */
-    padding: 8px 15px; /* Slightly smaller padding */
-    font-size: 0.9rem; /* Smaller font */
+    width: auto;
+    max-width: 250px;
+    margin: 0;
+    padding: 8px 15px;
+    font-size: 0.9rem;
 }
 
-/* Ensure the back button hover/active states are still smooth */
 .displayed-phone-price-info .back-button:hover {
     background-color: #dee2e6;
     border-color: #adb5bd;
     transform: translateY(-1px);
 }
-
 
 /* Login Section Specific Styles */
 #loginSection h2 {
@@ -482,14 +575,14 @@ select.error {
 }
 
 #loginSection .loader {
-    border-top: 3px solid #007bff; /* Ensure consistent loader color for login */
+    border-top: 3px solid #007bff;
 }
 
 /* Store ID Display */
 .store-id-display {
     margin-bottom: 25px;
     padding: 10px 15px;
-    background-color: #f0f0f0; /* Light grey background */
+    background-color: #f0f0f0;
     border-radius: 6px;
     font-size: 0.95rem;
     display: flex;
@@ -505,29 +598,28 @@ select.error {
 }
 
 .store-id-value {
-    color: #dc3545; /* Red for store ID for prominence */
-    font-weight: 700; /* Bolder */
+    color: #dc3545;
+    font-weight: 700;
     font-size: 1.1rem;
     letter-spacing: 0.5px;
 }
 
 /* Logout Button (original position, now moved into drawer) */
-/* This rule is kept for historical context but its position will be overridden by .drawer .logout-button */
 #logoutButton {
-    position: absolute; /* Original position for #logoutButton in warrantySection */
+    position: absolute;
     top: 20px;
     right: 20px;
-    display: none; /* Hide the original logout button */
+    display: none;
 }
 
 /* Logout button specifically inside the drawer */
 .drawer .logout-button {
-    position: static; /* Override absolute positioning */
-    margin-top: auto; /* Push to the bottom of the drawer */
-    margin-bottom: 20px; /* Some bottom padding */
-    width: calc(100% - 40px); /* Adjust for padding */
-    align-self: center; /* Center horizontally in flex container */
-    background-color: #dc3545; /* Red for danger action */
+    position: static;
+    margin-top: auto;
+    margin-bottom: 20px;
+    width: calc(100% - 40px);
+    align-self: center;
+    background-color: #dc3545;
     color: white;
     border: none;
     padding: 12px 20px;
@@ -550,7 +642,6 @@ select.error {
     box-shadow: 0 2px 4px rgba(220, 53, 69, 0.1);
 }
 
-
 /* --- DRAWER (SIDEBAR) STYLES --- */
 .hamburger-menu {
     position: absolute;
@@ -558,10 +649,10 @@ select.error {
     left: 20px;
     background: none;
     border: none;
-    font-size: 2rem; /* Larger icon */
-    color: #007bff; /* Primary blue color */
+    font-size: 2rem;
+    color: #007bff;
     cursor: pointer;
-    z-index: 100; /* Above other content */
+    z-index: 100;
     transition: color 0.3s ease-in-out;
 }
 
@@ -574,20 +665,20 @@ select.error {
     top: 0;
     left: 0;
     height: 100%;
-    width: 0; /* Hidden by default */
-    max-width: 300px; /* Max width for drawer */
+    width: 0;
+    max-width: 300px;
     background-color: #ffffff;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
-    overflow-x: hidden; /* Hide content that overflows */
-    transition: width 0.3s ease-in-out; /* Smooth slide in/out */
-    z-index: 1000; /* Ensure it's on top of everything */
-    display: flex; /* Use flexbox for content alignment */
+    overflow-x: hidden;
+    transition: width 0.3s ease-in-out;
+    z-index: 1000;
+    display: flex;
     flex-direction: column;
-    padding-top: 20px; /* Space for close button */
+    padding-top: 20px;
 }
 
 .drawer.open {
-    width: 280px; /* Open width */
+    width: 280px;
 }
 
 .drawer-close-button {
@@ -607,12 +698,12 @@ select.error {
 }
 
 .drawer-content {
-    flex-grow: 1; /* Allow content to grow and push logout to bottom */
+    flex-grow: 1;
     padding: 20px;
-    padding-top: 0; /* Reset top padding as header has it */
+    padding-top: 0;
     display: flex;
     flex-direction: column;
-    align-items: stretch; /* Stretch items to fill width */
+    align-items: stretch;
 }
 
 .drawer-header {
@@ -629,20 +720,18 @@ select.error {
     font-size: 1.5rem;
 }
 
-/* Style for the new store ID display in drawer */
 .drawer-header .store-id-value {
-    font-size: 1rem; /* Slightly smaller than main display */
+    font-size: 1rem;
     font-weight: 600;
-    color: #007bff; /* A nice blue for the store ID */
+    color: #007bff;
     letter-spacing: 0.2px;
 }
-
 
 .drawer-nav {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    margin-bottom: 30px; /* Space below nav items */
+    margin-bottom: 30px;
 }
 
 .drawer-menu-item {
@@ -667,7 +756,7 @@ select.error {
 }
 
 .drawer-menu-item i {
-    font-size: 1.5rem; /* Icon size */
+    font-size: 1.5rem;
 }
 
 /* Drawer Overlay */
@@ -677,8 +766,8 @@ select.error {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.4); /* Dark semi-transparent overlay */
-    z-index: 999; /* Below drawer, above main content */
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 999;
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
 }
@@ -739,7 +828,7 @@ select.error {
     font-size: 0.95rem;
     color: #4a4a4a;
     display: flex;
-    justify-content: space-between; /* Align label and value */
+    justify-content: space-between;
 }
 
 .tracking-results strong {
@@ -750,14 +839,14 @@ select.error {
 
 /* --- NEW: Terms and Conditions Section Styles --- */
 .terms-and-conditions-section {
-    background-color: #fcfcfc; /* Slightly off-white */
+    background-color: #fcfcfc;
     border: 1px solid #e0e0e0;
     border-radius: 10px;
     padding: 25px;
     margin-top: 25px;
-    margin-bottom: 30px; /* Space before the submit button */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* Subtle shadow */
-    opacity: 0; /* Start hidden for animation */
+    margin-bottom: 30px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    opacity: 0;
     transform: translateY(15px);
     transition: opacity 0.5s ease-out, transform 0.5s ease-out;
 }
@@ -786,8 +875,8 @@ select.error {
     border: 1px solid #f0f0f0;
     border-radius: 8px;
     padding: 15px;
-    max-height: 200px; /* Limit height for scrollability */
-    overflow-y: auto; /* Enable scrolling for long content */
+    max-height: 200px;
+    overflow-y: auto;
     font-size: 0.95rem;
     line-height: 1.6;
     color: #555;
@@ -799,36 +888,34 @@ select.error {
     margin-bottom: 10px;
 }
 
-/* Basic styling for bold text inside T&C content, if present */
 .terms-and-conditions-content strong {
     font-weight: 600;
     color: #333;
 }
 
 /* FIX: Checkbox alignment styles for .terms-checkbox-group */
-.terms-checkbox-group { /* Target the div directly containing the checkbox and label */
-    display: flex; /* Makes content (checkbox and label) align horizontally */
-    align-items: flex-start; /* Aligns items to the start (top) if they have different heights */
+.terms-checkbox-group {
+    display: flex;
+    align-items: flex-start;
     margin-top: 20px;
     margin-bottom: 20px;
-    cursor: pointer; /* Makes the whole area clickable for the checkbox */
-    user-select: none; /* Prevent text selection on label */
+    cursor: pointer;
+    user-select: none;
 }
 
 .terms-checkbox-group input[type="checkbox"] {
     margin-right: 10px;
-    min-width: 20px; /* Ensure checkbox is not too small */
+    min-width: 20px;
     min-height: 20px;
     cursor: pointer;
-    /* Basic custom checkbox styling */
     appearance: none;
     background-color: #fff;
     border: 2px solid #ccc;
     border-radius: 4px;
     transition: all 0.2s ease-in-out;
     position: relative;
-    top: 2px; /* Adjusted to align better with text baseline */
-    flex-shrink: 0; /* Prevent checkbox from shrinking */
+    top: 2px;
+    flex-shrink: 0;
 }
 
 .terms-checkbox-group input[type="checkbox"]:checked {
@@ -837,7 +924,7 @@ select.error {
 }
 
 .terms-checkbox-group input[type="checkbox"]:checked::after {
-    content: '✔'; /* Checkmark symbol */
+    content: '✔';
     position: absolute;
     top: 50%;
     left: 50%;
@@ -847,13 +934,13 @@ select.error {
     font-weight: bold;
 }
 
-.terms-checkbox-group label { /* Target the label inside the group */
-    margin: 0; /* Override default label margin */
+.terms-checkbox-group label {
+    margin: 0;
     font-size: 0.95rem;
     color: #333;
     cursor: pointer;
-    font-weight: normal; /* Override potential bolder label style */
-    line-height: 1.3; /* Adjust line height for better wrapping and alignment */
+    font-weight: normal;
+    line-height: 1.3;
 }
 
 .terms-checkbox-group label a {
@@ -868,35 +955,11 @@ select.error {
     text-decoration: underline;
 }
 
-/* The .full-terms-link class from your previous CSS was not in your HTML structure
-   for the "View Full Terms" link. The label a {} styling handles it.
-   If you intend to have a separate link block for full terms, this would apply:
-.full-terms-link {
-    display: block;
-    text-align: center;
-    margin-top: 15px;
-    font-size: 0.9rem;
-}
-.full-terms-link a {
-    color: #007bff;
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.2s ease-in-out, text-decoration 0.2s ease-in-out;
-}
-.full-terms-link a:hover {
-    color: #0056b3;
-    text-decoration: underline;
-}
-*/
-
-
 /* Responsive Adjustments */
 @media (max-width: 768px) {
     .container {
         padding: 30px 20px;
         border-radius: 10px;
-        /* Consider adjusting max-width for tablets if it feels too small, e.g., */
-        /* max-width: 600px; */
     }
 
     h1, h2 {
@@ -931,20 +994,33 @@ select.error {
         font-size: 1rem;
     }
 
-    .plan-button {
+    /* Adjustments for general plan cards */
+    .plan-card {
         font-size: 0.95rem;
         padding: 12px 15px;
     }
 
-    .plan-button .plan-price {
+    .plan-card .plan-price {
         font-size: 1.05rem;
+    }
+
+    /* Adjustments for combo plan cards on smaller screens */
+    .combo-plan-card .plan-name {
+        font-size: 1.15rem; /* Slightly smaller combo name */
+    }
+    .combo-plan-card .plan-price {
+        font-size: 1.25rem; /* Slightly smaller combo price */
+    }
+    .combo-plan-card::before {
+        font-size: 0.7rem;
+        padding: 5px 25px;
+        right: -25px;
     }
 
     #pdfLinkSection {
         padding: 15px;
     }
 
-    /* Logout button inside drawer also adjusts */
     .drawer .logout-button {
         padding: 10px 15px;
         font-size: 0.9rem;
@@ -1009,18 +1085,17 @@ select.error {
         font-size: 1rem;
     }
 
-    /* Terms and Conditions responsive adjustments */
     .terms-and-conditions-section {
-        padding: 20px; /* Slightly less padding on smaller screens */
+        padding: 20px;
     }
     .terms-and-conditions-section h4 {
         font-size: 1.2rem;
     }
     .terms-and-conditions-content {
-        max-height: 150px; /* Adjust max-height for T&C content on smaller screens */
+        max-height: 150px;
         padding: 12px;
     }
-    .terms-checkbox-group label { /* Target the label directly within the group */
+    .terms-checkbox-group label {
         font-size: 0.9rem;
     }
 }
@@ -1029,8 +1104,6 @@ select.error {
     .container {
         padding: 20px 15px;
         border-radius: 8px;
-        /* Consider adjusting max-width for phones if it feels too small, e.g., */
-        /* max-width: 380px; */
     }
 
     h1, h2 {
@@ -1052,18 +1125,38 @@ select.error {
         font-size: 0.85rem;
     }
 
-    .plan-options-container {
-        grid-template-columns: 1fr; /* Stack buttons on very small screens */
-        gap: 10px;
+    .plan-options-grid { /* Still grid for stacking */
+        grid-template-columns: 1fr;
+        gap: 15px; /* Slightly reduced gap */
     }
     
-    .plan-button .plan-text {
-        margin-right: 5px;
+    /* Further adjustments for all plan cards on very small screens */
+    .plan-card {
+        padding: 10px 12px;
     }
-
-    .plan-button .plan-price {
+    .plan-card .plan-name {
         font-size: 1rem;
     }
+    .plan-card .plan-description {
+        font-size: 0.8rem;
+    }
+    .plan-card .plan-price {
+        font-size: 1.1rem;
+    }
+
+    /* Further adjustments for combo plan cards on very small screens */
+    .combo-plan-card .plan-name {
+        font-size: 1.1rem;
+    }
+    .combo-plan-card .plan-price {
+        font-size: 1.2rem;
+    }
+    .combo-plan-card::before {
+        font-size: 0.65rem;
+        padding: 4px 20px;
+        right: -20px;
+    }
+
 
     .displayed-phone-price-info {
         padding: 6px 8px;
@@ -1078,11 +1171,10 @@ select.error {
     }
 
     .drawer.open {
-        width: 100%; /* Full width on very small screens */
+        width: 100%;
         max-width: 100%;
     }
 
-    /* Terms and Conditions responsive adjustments for very small screens */
     .terms-and-conditions-section {
         padding: 15px;
     }
@@ -1090,10 +1182,10 @@ select.error {
         font-size: 1.1rem;
     }
     .terms-and-conditions-content {
-        max-height: 120px; /* Further adjust max-height for T&C content */
+        max-height: 120px;
         padding: 10px;
     }
-    .terms-checkbox-group label { /* Target the label directly within the group */
+    .terms-checkbox-group label {
         font-size: 0.85rem;
     }
     .terms-checkbox-group input[type="checkbox"] {
