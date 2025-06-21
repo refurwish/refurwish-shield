@@ -399,6 +399,7 @@ select.error {
     flex-direction: column; /* Stack text and price/features */
     align-items: flex-start; /* Align content to the start */
     position: relative; /* For badges/highlights */
+    /* REMOVED: overflow: hidden; <--- THIS IS KEY FOR THE RIBBON */
 }
 
 .plan-card:hover {
@@ -451,7 +452,7 @@ select.error {
     background-color: #FFFACD; /* Light yellow background */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* More pronounced shadow */
     position: relative; /* Ensure ribbon positioning is relative to this card */
-    overflow: hidden; /* Hide anything that goes outside the card for the ribbon */
+    /* REMOVED: overflow: hidden; <--- THIS IS KEY FOR THE RIBBON */
     transform: scale(1.03); /* Slightly larger by default */
     z-index: 10; /* Bring to front a bit */
     animation: pulseBorder 1.5s infinite alternate ease-in-out; /* Subtle pulsing border */
@@ -513,7 +514,7 @@ select.error {
     font-weight: bold;
     transform: rotate(45deg);
     transform-origin: 100% 0%; /* Rotate from the top-right corner */
-    z-index: 10; /* Ensure it's above other content */
+    z-index: 99; /* IMPORTANT: Increased z-index to ensure it's always on top */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 
     /* For the triangle effect */
