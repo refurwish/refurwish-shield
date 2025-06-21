@@ -398,7 +398,7 @@ select.error {
     display: flex;
     flex-direction: column; /* Stack text and price/features */
     align-items: flex-start; /* Align content to the start */
-    position: relative; /* CORRECT: Establishes positioning context for absolute children */
+    position: relative; /* CRITICAL: Establishes positioning context for absolute children */
     /* Ensure no overflow: hidden; here! */
 }
 
@@ -451,7 +451,7 @@ select.error {
     border: 2px solid #FFD700; /* Gold border to make it stand out */
     background-color: #FFFACD; /* Light yellow background */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* More pronounced shadow */
-    position: relative; /* Essential for ribbon positioning */
+    position: relative; /* ESSENTIAL: This makes absolute positioning of ribbon relative to card */
     /* Ensure no overflow: hidden; here! */
     transform: scale(1.03); /* Slightly larger by default */
     z-index: 10; /* Bring to front a bit */
@@ -500,33 +500,39 @@ select.error {
     color: #ffc107; /* Yellow price when selected */
 }
 
-/* Best Value Ribbon Styling - ADJUSTED */
+/* Best Value Ribbon Styling - FURTHER REFINED FOR VISIBILITY */
 .best-value-ribbon {
     position: absolute;
-    /* Adjusted positioning for top-right corner */
-    top: 0px; /* Start at the very top edge of the parent */
-    right: 0px; /* Start at the very right edge of the parent */
-    width: 140px; /* INCREASED width for more visible text */
+    /* Position the ribbon's top-right corner slightly outside the parent's top-right corner */
+    top: -15px; /* Adjust this value to control how far it extends upwards */
+    right: -15px; /* Adjust this value to control how far it extends to the right */
+    
+    width: 170px; /* INCREASED SIGNIFICANTLY: Make ribbon much wider to ensure text fits and it's not squashed */
     background-color: #FF4500; /* Orange-red for "Best Value" */
     color: white;
     text-align: center;
-    padding: 8px 0; /* INCREASED vertical padding for better text visibility */
-    font-size: 0.85em; /* INCREASED font size for readability */
+    padding: 8px 0; /* MAINTAINED / INCREASED: Good vertical padding */
+    font-size: 0.9em; /* INCREASED: Larger font size for better readability */
     font-weight: bold;
-    transform: translate(50%, -50%) rotate(45deg); /* ADJUSTED: Move half its width/height out, then rotate */
-    transform-origin: 0% 0%; /* Origin of rotation is now the top-left of the RIBBON itself */
+    
+    /* This transformation pulls the ribbon out from the corner and rotates it */
+    /* The translate values are now relative to the parent's top-right corner due to `top` and `right` */
+    transform: rotate(45deg); /* JUST ROTATE: The `top` and `right` now handle initial positioning */
+    transform-origin: 100% 100%; /* Origin of rotation is the BOTTOM-RIGHT of the RIBBON itself. */
+                                  /* This makes it pivot nicely into the corner when rotated */
+    
     z-index: 100; /* IMPORTANT: Ensures it's above everything else */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Stronger shadow for pop */
-    white-space: nowrap; /* Prevent text from wrapping prematurely */
-    overflow: hidden; /* This overflow is for the ribbon itself, preventing pseudo-elements from bleeding too far, but the parent should NOT have it */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Stronger shadow for pop-out effect */
+    white-space: nowrap; /* Prevent "BEST VALUE" text from wrapping */
+    overflow: hidden; /* This is okay for the ribbon itself to manage its shape */
 }
 
-/* For the triangle effect - ADJUSTED */
+/* For the triangle effect at the ends of the ribbon */
 .best-value-ribbon::before, .best-value-ribbon::after {
     content: '';
     position: absolute;
-    bottom: -10px; /* Adjusted to connect with the ribbon */
-    border: 7px solid transparent; /* Slightly larger triangles */
+    bottom: -10px; /* Adjusted: Pull triangles slightly under the ribbon */
+    border: 10px solid transparent; /* INCREASED: Larger triangles for better visual balance */
 }
 
 .best-value-ribbon::before {
@@ -1011,7 +1017,7 @@ select.error {
     input[type="email"],
     input[type="tel"],
     input[type="date"],
-    type="number"],
+    input[type="number"],
     input[type="password"],
     select {
         padding: 10px 12px;
@@ -1044,17 +1050,15 @@ select.error {
     }
     /* Ribbon adjustment for smaller screens */
     .best-value-ribbon {
-        font-size: 0.8em; /* Adjusted: Slightly larger text for medium screens */
-        width: 120px; /* Adjusted: Wider */
-        top: 0px;
-        right: 0px;
-        padding: 7px 0; /* Adjusted: More vertical padding */
-        transform: translate(50%, -50%) rotate(45deg); /* Re-applied */
-        transform-origin: 0% 0%; /* Re-applied */
+        width: 150px; /* Adjusted width for medium screens */
+        padding: 7px 0;
+        font-size: 0.85em;
+        top: -12px;
+        right: -12px;
     }
     .best-value-ribbon::before, .best-value-ribbon::after {
         bottom: -9px;
-        border-width: 6px;
+        border-width: 9px;
     }
     .combo-offer-text {
         font-size: 0.8em; /* Adjust for medium screens */
@@ -1197,17 +1201,15 @@ select.error {
     }
     /* Ribbon adjustment for very small screens */
     .best-value-ribbon {
-        font-size: 0.75em; /* Adjusted: Larger font for very small screens */
-        width: 100px; /* Adjusted: Wider */
-        top: 0px;
-        right: 0px;
-        padding: 6px 0; /* Adjusted: More vertical padding */
-        transform: translate(50%, -50%) rotate(45deg); /* Re-applied */
-        transform-origin: 0% 0%; /* Re-applied */
+        width: 130px; /* Adjusted width for small screens */
+        padding: 6px 0;
+        font-size: 0.8em;
+        top: -10px;
+        right: -10px;
     }
     .best-value-ribbon::before, .best-value-ribbon::after {
-        bottom: -8px;
-        border-width: 5px;
+        bottom: -7px;
+        border-width: 7px;
     }
     .combo-offer-text {
         font-size: 0.75em; /* Adjust for small screens */
