@@ -448,9 +448,11 @@ select.error {
 
 /* Combo Plan Specific Styles - Eye Catchy Layout */
 .combo-plan-card {
-    border: 2px solid #ffc107; /* Eye-catching yellow/orange border */
-    background: linear-gradient(145deg, #fffbe6 0%, #fff9d6 100%); /* Lighter, warmer background */
-    box-shadow: 0 5px 15px rgba(255, 193, 7, 0.2); /* More prominent shadow */
+    border: 2px solid #FFD700; /* Gold border to make it stand out */
+    background-color: #FFFACD; /* Light yellow background */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* More pronounced shadow */
+    position: relative; /* Ensure ribbon positioning is relative to this card */
+    overflow: hidden; /* Hide anything that goes outside the card for the ribbon */
     transform: scale(1.03); /* Slightly larger by default */
     z-index: 10; /* Bring to front a bit */
     animation: pulseBorder 1.5s infinite alternate ease-in-out; /* Subtle pulsing border */
@@ -498,28 +500,52 @@ select.error {
     color: #ffc107; /* Yellow price when selected */
 }
 
-/* Optional: Ribbon/Badge for Combo Plans */
-.combo-plan-card::before {
-    content: 'BEST VALUE'; /* Or 'COMBO DEAL' */
+/* Best Value Ribbon Styling */
+.best-value-ribbon {
     position: absolute;
-    top: 10px;
-    right: -30px; /* Adjust to move outside then rotate */
-    background-color: #dc3545; /* Red ribbon */
+    top: -10px; /* Adjust as needed, negative value to bring it slightly out */
+    right: -10px; /* Adjust as needed */
+    width: 100px; /* Width of the ribbon */
+    background-color: #FF4500; /* Orange-red for "Best Value" */
     color: white;
-    padding: 5px 30px;
-    font-size: 0.75rem;
+    text-align: center;
+    padding: 5px 0;
+    font-size: 0.7em; /* Smaller font size for the ribbon text */
     font-weight: bold;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
     transform: rotate(45deg);
-    transform-origin: 0% 100%; /* Rotate around top-left of the original element */
+    transform-origin: 100% 0%; /* Rotate from the top-right corner */
+    z-index: 10; /* Ensure it's above other content */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    border-top: 1px solid rgba(255,255,255,0.3);
-    border-bottom: 1px solid rgba(0,0,0,0.3);
+
+    /* For the triangle effect */
+    &::before, &::after {
+        content: '';
+        position: absolute;
+        bottom: -8px; /* Adjust to connect with the ribbon */
+        border: 5px solid transparent;
+    }
+
+    &::before {
+        left: 0;
+        border-bottom-color: #CD3700; /* Darker shade for the triangle */
+        border-left-color: #CD3700;
+    }
+
+    &::after {
+        right: 0;
+        border-bottom-color: #CD3700; /* Darker shade for the triangle */
+        border-right-color: #CD3700;
+    }
 }
 
-.combo-plan-card.selected::before {
-    background-color: #28a745; /* Green ribbon when selected */
+/* Styling for the new offer text */
+.combo-offer-text {
+    font-size: 0.8em;
+    font-weight: bold;
+    color: #DAA520; /* A gold/dark yellow color to match the theme */
+    margin-top: 5px; /* Space it out from description */
+    text-align: center;
+    padding: 0 5px;
 }
 
 @keyframes pulseBorder {
@@ -1011,11 +1037,22 @@ select.error {
     .combo-plan-card .plan-price {
         font-size: 1.25rem; /* Slightly smaller combo price */
     }
-    .combo-plan-card::before {
-        font-size: 0.7rem;
-        padding: 5px 25px;
-        right: -25px;
+    /* Ribbon adjustment for smaller screens */
+    .best-value-ribbon {
+        font-size: 0.65em; /* Make text smaller to fit */
+        width: 80px; /* Adjust width */
+        top: -8px;
+        right: -8px;
+        padding: 4px 0;
     }
+    .best-value-ribbon::before, .best-value-ribbon::after {
+        bottom: -6px;
+        border-width: 4px;
+    }
+    .combo-offer-text {
+        font-size: 0.75em; /* Adjust font size */
+    }
+
 
     #pdfLinkSection {
         padding: 15px;
@@ -1151,10 +1188,20 @@ select.error {
     .combo-plan-card .plan-price {
         font-size: 1.2rem;
     }
-    .combo-plan-card::before {
-        font-size: 0.65rem;
-        padding: 4px 20px;
-        right: -20px;
+    /* Ribbon adjustment for very small screens */
+    .best-value-ribbon {
+        font-size: 0.6em; /* Even smaller text */
+        width: 70px; /* Adjust width */
+        top: -7px;
+        right: -7px;
+        padding: 3px 0;
+    }
+    .best-value-ribbon::before, .best-value-ribbon::after {
+        bottom: -5px;
+        border-width: 3px;
+    }
+    .combo-offer-text {
+        font-size: 0.7em; /* Adjust font size */
     }
 
 
