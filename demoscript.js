@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
+    // DOM Elements
     const form = document.getElementById('warrantyForm');
     const loading = document.getElementById('loading');
     const successContainer = document.getElementById('successContainer');
@@ -36,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const openTrackingButton = document.getElementById('openTrackingButton');
     const trackingSection = document.getElementById('trackingSection');
     const fromDateInput = document.getElementById('fromDate');
-    const toDateInput = document.getElementById('toDate');
+    const toDateInput = document.getElementById('toDate'); // Corrected typo
     const filterTrackingDataButton = document.getElementById('filterTrackingDataButton');
     const trackingLoading = document.getElementById('trackingLoading');
     const trackingError = document.getElementById('trackingError');
@@ -50,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const loginPasswordInput = document.getElementById('loginPassword');
     const showPasswordToggle = document.getElementById('showPasswordToggle');
 
+    // Data for Extended Warranty pricing
     const extendedWarrantyPrices = [
         { maxPrice: 10000, planText: '₹5,000 - ₹10,000', price: 449 },
         { maxPrice: 15000, planText: '₹10,001 - ₹15,000', price: 649 },
@@ -68,15 +70,17 @@ document.addEventListener('DOMContentLoaded', function () {
         { maxPrice: 250000, planText: '₹2,00,001 - ₹2,50,000', price: 9999 },
     ];
 
+    // Function to get Extended Warranty price based on phone price
     function getExtendedWarrantyPrice(phonePrice) {
         for (const plan of extendedWarrantyPrices) {
             if (phonePrice <= plan.maxPrice) {
                 return plan.price;
             }
         }
-        return extendedWarrantyPrices[extendedWarrantyPrices.length - 1].price;
+        return extendedWarrantyPrices[extendedWarrantyPrices.length - 1].price; // Return max price if phonePrice exceeds all ranges
     }
 
+    // Terms and Conditions data for different plans
     const termsAndConditionsData = {
         "Extended Warranty": {
             content: "<p>These are the **Terms and Conditions for Extended Warranty** plan.</p><p>This plan covers manufacturing defects and functional issues beyond the standard manufacturer's warranty for 12 months. Please refer to the full document for exclusions and claim procedures.</p><p>This content should ideally come from your Google Doc.</p>",
@@ -100,6 +104,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
+    // Function to load and display Terms and Conditions
     function loadTermsAndConditions(planName) {
         const tnc = termsAndConditionsData[planName];
         if (tnc) {
@@ -131,19 +136,22 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // Function to enable/disable Generate Certificate button based on T&C agreement
     function toggleGenerateButton() {
         generateCertificateButton.disabled = !agreeTermsCheckbox.checked;
     }
 
+    // Event listener for T&C checkbox
     if (agreeTermsCheckbox && generateCertificateButton) {
         agreeTermsCheckbox.addEventListener('change', toggleGenerateButton);
-        toggleGenerateButton();
+        toggleGenerateButton(); // Set initial state
     } else {
         console.error("Error: Could not find 'agreeTerms' checkbox or 'generateCertificateButton'. Please check your HTML IDs.");
     }
 
+    // Function to populate plan options based on phone price
     function populatePlanOptions(phonePrice) {
-        planOptionsGrid.innerHTML = '';
+        planOptionsGrid.innerHTML = ''; // Clear previous plans
 
         const extendedPrice = getExtendedWarrantyPrice(phonePrice);
         const screenDamagePrice = Math.round(phonePrice * 0.06);
@@ -161,14 +169,14 @@ document.addEventListener('DOMContentLoaded', function () {
             const planCard = document.createElement('div');
             planCard.classList.add('plan-card');
             
-            let comboRibbonHtml = ''; // Initialize to empty for all plans
-            let comboOfferTextHtml = ''; // Initialize to empty for all plans
+            let comboBadgeHtml = ''; // Initialize to empty for each plan (NEW: changed from comboRibbonHtml)
+            let comboOfferTextHtml = ''; // Initialize to empty for each plan
 
-            // ONLY add combo specific classes and HTML if it's a combo plan
+            // Conditionally add combo specific classes and HTML (like the new badge)
             if (plan.isCombo) {
                 planCard.classList.add('combo-plan-card');
-                // The ribbon's HTML is only generated here for combo plans
-                comboBadgeHtml = '<div class="best-value-badge">BEST VALUE</div>';
+                // The new "BEST VALUE" badge HTML
+                comboBadgeHtml = '<div class="best-value-badge">BEST VALUE</div>'; // NEW: Using best-value-badge
                 comboOfferTextHtml = '<p class="combo-offer-text">70% off on Extended Warranty</p>';
             }
             
@@ -177,17 +185,19 @@ document.addEventListener('DOMContentLoaded', function () {
             planCard.setAttribute('data-plantype', plan.internalType);
             planCard.setAttribute('data-details', `${plan.name} (${plan.periodText})`);
 
+            // Construct plan card inner HTML
             planCard.innerHTML = `
-                ${comboBadgeHtml}
+                ${comboBadgeHtml} <!-- NEW: Using comboBadgeHtml -->
                 <p class="plan-name">${plan.name}</p>
                 <p class="plan-description">${plan.description}</p>
                 ${comboOfferTextHtml}
-                <div class="plan-price-period-group"> <!-- NEW WRAPPER FOR PRICE AND PERIOD -->
+                <div class="plan-price-period-group"> <!-- Wrapper for price and period -->
                     <div class="plan-price">₹${plan.price.toLocaleString('en-IN')}</div>
                     <div class="plan-period">${plan.periodText}</div>
                 </div>
             `;
 
+            // Add click listener to select plan and load T&C
             planCard.addEventListener('click', function() {
                 const currentSelected = planOptionsGrid.querySelector('.plan-card.selected');
                 if (currentSelected) {
@@ -200,7 +210,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 selectedPlanTypeInput.value = plan.internalType;
                 selectedPlanDetailsInput.value = planCard.getAttribute('data-details');
 
-                planOptionsGrid.classList.remove('error');
+                planOptionsGrid.classList.remove('error'); // Clear error state if a plan is selected
 
                 loadTermsAndConditions(plan.name);
             });
@@ -208,6 +218,7 @@ document.addEventListener('DOMContentLoaded', function () {
             planOptionsGrid.appendChild(planCard);
         });
 
+        // Reset selected plan inputs and T&C section
         selectedPlanValueInput.value = '';
         selectedPlanPriceInput.value = '';
         selectedPlanTypeInput.value = '';
@@ -218,6 +229,7 @@ document.addEventListener('DOMContentLoaded', function () {
         toggleGenerateButton();
     }
 
+    // Function to validate customer and phone details
     function validateCustomerAndPhoneDetails() {
         let isValid = true;
         const requiredFields = [
@@ -265,11 +277,11 @@ document.addEventListener('DOMContentLoaded', function () {
         return isValid;
     }
 
+    // Event listener for "Show Plan Prices" button
     showPlanPricesButton.addEventListener('click', function (e) {
         e.preventDefault();
 
         if (!validateCustomerAndPhoneDetails()) {
-            // Using a custom modal/message box instead of alert()
             displayCustomMessage('Please fill in all required details correctly before proceeding to plan selection.', 'error');
             const firstErrorField = document.querySelector('.form-group input.error, .form-group select.error');
             if (firstErrorField) {
@@ -303,7 +315,7 @@ document.addEventListener('DOMContentLoaded', function () {
         pdfLinkSection.classList.remove('visible');
         pdfLinkSection.classList.add('hidden');
         errorMessage.classList.remove('visible');
-        errorMessage.classList.add('hidden'); // Also hide general error messages
+        errorMessage.classList.add('hidden');
 
         planSelectionSection.classList.remove('hidden');
         setTimeout(() => {
@@ -313,6 +325,7 @@ document.addEventListener('DOMContentLoaded', function () {
         planOptionsGrid.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
 
+    // Event listener for "Back to Phone Price" button
     backToPhonePriceButton.addEventListener('click', function() {
         planSelectionSection.classList.remove('visible');
         setTimeout(() => {
@@ -342,6 +355,7 @@ document.addEventListener('DOMContentLoaded', function () {
         phonePriceInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
 
+    // Event listener for form submission (Generate Certificate)
     form.addEventListener('submit', function (e) {
         e.preventDefault();
 
@@ -392,7 +406,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('successMessage').textContent = 'Certificate generated successfully!';
                     downloadLink.href = data.url;
                     qrcodeDiv.innerHTML = '';
-                    new QRCode(qrcodeDiv, { // Corrected: qrcodeDiv is the correct variable for the DOM element
+                    new QRCode(qrcodeDiv, { // Correctly using qrcodeDiv
                         text: data.url,
                         width: 150,
                         height: 150,
@@ -485,19 +499,20 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 5000); // Message disappears after 5 seconds
     }
 
-
+    // Drawer (Sidebar) functions
     function openDrawer() {
         mainDrawer.classList.add('open');
         drawerOverlay.classList.remove('hidden');
         setTimeout(() => drawerOverlay.classList.add('visible'), 10);
-        document.body.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden'; // Prevent body scroll when drawer is open
     }
 
     function closeDrawer() {
         mainDrawer.classList.remove('open');
         drawerOverlay.classList.remove('visible');
         setTimeout(() => drawerOverlay.classList.add('hidden'), 300);
-        document.body.style.overflow = '';
+        document.body.style.overflow = ''; // Re-enable body scroll
+        // Hide tracking section and its results/errors when drawer closes
         trackingSection.classList.remove('visible');
         trackingSection.classList.add('hidden');
         trackingResults.classList.remove('visible');
@@ -508,13 +523,16 @@ document.addEventListener('DOMContentLoaded', function () {
         trackingLoading.classList.add('hidden');
     }
 
+    // Drawer Event Listeners
     hamburgerMenu.addEventListener('click', openDrawer);
     drawerCloseButton.addEventListener('click', closeDrawer);
     drawerOverlay.addEventListener('click', closeDrawer);
 
+    // Logout functionality
     logoutButtonDrawer.addEventListener('click', () => {
-        sessionStorage.removeItem('storeId');
+        sessionStorage.removeItem('storeId'); // Clear stored store ID
 
+        // Reset all forms and fields
         document.getElementById('loginForm').reset();
         form.reset();
 
@@ -522,35 +540,41 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('loginPassword').value = '';
         storeIdInput.value = '';
         document.getElementById('displayedStoreId').textContent = '';
-
+        
+        // Hide warranty section, show login section
         document.getElementById('warrantySection').classList.remove('visible');
         document.getElementById('warrantySection').classList.add('hidden');
         document.getElementById('loginSection').classList.remove('hidden');
         setTimeout(() => document.getElementById('loginSection').classList.add('visible'), 10);
 
+        // Reset login messages and button
         document.getElementById('loginError').classList.add('hidden');
         document.getElementById('loginError').classList.remove('visible');
         document.getElementById('loginLoading').classList.add('hidden');
         document.getElementById('loginLoading').classList.remove('visible');
         document.getElementById('loginForm').querySelector('.submit-button').classList.remove('hidden'); // Ensure login button reappears
 
-        closeDrawer();
+        closeDrawer(); // Close the drawer
 
+        // Reset tracking section fields
         fromDateInput.value = '';
         toDateInput.value = '';
 
+        // Reset T&C section
         termsAndConditionsSection.classList.remove('visible');
         termsAndConditionsSection.classList.add('hidden');
         agreeTermsCheckbox.checked = false;
         toggleGenerateButton();
     });
 
+    // Tracking data section
     openTrackingButton.addEventListener('click', () => {
         trackingSection.classList.toggle('hidden');
         setTimeout(() => {
             trackingSection.classList.toggle('visible');
         }, 10);
 
+        // Populate dates if empty (default to last 30 days)
         if (!fromDateInput.value || !toDateInput.value) {
             const today = new Date();
             const thirtyDaysAgo = new Date();
@@ -563,8 +587,10 @@ document.addEventListener('DOMContentLoaded', function () {
         trackingSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
+    // Event listener for filtering tracking data
     filterTrackingDataButton.addEventListener('click', fetchTrackingData);
 
+    // Function to fetch tracking data from Google Apps Script
     async function fetchTrackingData() {
         const fromDate = fromDateInput.value;
         const toDate = toDateInput.value;
@@ -584,6 +610,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
+        // Hide previous messages, show loading
         trackingError.classList.remove('visible');
         trackingError.classList.add('hidden');
         trackingResults.classList.remove('visible');
@@ -632,6 +659,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // Helper function to format date for display
     function formatDateForDisplay(dateString) {
         const date = new Date(dateString);
         return date.toLocaleDateString('en-IN', {
@@ -641,6 +669,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // Toggle password visibility
     if (showPasswordToggle && loginPasswordInput) {
         showPasswordToggle.addEventListener('change', () => {
             if (showPasswordToggle.checked) {
@@ -651,7 +680,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // New CSS for the custom message boxes (added inline style for convenience, but best practice is in .css file)
+    // Inject CSS for custom message boxes dynamically (should ideally be in .css file)
     const style = document.createElement('style');
     style.innerHTML = `
         .custom-message {
@@ -687,7 +716,7 @@ document.addEventListener('DOMContentLoaded', function () {
     `;
     document.head.appendChild(style);
 
-    // Initial setup
+    // Initial setup when DOM is loaded
     toggleGenerateButton(); // This disables the button if terms are not agreed initially.
-    termsAndConditionsSection.classList.add('hidden');
+    termsAndConditionsSection.classList.add('hidden'); // Ensure T&C section is hidden initially
 });
