@@ -440,21 +440,19 @@ select.error {
 .plan-price-period-group {
     width: 100%; /* Take full width of card */
     display: flex;
-    /* Changed to space-between to push price to left and period to right */
-    justify-content: space-between; 
+    justify-content: flex-start; /* Aligns price/period to the left */
     align-items: baseline; /* Align price and period at their baseline */
     margin-top: auto; /* Ensure it sticks to the bottom */
-    /* Removed gap as space-between handles spacing */
+    gap: 10px; /* Consistent spacing between price and period */
     padding-top: 10px; /* Give some space above it */
-    flex-wrap: nowrap; /* Ensure price and period stay on one line if space allows */
+    flex-wrap: wrap; /* Allow wrapping on very small screens if necessary */
 }
 
 .plan-card .plan-price {
     font-weight: 700;
     font-size: 1.25rem;
     color: #28a745;
-    /* Added text-align left if not already inherited */
-    text-align: left; 
+    text-align: left; /* Ensure text aligns left */
     flex-shrink: 0; /* Prevent price from shrinking */
 }
 
@@ -466,10 +464,9 @@ select.error {
     font-size: 0.85rem;
     color: #555;
     font-weight: 500;
-    /* Added text-align right if not already inherited */
-    text-align: right; 
+    text-align: left; /* Align with price */
     flex-shrink: 0; /* Prevent period from shrinking */
-    margin-left: auto; /* Ensure it sticks to the right if space-between is overridden somehow */
+    /* Removed margin-left: auto; as we want left alignment now */
 }
 
 .plan-card.selected .plan-period {
@@ -481,10 +478,11 @@ select.error {
     border: 2px solid #FFD700; /* Gold border to make it stand out */
     background-color: #FFFACD; /* Light yellow background */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* More pronounced shadow */
-    position: relative; /* ESSENTIAL: This makes absolute positioning of ribbon relative to card */
+    position: relative; /* ESSENTIAL: This makes positioning context for badge */
     transform: scale(1.03); /* Slightly larger by default */
     z-index: 10; /* Bring to front a bit */
     animation: pulseBorder 1.5s infinite alternate ease-in-out; /* Subtle pulsing border */
+    padding-top: 40px; /* Make space for the new badge */
 }
 
 .combo-plan-card:hover {
@@ -531,49 +529,28 @@ select.error {
 }
 
 
-/* Best Value Ribbon Styling - FINALLY ADJUSTED TO MATCH THE REFERENCE IMAGE AND BE FULLY VISIBLE */
-.best-value-ribbon {
+/* NEW: "Best Value" Badge Styling - Modern and Prominent */
+.best-value-badge {
     position: absolute;
-    /* Adjust these values to shift the entire ribbon */
-    top: -10px; /* Pull it slightly up so it's fully visible */
-    right: -10px; /* Pull it slightly right */
-    
-    width: 160px; /* Increased width significantly from 130px to give more space for text and prevent clipping */
-    background-color: #FF4500; /* Orange-red */
+    top: 0;
+    left: 0;
+    right: 0; /* Stretches across the top */
+    background-color: #FF4500; /* Eye-catching orange-red */
     color: white;
     text-align: center;
-    padding: 6px 0; /* Reduced padding for narrower ribbon */
-    font-size: 0.75em; /* Smaller font for narrower ribbon */
+    padding: 8px 0; /* Vertical padding for height */
+    font-size: 0.9em; /* Readable size */
     font-weight: bold;
-    
-    /* This transformation ensures the diagonal corner effect */
-    transform: translate(50%, -50%) rotate(45deg);
-    transform-origin: 0% 0%; /* Pivot from the top-left of the ribbon's original unrotated position */
-    
-    z-index: 100; /* Ensures it's above other content */
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Stronger shadow for pop-out effect */
-    white-space: nowrap; /* Prevent "BEST VALUE" text from wrapping */
+    border-top-left-radius: 10px; /* Match card radius */
+    border-top-right-radius: 10px; /* Match card radius */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    letter-spacing: 0.05em; /* A little spacing for style */
+    text-transform: uppercase; /* All caps */
+    z-index: 101; /* Ensure it's above everything else */
+    overflow: hidden; /* Just in case */
 }
 
-/* For the triangle effect at the ends of the ribbon */
-.best-value-ribbon::before, .best-value-ribbon::after {
-    content: '';
-    position: absolute;
-    bottom: -6px; /* Adjusted to connect correctly with smaller padding */
-    border: 6px solid transparent; /* Smaller triangles */
-}
-
-.best-value-ribbon::before {
-    left: 0;
-    border-bottom-color: #CD3700; /* Darker shade for the triangle */
-    border-left-color: #CD3700;
-}
-
-.best-value-ribbon::after {
-    right: 0;
-    border-bottom-color: #CD3700; /* Darker shade for the triangle */
-    border-right-color: #CD3700;
-}
+/* Removed old ribbon styles: .best-value-ribbon, .best-value-ribbon::before, .best-value-ribbon::after */
 
 
 /* Styling for the new offer text */
@@ -1078,17 +1055,11 @@ select.error {
     .combo-plan-card .plan-price {
         font-size: 1.25rem; /* Slightly smaller combo price */
     }
-    /* Ribbon adjustment for smaller screens */
-    .best-value-ribbon {
-        width: 150px; /* Adjusted width for medium screens */
-        padding: 7px 0;
-        font-size: 0.85em;
-        top: -12px;
-        right: -12px;
-    }
-    .best-value-ribbon::before, .best-value-ribbon::after {
-        bottom: -9px;
-        border-width: 9px;
+    /* Badge adjustment for smaller screens */
+    .best-value-badge {
+        width: 100%; /* Full width on smaller screens */
+        font-size: 0.8em;
+        padding: 6px 0;
     }
     .combo-offer-text {
         font-size: 0.8em; /* Adjust for medium screens */
@@ -1229,17 +1200,10 @@ select.error {
     .combo-plan-card .plan-price {
         font-size: 1.2rem;
     }
-    /* Ribbon adjustment for very small screens */
-    .best-value-ribbon {
-        width: 130px; /* Adjusted width for small screens */
-        padding: 6px 0;
-        font-size: 0.8em;
-        top: -10px;
-        right: -10px;
-    }
-    .best-value-ribbon::before, .best-value-ribbon::after {
-        bottom: -7px;
-        border-width: 7px;
+    /* Badge adjustment for very small screens */
+    .best-value-badge {
+        font-size: 0.7em;
+        padding: 5px 0;
     }
     .combo-offer-text {
         font-size: 0.75em; /* Adjust for small screens */
