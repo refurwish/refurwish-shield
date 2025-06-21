@@ -446,6 +446,7 @@ select.error {
     margin-top: auto; /* Ensure it sticks to the bottom */
     /* Removed gap as space-between handles spacing */
     padding-top: 10px; /* Give some space above it */
+    flex-wrap: nowrap; /* Ensure price and period stay on one line if space allows */
 }
 
 .plan-card .plan-price {
@@ -454,6 +455,7 @@ select.error {
     color: #28a745;
     /* Added text-align left if not already inherited */
     text-align: left; 
+    flex-shrink: 0; /* Prevent price from shrinking */
 }
 
 .plan-card.selected .plan-price {
@@ -466,6 +468,8 @@ select.error {
     font-weight: 500;
     /* Added text-align right if not already inherited */
     text-align: right; 
+    flex-shrink: 0; /* Prevent period from shrinking */
+    margin-left: auto; /* Ensure it sticks to the right if space-between is overridden somehow */
 }
 
 .plan-card.selected .plan-period {
@@ -527,14 +531,14 @@ select.error {
 }
 
 
-/* Best Value Ribbon Styling - FINALLY ADJUSTED TO MATCH THE REFERENCE IMAGE */
+/* Best Value Ribbon Styling - FINALLY ADJUSTED TO MATCH THE REFERENCE IMAGE AND BE FULLY VISIBLE */
 .best-value-ribbon {
     position: absolute;
     /* Adjust these values to shift the entire ribbon */
-    top: -12px; /* Pull it slightly up so it's fully visible */
-    right: -12px; /* Pull it slightly right */
+    top: -10px; /* Pull it slightly up so it's fully visible */
+    right: -10px; /* Pull it slightly right */
     
-    width: 130px; /* Make it narrower to fit better in the corner, matching the reference */
+    width: 160px; /* Increased width significantly from 130px to give more space for text and prevent clipping */
     background-color: #FF4500; /* Orange-red */
     color: white;
     text-align: center;
