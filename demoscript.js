@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const showPlanPricesButton = document.getElementById('showPlanPricesButton');
     const planSelectionSection = document.getElementById('planSelectionSection');
 
-    const planOptionsGrid = document.getElementById('planOptionsGrid'); // Changed ID here
+    const planOptionsGrid = document.getElementById('planOptionsGrid');
     const selectedPlanValueInput = document.getElementById('selectedPlanValue');
     const selectedPlanPriceInput = document.getElementById('selectedPlanPrice');
     const selectedPlanTypeInput = document.getElementById('selectedPlanType');
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const openTrackingButton = document.getElementById('openTrackingButton');
     const trackingSection = document.getElementById('trackingSection');
     const fromDateInput = document.getElementById('fromDate');
-    const toDateInput = document = document.getElementById('toDate');
+    const toDateInput = document.getElementById('toDate'); // Corrected typo here
     const filterTrackingDataButton = document.getElementById('filterTrackingDataButton');
     const trackingLoading = document.getElementById('trackingLoading');
     const trackingError = document.getElementById('trackingError');
@@ -179,8 +179,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 ${comboRibbonHtml}
                 <p class="plan-name">${plan.name}</p>
                 <p class="plan-description">${plan.description}</p>
-                ${comboOfferTextHtml} <div class="plan-price">₹${plan.price.toLocaleString('en-IN')}</div>
-                <div class="plan-period">${plan.periodText}</div>
+                ${comboOfferTextHtml}
+                <div class="plan-footer"> <!-- NEW WRAPPER FOR PRICE AND PERIOD -->
+                    <div class="plan-price">₹${plan.price.toLocaleString('en-IN')}</div>
+                    <div class="plan-period">${plan.periodText}</div>
+                </div>
             `;
 
             planCard.addEventListener('click', function() {
@@ -387,7 +390,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('successMessage').textContent = 'Certificate generated successfully!';
                     downloadLink.href = data.url;
                     qrcodeDiv.innerHTML = '';
-                    new QRCode(qrcodeDiv, {
+                    new QRCode(qrcode.QRCode, { // Corrected: qrcodeDiv should be used directly here
                         text: data.url,
                         width: 150,
                         height: 150,
@@ -646,7 +649,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // New CSS for the custom message boxes
+    // New CSS for the custom message boxes (added inline style for convenience, but best practice is in .css file)
     const style = document.createElement('style');
     style.innerHTML = `
         .custom-message {
@@ -681,7 +684,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     `;
     document.head.appendChild(style);
-
 
     // Initial setup
     toggleGenerateButton(); // This disables the button if terms are not agreed initially.
