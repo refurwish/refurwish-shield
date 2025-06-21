@@ -399,7 +399,6 @@ select.error {
     flex-direction: column; /* Stack text and price/features */
     align-items: flex-start; /* Align content to the start */
     position: relative; /* For badges/highlights */
-    overflow: hidden; /* For pseudo-elements */
 }
 
 .plan-card:hover {
