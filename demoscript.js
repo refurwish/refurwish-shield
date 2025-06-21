@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const openTrackingButton = document.getElementById('openTrackingButton');
     const trackingSection = document.getElementById('trackingSection');
     const fromDateInput = document.getElementById('fromDate');
-    const toDateInput = document.getElementById('toDate'); // Corrected typo here
+    const toDateInput = document.getElementById('toDate');
     const filterTrackingDataButton = document.getElementById('filterTrackingDataButton');
     const trackingLoading = document.getElementById('trackingLoading');
     const trackingError = document.getElementById('trackingError');
@@ -161,13 +161,15 @@ document.addEventListener('DOMContentLoaded', function () {
             const planCard = document.createElement('div');
             planCard.classList.add('plan-card');
             
-            let comboRibbonHtml = ''; // Reset for each plan
-            let comboOfferTextHtml = ''; // Reset for each plan
+            let comboRibbonHtml = ''; // Initialize to empty for all plans
+            let comboOfferTextHtml = ''; // Initialize to empty for all plans
 
+            // ONLY add combo specific classes and HTML if it's a combo plan
             if (plan.isCombo) {
                 planCard.classList.add('combo-plan-card');
+                // The ribbon's HTML is only generated here for combo plans
                 comboRibbonHtml = '<div class="best-value-ribbon">BEST VALUE</div>';
-                comboOfferTextHtml = '<p class="combo-offer-text">70% off on Extended Warranty</p>'; // New text
+                comboOfferTextHtml = '<p class="combo-offer-text">70% off on Extended Warranty</p>';
             }
             
             planCard.setAttribute('data-value', plan.value);
@@ -180,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <p class="plan-name">${plan.name}</p>
                 <p class="plan-description">${plan.description}</p>
                 ${comboOfferTextHtml}
-                <div class="plan-footer"> <!-- NEW WRAPPER FOR PRICE AND PERIOD -->
+                <div class="plan-price-period-group"> <!-- NEW WRAPPER FOR PRICE AND PERIOD -->
                     <div class="plan-price">₹${plan.price.toLocaleString('en-IN')}</div>
                     <div class="plan-period">${plan.periodText}</div>
                 </div>
@@ -390,7 +392,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('successMessage').textContent = 'Certificate generated successfully!';
                     downloadLink.href = data.url;
                     qrcodeDiv.innerHTML = '';
-                    new QRCode(qrcode.QRCode, { // Corrected: qrcodeDiv should be used directly here
+                    new QRCode(qrcodeDiv, { // Corrected: qrcodeDiv is the correct variable for the DOM element
                         text: data.url,
                         width: 150,
                         height: 150,
