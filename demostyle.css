@@ -440,10 +440,11 @@ select.error {
 .plan-price-period-group {
     width: 100%; /* Take full width of card */
     display: flex;
-    justify-content: flex-end; /* Align content to the right */
+    /* Changed to space-between to push price to left and period to right */
+    justify-content: space-between; 
     align-items: baseline; /* Align price and period at their baseline */
     margin-top: auto; /* Ensure it sticks to the bottom */
-    gap: 8px; /* Space between price and period */
+    /* Removed gap as space-between handles spacing */
     padding-top: 10px; /* Give some space above it */
 }
 
@@ -451,6 +452,8 @@ select.error {
     font-weight: 700;
     font-size: 1.25rem;
     color: #28a745;
+    /* Added text-align left if not already inherited */
+    text-align: left; 
 }
 
 .plan-card.selected .plan-price {
@@ -461,6 +464,8 @@ select.error {
     font-size: 0.85rem;
     color: #555;
     font-weight: 500;
+    /* Added text-align right if not already inherited */
+    text-align: right; 
 }
 
 .plan-card.selected .plan-period {
@@ -525,23 +530,19 @@ select.error {
 /* Best Value Ribbon Styling - FINALLY ADJUSTED TO MATCH THE REFERENCE IMAGE */
 .best-value-ribbon {
     position: absolute;
-    /* These values place the top-right corner of the ribbon exactly at the top-right
-       corner of its parent (.plan-card) after rotation. */
-    top: -1px; /* Align precisely with the top edge */
-    right: -1px; /* Align precisely with the right edge */
+    /* Adjust these values to shift the entire ribbon */
+    top: -12px; /* Pull it slightly up so it's fully visible */
+    right: -12px; /* Pull it slightly right */
     
-    width: 150px; /* Adjusted width to match the visual size in the screenshot */
+    width: 130px; /* Make it narrower to fit better in the corner, matching the reference */
     background-color: #FF4500; /* Orange-red */
     color: white;
     text-align: center;
-    padding: 8px 0; /* Vertical padding */
-    font-size: 0.85em; /* Readable font size for the ribbon text */
+    padding: 6px 0; /* Reduced padding for narrower ribbon */
+    font-size: 0.75em; /* Smaller font for narrower ribbon */
     font-weight: bold;
     
-    /* Rotate and position relative to its own center.
-       The combination of 'top/right' with 'transform: translate' and 'rotate'
-       achieves the diagonal corner effect by first translating the element
-       away from the corner, then rotating it. */
+    /* This transformation ensures the diagonal corner effect */
     transform: translate(50%, -50%) rotate(45deg);
     transform-origin: 0% 0%; /* Pivot from the top-left of the ribbon's original unrotated position */
     
@@ -554,8 +555,8 @@ select.error {
 .best-value-ribbon::before, .best-value-ribbon::after {
     content: '';
     position: absolute;
-    bottom: -8px; /* Connects the triangle to the main ribbon body */
-    border: 8px solid transparent; /* Size of the triangles */
+    bottom: -6px; /* Adjusted to connect correctly with smaller padding */
+    border: 6px solid transparent; /* Smaller triangles */
 }
 
 .best-value-ribbon::before {
