@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (plan.isCombo) {
                 planCard.classList.add('combo-plan-card');
                 // The ribbon's HTML is only generated here for combo plans
-                comboRibbonHtml = '<div class="best-value-ribbon">BEST VALUE</div>';
+                comboBadgeHtml = '<div class="best-value-badge">BEST VALUE</div>';
                 comboOfferTextHtml = '<p class="combo-offer-text">70% off on Extended Warranty</p>';
             }
             
@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function () {
             planCard.setAttribute('data-details', `${plan.name} (${plan.periodText})`);
 
             planCard.innerHTML = `
-                ${comboRibbonHtml}
+                ${comboBadgeHtml}
                 <p class="plan-name">${plan.name}</p>
                 <p class="plan-description">${plan.description}</p>
                 ${comboOfferTextHtml}
