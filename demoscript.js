@@ -83,23 +83,23 @@ document.addEventListener('DOMContentLoaded', function () {
     // Terms and Conditions data for different plans
     const termsAndConditionsData = {
         "Extended Warranty": {
-            content: "<p>These are the **Terms and Conditions for Extended Warranty** plan.</p><p>This plan covers manufacturing defects and functional issues beyond the standard manufacturer's warranty for 12 months. Please refer to the full document for exclusions and claim procedures.</p><p>This content should ideally come from your Google Doc.</p>",
+            content: "<p>This plan covers defects in materials or workmanship after the standard manufacturer's warranty has expired, for a duration of 12 months. Please refer to the full document for exclusions and the process for requesting service.</p>",
             fullLink: "https://drive.google.com/uc?export=download&id=1sv9svRqkP2JW7hig9Lh2gUdedDhPZv_r"
         },
         "Screen Damage Protection": {
-            content: "<p>These are the **Terms and Conditions for Screen Damage Protection** plan.</p><p>This plan covers physical damage to the screen for 12 months. Coverage includes screen repair or replacement as per policy limits. Accidental damage to other parts of the device is not covered.</p>",
+            content: "<p>This plan covers physical damage to the screen for a period of 12 months. It includes repair or replacement of the screen, subject to the terms of the plan. Accidental damage to other parts of the device is not included.</p>",
             fullLink: "https://drive.google.com/uc?export=download&id=1styeSFp0T8lF3FYL6tU69xWk29t81snd"
         },
         "Total Damage Protection": {
-            content: "<p>These are the **Terms and Conditions for Total Damage Protection** plan.</p><p>This comprehensive plan covers accidental physical damage, liquid damage, and other specified perils for 12 months. Limits and exclusions apply, detailed in the full terms.</p>",
+            content: "<p>This comprehensive plan offers protection against accidental physical damage, liquid damage, and other specified risks for 12 months. Terms, limits, and exclusions apply; please refer to the full details for more information.</p>",
             fullLink: "https://drive.google.com/uc?export=download&id=1sqXoSiJvHSfYoSqJjPqZzXAfg41Yiqar"
         },
         "Combo (Screen Damage Protection + Extended Warranty)": {
-            content: "<p>These are the **Terms and Conditions for Combo (Screen Damage Protection + Extended Warranty)** plan.</p><p>This combo offers both screen damage protection (12 months) and extended warranty (12 months after manufacturer's warranty, totaling 24 months coverage). Refer to individual plan terms for specific details.</p>",
+            content: "<p>This combo offers both screen damage protection (12 months) and extended warranty (12 months after manufacturer's warranty, totaling 24 months coverage). Refer to individual plan terms for specific details.</p>",
             fullLink: "https://drive.google.com/uc?export=download&id=1t3WJbGXiiyWOaaSCVjsk2u7RYLom0_B7"
         },
         "Combo (Total Damage Protection + Extended Warranty)": {
-            content: "<p>These are the **Terms and Conditions for Combo (Total Damage Protection + Extended Warranty)** plan.</p><p>This combo provides comprehensive total damage protection (12 months) and extended warranty (12 months after manufacturer's warranty, totaling 24 months coverage). Review both individual plan terms for complete understanding.</p>",
+            content: "<p>This combo provides comprehensive total damage protection (12 months) and extended warranty (12 months after manufacturer's warranty, totaling 24 months coverage). Review both individual plan terms for complete understanding.</p>",
             fullLink: "https://drive.google.com/uc?export=download&id=1t0z5Dx_8jXqBL3kqxksgYfez8pzANOU8"
         }
     };
@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const totalDamagePrice = Math.round(phonePrice * 0.1);
 
         const allPlans = [
-            { value: 'extended_warranty', name: 'Extended Warranty', price: extendedPrice, internalType: 'extended', periodText: '12 Months Extended', icon: 'extension', description: 'Covers manufacturing defects beyond standard warranty.' },
+            { value: 'extended_warranty', name: 'Extended Warranty', price: extendedPrice, internalType: 'extended', periodText: '12 Months Extended', icon: 'extension', description: 'Provides coverage for defects in materials or workmanship beyond the manufacturer’s warranty.' },
             { value: 'screen_protection', name: 'Screen Damage Protection', price: screenDamagePrice, internalType: 'screen_protection', periodText: '12 Months', icon: 'smartphone', description: 'Protects against accidental screen damage.' },
             { value: 'total_damage_protection', name: 'Total Damage Protection', price: totalDamagePrice, internalType: 'total_damage', periodText: '12 Months', icon: 'security', description: 'Protect your device against accidental & liquid damage.' },
             { value: 'combo_screen_extended', name: 'Combo (Screen Damage Protection + Extended Warranty)', price: Math.round(screenDamagePrice + (extendedPrice * 0.3)), internalType: 'combo_screen_extended', periodText: '24 Months Total', icon: 'devices', description: 'Screen protection and extended warranty combined.', isCombo: true },
