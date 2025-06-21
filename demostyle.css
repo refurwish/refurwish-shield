@@ -365,7 +365,7 @@ select.error {
 }
 
 /* Plan Options Container (now grid) */
-.plan-options-grid { /* Renamed from .plan-options-container */
+.plan-options-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsive grid */
     gap: 20px; /* Increased gap for better separation */
@@ -383,7 +383,7 @@ select.error {
     box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2);
 }
 
-/* Individual Plan Button/Card - Renamed from .plan-button to .plan-card for clarity */
+/* Individual Plan Button/Card */
 .plan-card {
     background-color: #ffffff;
     border: 1px solid #e0e0e0;
@@ -397,10 +397,10 @@ select.error {
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     display: flex;
     flex-direction: column; /* Stack text and price/features */
-    /* Ensure content aligns to the start, and distribute space */
-    align-items: flex-start; 
+    align-items: flex-start; /* Align content to the start */
     position: relative; /* CRITICAL: Establishes positioning context for absolute children */
-    /* Ensure no overflow: hidden; here! */
+    overflow: hidden; /* This is key to prevent ribbon from showing where it shouldn't if JS is off */
+    min-height: 180px; /* Ensure a consistent minimum height for all cards */
 }
 
 .plan-card:hover {
@@ -421,53 +421,51 @@ select.error {
 .plan-card .plan-name {
     font-weight: 600;
     font-size: 1.1rem;
-    margin-bottom: 5px; /* Space between name and description */
-    color: inherit; /* Inherit color from parent */
+    margin-bottom: 5px;
+    color: inherit;
 }
 
 .plan-card .plan-description {
     font-size: 0.85rem;
-    color: #666; /* Lighter color for description */
-    margin-bottom: 10px; /* Space before price */
-    flex-grow: 1; /* Allow description to take available space */
+    color: #666;
+    margin-bottom: 15px; /* More space before price/period group */
+    flex-grow: 1; /* Pushes price/period group to the bottom */
 }
 
 .plan-card.selected .plan-description {
-    color: rgba(255, 255, 255, 0.8); /* Lighter white for selected description */
+    color: rgba(255, 255, 255, 0.8);
 }
 
-/* New: Plan Footer for Price & Period */
-.plan-footer {
+/* NEW: Wrapper for Price and Period */
+.plan-price-period-group {
     width: 100%; /* Take full width of card */
     display: flex;
     justify-content: flex-end; /* Align content to the right */
     align-items: baseline; /* Align price and period at their baseline */
-    margin-top: auto; /* Push to the bottom */
+    margin-top: auto; /* Ensure it sticks to the bottom */
     gap: 8px; /* Space between price and period */
+    padding-top: 10px; /* Give some space above it */
 }
 
 .plan-card .plan-price {
-    font-weight: 700; /* Bolder price */
-    font-size: 1.25rem; /* Make price stand out more */
-    color: #28a745; /* Green for price for better contrast/emphasis */
-    /* Removed align-self as flex-end on parent .plan-footer handles it */
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: #28a745;
 }
 
 .plan-card.selected .plan-price {
-    color: white; /* White price when selected */
+    color: white;
 }
 
 .plan-card .plan-period {
     font-size: 0.85rem;
     color: #555;
     font-weight: 500;
-    /* Aligned by .plan-footer */
 }
 
 .plan-card.selected .plan-period {
     color: rgba(255, 255, 255, 0.7);
 }
-
 
 /* Combo Plan Specific Styles - Eye Catchy Layout */
 .combo-plan-card {
@@ -475,7 +473,6 @@ select.error {
     background-color: #FFFACD; /* Light yellow background */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* More pronounced shadow */
     position: relative; /* ESSENTIAL: This makes absolute positioning of ribbon relative to card */
-    /* Ensure no overflow: hidden; here! */
     transform: scale(1.03); /* Slightly larger by default */
     z-index: 10; /* Bring to front a bit */
     animation: pulseBorder 1.5s infinite alternate ease-in-out; /* Subtle pulsing border */
@@ -497,11 +494,11 @@ select.error {
 .combo-plan-card .plan-name {
     color: #d39e00; /* Darker yellow for combo plan name */
     font-size: 1.25rem; /* Larger font for combo name */
-    font-weight: 700; /* Bolder */
+    font-weight: 700;
 }
 
 .combo-plan-card.selected .plan-name {
-    color: white; /* White name when selected */
+    color: white;
 }
 
 .combo-plan-card .plan-description {
@@ -510,57 +507,55 @@ select.error {
 }
 
 .combo-plan-card.selected .plan-description {
-    color: rgba(255, 255, 255, 0.9); /* Lighter white description when selected */
+    color: rgba(255, 255, 255, 0.9);
 }
 
 /* Specific styling for combo plan price and period for better visibility */
 .combo-plan-card .plan-price {
     color: #ff4500; /* Orange-red for combo plan price */
     font-size: 1.5rem; /* Even larger price for combo */
-    font-weight: 900; /* Extra bold */
+    font-weight: 900;
 }
 
 .combo-plan-card.selected .plan-price {
-    color: #ffc107; /* Yellow price when selected */
+    color: #ffc107;
 }
 
 
-/* Best Value Ribbon Styling - FURTHER REFINED FOR VISIBILITY AND BEAUTY */
+/* Best Value Ribbon Styling - FINALLY ADJUSTED TO MATCH THE REFERENCE IMAGE */
 .best-value-ribbon {
     position: absolute;
-    /* Push the ribbon's top-right corner slightly outside the parent's top-right corner.
-       These values are critical for the diagonal pop-out effect when combined with transform. */
-    top: -15px; /* Adjust as needed */
-    right: -15px; /* Adjust as needed */
+    /* These values place the top-right corner of the ribbon exactly at the top-right
+       corner of its parent (.plan-card) after rotation. */
+    top: -1px; /* Align precisely with the top edge */
+    right: -1px; /* Align precisely with the right edge */
     
-    width: 170px; /* Adjusted width for a balanced look and text fit */
-    background-color: #FF4500; /* Orange-red for "Best Value" */
+    width: 150px; /* Adjusted width to match the visual size in the screenshot */
+    background-color: #FF4500; /* Orange-red */
     color: white;
     text-align: center;
-    padding: 8px 0; /* Consistent vertical padding */
-    font-size: 0.9em; /* Readable font size */
+    padding: 8px 0; /* Vertical padding */
+    font-size: 0.85em; /* Readable font size for the ribbon text */
     font-weight: bold;
     
-    /* This transformation pivots the ribbon from its bottom-right and rotates it.
-       The combination of 'top/right' offsets and 'transform-origin' makes it appear from the corner. */
-    transform: rotate(45deg); 
-    /* Pivot the rotation from the bottom-right corner of the RIBBON itself.
-       This makes it sweep into the card's top-right corner nicely and predictably. */
-    transform-origin: 100% 100%; 
+    /* Rotate and position relative to its own center.
+       The combination of 'top/right' with 'transform: translate' and 'rotate'
+       achieves the diagonal corner effect by first translating the element
+       away from the corner, then rotating it. */
+    transform: translate(50%, -50%) rotate(45deg);
+    transform-origin: 0% 0%; /* Pivot from the top-left of the ribbon's original unrotated position */
     
-    z-index: 100; /* IMPORTANT: Ensures it's above everything else */
+    z-index: 100; /* Ensures it's above other content */
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Stronger shadow for pop-out effect */
     white-space: nowrap; /* Prevent "BEST VALUE" text from wrapping */
-    /* Removed overflow: hidden; from here if it was causing issues with content being cut.
-       It should be safe here for shaping the ribbon itself. */
 }
 
 /* For the triangle effect at the ends of the ribbon */
 .best-value-ribbon::before, .best-value-ribbon::after {
     content: '';
     position: absolute;
-    bottom: -10px; /* Adjusted for aesthetic connection */
-    border: 10px solid transparent; /* Larger triangles for better visual balance */
+    bottom: -8px; /* Connects the triangle to the main ribbon body */
+    border: 8px solid transparent; /* Size of the triangles */
 }
 
 .best-value-ribbon::before {
@@ -578,13 +573,13 @@ select.error {
 
 /* Styling for the new offer text */
 .combo-offer-text {
-    font-size: 0.85em; /* Slightly larger for readability */
+    font-size: 0.85em;
     font-weight: bold;
-    color: #DAA520; /* Gold/dark yellow color to match the theme */
-    margin-top: 8px; /* More space it out from description */
+    color: #DAA520;
+    margin-top: 8px;
     text-align: center;
-    padding: 0 10px; /* Slightly more horizontal padding */
-    line-height: 1.3; /* Ensure text doesn't look too squashed */
+    padding: 0 10px;
+    line-height: 1.3;
     width: 100%; /* Ensure it takes full width for centering */
     box-sizing: border-box; /* Include padding in width */
 }
