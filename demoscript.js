@@ -14,12 +14,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const showPlanPricesButton = document.getElementById('showPlanPricesButton');
     const planSelectionSection = document.getElementById('planSelectionSection');
 
-    const planOptionsContainer = document.getElementById('planOptionsContainer');
+    // IMPORTANT: Changed planOptionsContainer to planOptionsGrid to match HTML and CSS
+    const planOptionsGrid = document.getElementById('planOptionsGrid'); // Changed ID here
     const selectedPlanValueInput = document.getElementById('selectedPlanValue');
     const selectedPlanPriceInput = document.getElementById('selectedPlanPrice');
     const selectedPlanTypeInput = document.getElementById('selectedPlanType');
-    // FIX: Corrected typo from document() to document.getElementById()
-    const selectedPlanDetailsInput = document.getElementById('selectedPlanDetails'); 
+    const selectedPlanDetailsInput = document.getElementById('selectedPlanDetails');
     const backToPhonePriceButton = document.getElementById('backToPhonePriceButton');
 
     // --- New: Terms and Conditions Elements (IDs match demoindex.html) ---
@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', function () {
             setTimeout(() => {
                 termsAndConditionsSection.classList.add('visible');
             }, 10);
-            
+
             agreeTermsCheckbox.checked = false;
             toggleGenerateButton();
             termsAndConditionsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function () {
             setTimeout(() => {
                 termsAndConditionsSection.classList.add('hidden');
             }, 10);
-            
+
             agreeTermsCheckbox.checked = false;
             toggleGenerateButton();
         }
@@ -152,49 +152,60 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function populatePlanOptions(phonePrice) {
-        planOptionsContainer.innerHTML = '';
+        planOptionsGrid.innerHTML = ''; // Changed to planOptionsGrid
 
         const extendedPrice = getExtendedWarrantyPrice(phonePrice);
         const screenDamagePrice = Math.round(phonePrice * 0.06);
         const totalDamagePrice = Math.round(phonePrice * 0.1);
 
         const allPlans = [
-            { value: 'extended_warranty', name: 'Extended Warranty', price: extendedPrice, internalType: 'extended', periodText: '12 Months Extended' },
-            { value: 'screen_protection', name: 'Screen Damage Protection', price: screenDamagePrice, internalType: 'screen_protection', periodText: '12 Months' },
-            { value: 'total_damage_protection', name: 'Total Damage Protection', price: totalDamagePrice, internalType: 'total_damage', periodText: '12 Months' },
-            { value: 'combo_screen_extended', name: 'Combo (Screen Damage Protection + Extended Warranty)', price: Math.round(screenDamagePrice + (extendedPrice * 0.3)), internalType: 'combo_screen_extended', periodText: '24 Months Total' },
-            { value: 'combo_total_extended', name: 'Combo (Total Damage Protection + Extended Warranty)', price: Math.round(totalDamagePrice + (extendedPrice * 0.3)), internalType: 'combo_total_extended', periodText: '24 Months Total' }
+            { value: 'extended_warranty', name: 'Extended Warranty', price: extendedPrice, internalType: 'extended', periodText: '12 Months Extended', icon: 'extension', description: 'Covers manufacturing defects beyond standard warranty.' },
+            { value: 'screen_protection', name: 'Screen Damage Protection', price: screenDamagePrice, internalType: 'screen_protection', periodText: '12 Months', icon: 'smartphone', description: 'Protects against accidental screen damage.' },
+            { value: 'total_damage_protection', name: 'Total Damage Protection', price: totalDamagePrice, internalType: 'total_damage', periodText: '12 Months', icon: 'security', description: 'Comprehensive coverage for accidental and liquid damage.' },
+            { value: 'combo_screen_extended', name: 'Combo (Screen Damage Protection + Extended Warranty)', price: Math.round(screenDamagePrice + (extendedPrice * 0.3)), internalType: 'combo_screen_extended', periodText: '24 Months Total', icon: 'devices', description: 'Screen protection and extended warranty combined.', isCombo: true }, // Added isCombo: true
+            { value: 'combo_total_extended', name: 'Combo (Total Damage Protection + Extended Warranty)', price: Math.round(totalDamagePrice + (extendedPrice * 0.3)), internalType: 'combo_total_extended', periodText: '24 Months Total', icon: 'verified_user', description: 'Total damage protection and extended warranty combined.', isCombo: true } // Added isCombo: true
         ];
 
         allPlans.forEach(plan => {
-            const button = document.createElement('button');
-            button.type = 'button';
-            button.classList.add('plan-button');
-            button.innerHTML = `<span class="plan-text">${plan.name}</span><span class="plan-price">₹${plan.price}</span>`;
+            const planCard = document.createElement('div');
+            planCard.classList.add('plan-card');
+            // Add the combo-plan-card class if it's a combo plan
+            if (plan.isCombo) {
+                planCard.classList.add('combo-plan-card');
+            }
+            
+            planCard.setAttribute('data-value', plan.value);
+            planCard.setAttribute('data-price', plan.price);
+            planCard.setAttribute('data-plantype', plan.internalType);
+            planCard.setAttribute('data-details', `${plan.name} (${plan.periodText})`);
 
-            button.setAttribute('data-value', plan.value);
-            button.setAttribute('data-price', plan.price);
-            button.setAttribute('data-plantype', plan.internalType);
-            button.setAttribute('data-details', `${plan.name} (${plan.periodText})`);
+            // Updated innerHTML to match the new CSS classes for styling
+            planCard.innerHTML = `
+                <p class="plan-name">${plan.name}</p>
+                <p class="plan-description">${plan.description}</p>
+                <div class="plan-price">₹${plan.price.toLocaleString('en-IN')}</div>
+                <div class="plan-period">${plan.periodText}</div>
+            `;
 
-            button.addEventListener('click', function() {
-                const currentSelected = planOptionsContainer.querySelector('.plan-button.selected');
+            // Adding a click listener directly to the planCard for selection
+            planCard.addEventListener('click', function() {
+                const currentSelected = planOptionsGrid.querySelector('.plan-card.selected'); // Changed to planOptionsGrid
                 if (currentSelected) {
                     currentSelected.classList.remove('selected');
                 }
-                button.classList.add('selected');
+                planCard.classList.add('selected');
 
                 selectedPlanValueInput.value = plan.value;
                 selectedPlanPriceInput.value = plan.price;
                 selectedPlanTypeInput.value = plan.internalType;
-                selectedPlanDetailsInput.value = button.getAttribute('data-details');
+                selectedPlanDetailsInput.value = planCard.getAttribute('data-details');
 
-                planOptionsContainer.classList.remove('error');
+                planOptionsGrid.classList.remove('error'); // Changed to planOptionsGrid
 
                 loadTermsAndConditions(plan.name);
             });
 
-            planOptionsContainer.appendChild(button);
+            planOptionsGrid.appendChild(planCard); // Changed to planOptionsGrid
         });
 
         selectedPlanValueInput.value = '';
@@ -296,7 +307,7 @@ document.addEventListener('DOMContentLoaded', function () {
             planSelectionSection.classList.add('visible');
         }, 10);
 
-        planOptionsContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        planOptionsGrid.scrollIntoView({ behavior: 'smooth', block: 'center' }); // Changed to planOptionsGrid
     });
 
     backToPhonePriceButton.addEventListener('click', function() {
@@ -311,15 +322,16 @@ document.addEventListener('DOMContentLoaded', function () {
         showPlanPricesButton.classList.remove('hidden');
         setTimeout(() => showPlanPricesButton.classList.add('visible'), 400);
 
-        const currentSelected = planOptionsContainer.querySelector('.plan-button.selected');
+        const currentSelected = planOptionsGrid.querySelector('.plan-card.selected'); // Changed to planOptionsGrid
         if (currentSelected) {
             currentSelected.classList.remove('selected');
+            // No longer resetting button text as the button is gone from the plan card directly
         }
         selectedPlanValueInput.value = '';
         selectedPlanPriceInput.value = '';
         selectedPlanTypeInput.value = '';
         selectedPlanDetailsInput.value = '';
-        planOptionsContainer.classList.remove('error');
+        planOptionsGrid.classList.remove('error'); // Changed to planOptionsGrid
 
         termsAndConditionsSection.classList.remove('visible');
         termsAndConditionsSection.classList.add('hidden');
@@ -340,11 +352,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (!selectedPlanValueInput.value) {
             alert('Please select a Plan.');
-            planOptionsContainer.classList.add('error');
-            planOptionsContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            planOptionsGrid.classList.add('error'); // Changed to planOptionsGrid
+            planOptionsGrid.scrollIntoView({ behavior: 'smooth', block: 'center' }); // Changed to planOptionsGrid
             return;
         } else {
-            planOptionsContainer.classList.remove('error');
+            planOptionsGrid.classList.remove('error'); // Changed to planOptionsGrid
         }
 
         successContainer.classList.remove('visible');
@@ -404,9 +416,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     showPlanPricesButton.classList.remove('hidden');
                     showPlanPricesButton.classList.add('visible');
 
-                    const currentSelected = planOptionsContainer.querySelector('.plan-button.selected');
+                    const currentSelected = planOptionsGrid.querySelector('.plan-card.selected'); // Changed to planOptionsGrid
                     if (currentSelected) {
                         currentSelected.classList.remove('selected');
+                        // No longer resetting button text as the button is gone from the plan card directly
                     }
                     selectedPlanValueInput.value = '';
                     selectedPlanPriceInput.value = '';
