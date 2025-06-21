@@ -398,8 +398,8 @@ select.error {
     display: flex;
     flex-direction: column; /* Stack text and price/features */
     align-items: flex-start; /* Align content to the start */
-    position: relative; /* For badges/highlights */
-    /* REMOVED: overflow: hidden; <--- THIS IS KEY FOR THE RIBBON */
+    position: relative; /* CORRECT: Establishes positioning context for absolute children */
+    /* Ensure no overflow: hidden; here! */
 }
 
 .plan-card:hover {
@@ -451,8 +451,8 @@ select.error {
     border: 2px solid #FFD700; /* Gold border to make it stand out */
     background-color: #FFFACD; /* Light yellow background */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* More pronounced shadow */
-    position: relative; /* Ensure ribbon positioning is relative to this card */
-    /* REMOVED: overflow: hidden; <--- THIS IS KEY FOR THE RIBBON */
+    position: relative; /* Essential for ribbon positioning */
+    /* Ensure no overflow: hidden; here! */
     transform: scale(1.03); /* Slightly larger by default */
     z-index: 10; /* Bring to front a bit */
     animation: pulseBorder 1.5s infinite alternate ease-in-out; /* Subtle pulsing border */
@@ -500,52 +500,57 @@ select.error {
     color: #ffc107; /* Yellow price when selected */
 }
 
-/* Best Value Ribbon Styling */
+/* Best Value Ribbon Styling - ADJUSTED */
 .best-value-ribbon {
     position: absolute;
-    top: -10px; /* Adjust as needed, negative value to bring it slightly out */
-    right: -10px; /* Adjust as needed */
-    width: 100px; /* Width of the ribbon */
+    /* Adjusted positioning for top-right corner */
+    top: 0px; /* Start at the very top edge of the parent */
+    right: 0px; /* Start at the very right edge of the parent */
+    width: 140px; /* INCREASED width for more visible text */
     background-color: #FF4500; /* Orange-red for "Best Value" */
     color: white;
     text-align: center;
-    padding: 5px 0;
-    font-size: 0.7em; /* Smaller font size for the ribbon text */
+    padding: 8px 0; /* INCREASED vertical padding for better text visibility */
+    font-size: 0.85em; /* INCREASED font size for readability */
     font-weight: bold;
-    transform: rotate(45deg);
-    transform-origin: 100% 0%; /* Rotate from the top-right corner */
-    z-index: 99; /* IMPORTANT: Increased z-index to ensure it's always on top */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-
-    /* For the triangle effect */
-    &::before, &::after {
-        content: '';
-        position: absolute;
-        bottom: -8px; /* Adjust to connect with the ribbon */
-        border: 5px solid transparent;
-    }
-
-    &::before {
-        left: 0;
-        border-bottom-color: #CD3700; /* Darker shade for the triangle */
-        border-left-color: #CD3700;
-    }
-
-    &::after {
-        right: 0;
-        border-bottom-color: #CD3700; /* Darker shade for the triangle */
-        border-right-color: #CD3700;
-    }
+    transform: translate(50%, -50%) rotate(45deg); /* ADJUSTED: Move half its width/height out, then rotate */
+    transform-origin: 0% 0%; /* Origin of rotation is now the top-left of the RIBBON itself */
+    z-index: 100; /* IMPORTANT: Ensures it's above everything else */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Stronger shadow for pop */
+    white-space: nowrap; /* Prevent text from wrapping prematurely */
+    overflow: hidden; /* This overflow is for the ribbon itself, preventing pseudo-elements from bleeding too far, but the parent should NOT have it */
 }
+
+/* For the triangle effect - ADJUSTED */
+.best-value-ribbon::before, .best-value-ribbon::after {
+    content: '';
+    position: absolute;
+    bottom: -10px; /* Adjusted to connect with the ribbon */
+    border: 7px solid transparent; /* Slightly larger triangles */
+}
+
+.best-value-ribbon::before {
+    left: 0;
+    border-bottom-color: #CD3700; /* Darker shade for the triangle */
+    border-left-color: #CD3700;
+}
+
+.best-value-ribbon::after {
+    right: 0;
+    border-bottom-color: #CD3700; /* Darker shade for the triangle */
+    border-right-color: #CD3700;
+}
+
 
 /* Styling for the new offer text */
 .combo-offer-text {
-    font-size: 0.8em;
+    font-size: 0.85em; /* Slightly larger for readability */
     font-weight: bold;
-    color: #DAA520; /* A gold/dark yellow color to match the theme */
-    margin-top: 5px; /* Space it out from description */
+    color: #DAA520; /* Gold/dark yellow color to match the theme */
+    margin-top: 8px; /* More space it out from description */
     text-align: center;
-    padding: 0 5px;
+    padding: 0 10px; /* Slightly more horizontal padding */
+    line-height: 1.3; /* Ensure text doesn't look too squashed */
 }
 
 @keyframes pulseBorder {
@@ -1006,7 +1011,7 @@ select.error {
     input[type="email"],
     input[type="tel"],
     input[type="date"],
-    input[type="number"],
+    type="number"],
     input[type="password"],
     select {
         padding: 10px 12px;
@@ -1039,18 +1044,20 @@ select.error {
     }
     /* Ribbon adjustment for smaller screens */
     .best-value-ribbon {
-        font-size: 0.65em; /* Make text smaller to fit */
-        width: 80px; /* Adjust width */
-        top: -8px;
-        right: -8px;
-        padding: 4px 0;
+        font-size: 0.8em; /* Adjusted: Slightly larger text for medium screens */
+        width: 120px; /* Adjusted: Wider */
+        top: 0px;
+        right: 0px;
+        padding: 7px 0; /* Adjusted: More vertical padding */
+        transform: translate(50%, -50%) rotate(45deg); /* Re-applied */
+        transform-origin: 0% 0%; /* Re-applied */
     }
     .best-value-ribbon::before, .best-value-ribbon::after {
-        bottom: -6px;
-        border-width: 4px;
+        bottom: -9px;
+        border-width: 6px;
     }
     .combo-offer-text {
-        font-size: 0.75em; /* Adjust font size */
+        font-size: 0.8em; /* Adjust for medium screens */
     }
 
 
@@ -1190,18 +1197,20 @@ select.error {
     }
     /* Ribbon adjustment for very small screens */
     .best-value-ribbon {
-        font-size: 0.6em; /* Even smaller text */
-        width: 70px; /* Adjust width */
-        top: -7px;
-        right: -7px;
-        padding: 3px 0;
+        font-size: 0.75em; /* Adjusted: Larger font for very small screens */
+        width: 100px; /* Adjusted: Wider */
+        top: 0px;
+        right: 0px;
+        padding: 6px 0; /* Adjusted: More vertical padding */
+        transform: translate(50%, -50%) rotate(45deg); /* Re-applied */
+        transform-origin: 0% 0%; /* Re-applied */
     }
     .best-value-ribbon::before, .best-value-ribbon::after {
-        bottom: -5px;
-        border-width: 3px;
+        bottom: -8px;
+        border-width: 5px;
     }
     .combo-offer-text {
-        font-size: 0.7em; /* Adjust font size */
+        font-size: 0.75em; /* Adjust for small screens */
     }
 
 
