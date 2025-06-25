@@ -82,25 +82,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Terms and Conditions data for different plans
     const termsAndConditionsData = {
-        "Extended Warranty": {
+               "Extended Warranty": {
             content: "<p>This plan covers defects in materials or workmanship after the standard manufacturer's warranty has expired, for a duration of 12 months. Please refer to the full document for exclusions and the process for requesting service.</p>",
-            fullLink: "https://drive.google.com/uc?export=download&id=1sv9svRqkP2JW7hig9Lh2gUdedDhPZv_r"
+            fullLink: "https://drive.google.com/uc?export=download&id=1w4qv2pskNWg2TyGBICRsqMFAotDibS1t"
         },
         "Screen Damage Protection": {
             content: "<p>This plan covers physical damage to the screen for a period of 12 months. It includes repair or replacement of the screen, subject to the terms of the plan. Accidental damage to other parts of the device is not included.</p>",
-            fullLink: "https://drive.google.com/uc?export=download&id=1styeSFp0T8lF3FYL6tU69xWk29t81snd"
+            fullLink: "https://drive.google.com/uc?export=download&id=1w-Z_LZdbKj55N5jjTYCnEDh8FqmTwHsI"
         },
         "Total Damage Protection": {
             content: "<p>This comprehensive plan offers protection against accidental physical damage, liquid damage, and other specified risks for 12 months. Terms, limits, and exclusions apply; please refer to the full details for more information.</p>",
-            fullLink: "https://drive.google.com/uc?export=download&id=1sqXoSiJvHSfYoSqJjPqZzXAfg41Yiqar"
+            fullLink: "https://drive.google.com/uc?export=download&id=1w-P4VWB2yqXo6MS2oToC3I6_3YrtpFQZ"
         },
         "Combo (Screen Damage Protection + Extended Warranty)": {
             content: "<p>This combo offers both screen damage protection (12 months) and extended warranty (12 months after manufacturer's warranty, totaling 24 months coverage). Refer to individual plan terms for specific details.</p>",
-            fullLink: "https://drive.google.com/uc?export=download&id=1t3WJbGXiiyWOaaSCVjsk2u7RYLom0_B7"
+            fullLink: "https://drive.google.com/uc?export=download&id=1w8G2yhT5bByGSze04LdbraEdzyQuCpPP"
         },
         "Combo (Total Damage Protection + Extended Warranty)": {
             content: "<p>This combo provides comprehensive total damage protection (12 months) and extended warranty (12 months after manufacturer's warranty, totaling 24 months coverage). Review both individual plan terms for complete understanding.</p>",
-            fullLink: "https://drive.google.com/uc?export=download&id=1t0z5Dx_8jXqBL3kqxksgYfez8pzANOU8"
+            fullLink: "https://drive.google.com/uc?export=download&id=1vzpKWUgtXnAejoz1-NTmN-v7w1m-O8wW"
         }
     };
 
